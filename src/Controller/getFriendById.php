@@ -11,9 +11,20 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$userId = $_SESSION['user_id'];
+// Get the input data
+$data = json_decode(file_get_contents('php://input'), true);
+$chooseId = $data['chooseId'] ?? null;
 
-// Prepare the SQL query to fetch friends
+if (empty($chooseId)) {
+    http_response_code(400);
+    echo json_encode(["error" => "Invalid input: 'chooseId' is required"]);
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
+$_SESSION['chooseId'] = $data['chooseId'];
+
+// Prepare the SQL query to fetch the selected friend's details
 $query = "
     SELECT 
         user.userId, 
@@ -27,8 +38,9 @@ $query = "
     ON 
         (friendList.request = user.userId OR friendList.confirm = user.userId) 
     WHERE 
-        (friendList.request = ? OR friendList.confirm = ?) 
-        AND user.userId != ? 
+        ((friendList.request = ? AND friendList.confirm = ?) 
+        OR (friendList.request = ? AND friendList.confirm = ?)) 
+        AND user.userId = ? 
     ORDER BY 
         user.name;
 ";
@@ -42,7 +54,7 @@ if (!$stmt) {
 }
 
 // Bind parameters
-mysqli_stmt_bind_param($stmt, "iii", $userId, $userId, $userId);
+mysqli_stmt_bind_param($stmt, "iiiii", $userId, $chooseId, $chooseId, $userId, $chooseId);
 
 if (!mysqli_stmt_execute($stmt)) {
     http_response_code(500);
