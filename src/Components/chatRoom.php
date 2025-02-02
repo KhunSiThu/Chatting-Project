@@ -116,7 +116,7 @@
                                 })}
                                 </time>
                             </div>
-                            <div class="chat-bubble ${isSentByMe ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-100 dark:bg-gray-700 dark:text-white'}">${message.message}</div>
+                            <div class="chat-bubble text-justify ${isSentByMe ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'}">${message.message}</div>
                             <div class="chat-footer opacity-50 dark:text-gray-300">${isSentByMe ? 'Sent' : 'Received'}</div>
                         </div>
                     `;

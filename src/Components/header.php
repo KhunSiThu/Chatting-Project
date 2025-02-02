@@ -14,6 +14,11 @@
     .scroll-none {
         scrollbar-width: none;
     }
+
+    .bg-blur {
+        backdrop-filter: blur(3px);
+        z-index: 200;
+    }
 </style>
 
 <body>

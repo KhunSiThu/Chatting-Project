@@ -43,7 +43,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                     <!-- Displaying User's Name -->
                     <div class="mb-6 text-center">
-                        <p class="text-lg font-medium text-gray-700">User Name</p>
+                        <p class="text-lg font-medium text-gray-700"><?=$userData['name']?></p>
                     </div>
 
                     <!-- Upload Button (Disabled if no image) -->
@@ -121,7 +121,8 @@ require_once '../Components/footer.php'; ?>
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.success) {
-                        alert("Profile image uploaded successfully!");
+                        window.location.href = "./UploadProfilePage.php"
+                        // alert("Profile image uploaded successfully!");
                     } else {
                         alert("Upload failed: " + data.message);
                     }

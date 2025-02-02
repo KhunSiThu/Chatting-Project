@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Card</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <div class="bg-white p-6 rounded-xl shadow-xl w-96 space-y-6">
+        <!-- Profile Section -->
+        <div class="text-center">
+            <div class="relative w-32 h-32 mx-auto">
+                <img id="profileImage" src="https://via.placeholder.com/100" alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-gray-400">
+                <button onclick="editProfileImage()" class="absolute bottom-1 right-1 bg-blue-500 text-white p-1 rounded-full text-xs">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <div class="mt-2 flex justify-center items-center space-x-2">
+                <span id="profileNameDisplay" class="text-xl font-semibold text-gray-800">Example Name</span>
+                <button id="editNameButton" onclick="toggleEditName()" class="text-blue-500 text-sm">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <div id="editNameContainer" class="hidden flex justify-center items-center space-x-2 mt-2">
+                <input id="profileNameInput" type="text" class="text-xl font-semibold text-gray-800 border-b-2 border-gray-400 focus:outline-none focus:border-blue-500 text-center" value="Example Name">
+                <button onclick="saveName()" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">Save</button>
+            </div>
+            <p class="text-sm text-gray-500">example@gmail.com</p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="border-t pt-4">
+            <div class="flex justify-between text-gray-700">
+                <p>Blocks</p>
+                <button onclick="toggleBlockList()" class="text-blue-500 text-sm">Show</button>
+            </div>
+            <ul id="blockList" class="hidden mt-2 text-gray-700 bg-gray-200 p-2 rounded">
+                <li class="flex justify-between items-center">User 1 <button onclick="unblockUser(this)" class="text-red-500 text-sm">Unblock</button></li>
+                <li class="flex justify-between items-center">User 2 <button onclick="unblockUser(this)" class="text-red-500 text-sm">Unblock</button></li>
+                <li class="flex justify-between items-center">User 3 <button onclick="unblockUser(this)" class="text-red-500 text-sm">Unblock</button></li>
+            </ul>
+            <div class="flex justify-between text-gray-700 mt-2">
+                <p>Friends</p>
+                <p>50</p>
+            </div>
+            <div class="flex justify-between text-gray-700 mt-2">
+                <p>Follower</p>
+                <p>100</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleEditName() {
+            document.getElementById('profileNameDisplay').classList.toggle('hidden');
+            document.getElementById('editNameButton').classList.toggle('hidden');
+            document.getElementById('editNameContainer').classList.toggle('hidden');
+        }
+
+        function saveName() {
+            const nameInput = document.getElementById('profileNameInput').value;
+            document.getElementById('profileNameDisplay').textContent = nameInput;
+            toggleEditName();
+        }
+
+        function editProfileImage() {
+            const profileImage = document.getElementById('profileImage');
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = function () {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profileImage.src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            };
+            fileInput.click();
+        }
+
+        function toggleBlockList() {
+            document.getElementById('blockList').classList.toggle('hidden');
+        }
+
+        function unblockUser(button) {
+            button.parentElement.remove();
+        }
+    </script>
+
+</body>
+</html>
