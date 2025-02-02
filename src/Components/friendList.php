@@ -41,7 +41,7 @@
 
    <!-- Request Items -->
    <div id="requestItems" class="pt-36 px-3 overflow-auto hidden h-screen scroll-none">
-      <ul class="friendList flex flex-col gap-y-3 ">
+      <ul id="requestList" class=" flex flex-col gap-y-3 ">
 
          <!-- Repeat the above <li> for each chat item -->
       </ul>
@@ -49,7 +49,7 @@
 
    <!-- follow Items -->
    <div id="followItems" class="pt-36 px-3 overflow-auto hidden h-screen scroll-none">
-      <ul class="friendList flex flex-col gap-y-3 ">
+      <ul id="followList" class=" flex flex-col gap-y-3 ">
 
          <!-- Repeat the above <li> for each chat item -->
       </ul>

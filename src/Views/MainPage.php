@@ -221,6 +221,16 @@ if ($result && mysqli_num_rows($result) > 0) {
         groupItems.classList.add("hidden");
         mainTitle.textContent = "Friend Requests";
         searchBox.value = "";
+        const requestList = document.getElementById("requestList");
+        setInterval(() => {
+            friendRequests();
+        }, 1500);
+        requestList.addEventListener("click", (e) => {
+            if (e.target.matches(".confirmBtn")) {
+                const id = e.target.getAttribute("id");
+                confirmTest('../Controller/comfirmFri.php', id, e.target);
+            }
+        })
     });
 
     groupBtn.addEventListener("click", () => {
@@ -241,6 +251,17 @@ if ($result && mysqli_num_rows($result) > 0) {
         groupItems.classList.add("hidden");
         mainTitle.textContent = "Your Requests";
         searchBox.value = "";
+        const followList = document.getElementById("followList");
+        setInterval(() => {
+            followFriend();
+        }, 1500);
+
+        followList.addEventListener("click", (e) => {
+            if (e.target.matches(".requestBtn")) {
+                const id = e.target.getAttribute("id");
+                requestTest('../Controller/requestFri.php', id, e.target);
+            }
+        })
     });
 
     // Fetch Friend List
@@ -511,5 +532,131 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </li>
             `;
         }
+    }
+
+    // Friend Requests
+    async function friendRequests() {
+         // Ensure you have an element with id="requestList"
+
+        try {
+            const response = await fetch("../Controller/getFriendRequests.php");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+
+            // Clear previous search results
+            requestList.innerHTML = "";
+
+            if (data.length > 0) {
+                // Display search results
+                data.forEach((friend) => {
+                    const li = document.createElement("li");
+                    li.className = "p-3 rounded-md bg-slate-50 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
+                    li.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                        </div>
+                        <div class="ml-2">
+                            <h4 class="font-bold dark:text-white">${friend.name}</h4>
+                            <span class="text-xs opacity-50 dark:text-gray-300">${friend.status}</span>
+                        </div>
+                    </div>
+                    <button type="button" id="${friend.userId}" class="confirmBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        Confirm Request
+                    </button>
+                `;
+                    requestList.appendChild(li);
+                });
+            } else {
+                // Display "No results found" message
+                const li = document.createElement("li");
+                li.className = "flex items-center justify-center w-full h-96";
+                li.innerHTML = `
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
+                    <p>No friend requests found.</p>
+                </div>
+            `;
+                requestList.appendChild(li);
+            }
+        } catch (error) {
+            console.error("Error fetching friend requests:", error);
+            requestList.innerHTML = `
+            <li class="flex items-center justify-center w-full h-96">
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
+                    <p>An error occurred. Please try again later.</p>
+                </div>
+            </li>
+        `;
+        }
+
+    }
+
+    // Friend RequestsFollow Friend
+    async function followFriend() {
+         // Ensure you have an element with id="requestList"
+
+        try {
+            const response = await fetch("../Controller/getFollowFriend.php");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+
+            // Clear previous search results
+            followList.innerHTML = "";
+
+            if (data.length > 0) {
+                // Display search results
+                data.forEach((friend) => {
+                    const li = document.createElement("li");
+                    li.className = "p-3 rounded-md bg-slate-50 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
+                    li.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                        </div>
+                        <div class="ml-2">
+                            <h4 class="font-bold dark:text-white">${friend.name}</h4>
+                            <span class="text-xs opacity-50 dark:text-gray-300">${friend.status}</span>
+                        </div>
+                    </div>
+                    <button type="button" id="${friend.userId}" class="requestBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        Friend Request
+                    </button>
+                `;
+                    followList.appendChild(li);
+                });
+            } else {
+                // Display "No results found" message
+                const li = document.createElement("li");
+                li.className = "flex items-center justify-center w-full h-96";
+                li.innerHTML = `
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
+                    <p>Search Your Friends!</p>
+                </div>
+            `;
+                followList.appendChild(li);
+            }
+        } catch (error) {
+            console.error("Error fetching friend requests:", error);
+            followList.innerHTML = `
+            <li class="flex items-center justify-center w-full h-96">
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
+                    <p>An error occurred. Please try again later.</p>
+                </div>
+            </li>
+        `;
+        }
+
     }
 </script>

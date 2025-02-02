@@ -51,7 +51,7 @@ if (mysqli_num_rows($checkResult) > 0) {
     echo json_encode(["success" => true, "message" => "Friend request deleted successfully"]);
 } else {
     // If no request exists, insert a new one
-    $insertQuery = "INSERT INTO friendList (request, confirm) VALUES ('$userId', '$id')";
+    $insertQuery = "INSERT INTO friendList (request, confirm) VALUES ('$id','$userId')";
     $insertResult = mysqli_query($conn, $insertQuery);
 
     $deleteQuery = "DELETE FROM friendRequests 
