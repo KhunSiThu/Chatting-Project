@@ -28,7 +28,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                     <!-- Sidebar Icons -->
                     <div id="chatBoxBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
                             </svg>
@@ -39,7 +39,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
                     <div id="groupBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                             </svg>
@@ -49,11 +49,13 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </a>
                     </div>
 
-                    <div id="requestBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+
+                    <div id="requestBtn" class="relative hs-tooltip [--placement:right] inline-block">
+                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
                             </svg>
+                            <div id="reqCount" class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-1 -end-1 dark:border-gray-900">0</div>
                             <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
                                 Friends Request
                             </span>
@@ -61,7 +63,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
                     <div id="followBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                             </svg>
@@ -71,8 +73,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </a>
                     </div>
 
-                    <div class="hs-tooltip [--placement:right] inline-block">
-                        <button id="theme-toggle" class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none">
+                    <div class=" hidden md:inline-block">
+                        <button id="theme-toggle" class=" p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none">
                             <svg id="theme-toggle-dark-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
                             </svg>
@@ -86,7 +88,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
                     <div class="hs-tooltip [--placement:right] hidden md:inline-block">
-                        <button id="logoutBtn" class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                        <button id="logoutBtn" class=" logoutBtn hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                             </svg>
@@ -103,7 +105,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <!-- Profile Icon -->
                 <div id="userProfileBtn" class="hs-tooltip [--placement:right] md:inline-block mb-5 hidden">
                     <a class="hs-tooltip-toggle p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                        <img class="w-10 h-10 rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="">
+                        <img class="w-10 h-10 object-cover rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="">
                         <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
                             Profile
                         </span>
@@ -157,27 +159,31 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
     });
 
-    const logoutBtn = document.querySelector('#logoutBtn');
+    const logoutBtn = document.querySelectorAll('.logoutBtn');
 
-    logoutBtn.addEventListener("click", () => {
-        fetch("../Controller/logout.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "../../Public/index.php"; // Redirect after logout
-                } else {
-                    alert("Logout failed: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error("Error during logout:", error);
-            });
-    });
+    logoutBtn.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            localStorage.clear();
+            localStorage.setItem('color-theme', 'light');
+            fetch("../Controller/logout.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "../../Public/index.php"; // Redirect after logout
+                    } else {
+                        alert("Logout failed: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error during logout:", error);
+                });
+        });
+    })
 
     const userProfile = document.querySelector('#userProfile');
     const userProfileBtn = document.querySelector('#userProfileBtn');
@@ -222,9 +228,9 @@ if ($result && mysqli_num_rows($result) > 0) {
         mainTitle.textContent = "Friend Requests";
         searchBox.value = "";
         const requestList = document.getElementById("requestList");
-        setInterval(() => {
-            friendRequests();
-        }, 1500);
+        // setInterval(() => {
+        //     friendRequests();
+        // }, 1500);
         requestList.addEventListener("click", (e) => {
             if (e.target.matches(".confirmBtn")) {
                 const id = e.target.getAttribute("id");
@@ -252,9 +258,9 @@ if ($result && mysqli_num_rows($result) > 0) {
         mainTitle.textContent = "Your Requests";
         searchBox.value = "";
         const followList = document.getElementById("followList");
-        setInterval(() => {
-            followFriend();
-        }, 1500);
+        // setInterval(() => {
+        //     followFriend();
+        // }, 1500);
 
         followList.addEventListener("click", (e) => {
             if (e.target.matches(".requestBtn")) {
@@ -266,7 +272,6 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     // Fetch Friend List
     async function getFriendList() {
-
         try {
             const response = await fetch("../Controller/getFriends.php");
             if (!response.ok) {
@@ -278,20 +283,25 @@ if ($result && mysqli_num_rows($result) > 0) {
                 throw new Error(data.error);
             }
 
+
+
             friendList.innerHTML = data.length > 0 ? data.map(friend => `
             <li id="${friend.userId}" class="p-3 chatItem cursor-pointer rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-gray-900 flex items-center justify-between">
                 <div class="flex items-center pointer-events-none">
                     <div class="relative">
-                        <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
-                        <span class="bottom-0 left-7 absolute w-4 h-4 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+                        <!-- Profile Image -->
+                        <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
+
+                        <!-- Online Status Indicator -->
+                        <span class="bottom-0 left-7 absolute w-4 h-4 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${friend.status !== 'Online' ? 'opacity-0' : 'opacity-100'}"></span>
                     </div>
-                    <div class="ml-2">
-                        <h4 class="font-bold dark:text-white">${friend.name}</h4>
-                        <span class="text-xs opacity-50 dark:text-gray-300">You : Hello</span>
+                        <div class="ml-2">
+                        <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
+                        <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.lastMessage}</span>
                     </div>
                 </div>
                 <button class="">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 dark:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-black dark:text-white">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                     </svg>
                 </button>
@@ -317,10 +327,129 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
     }
 
+    // Friend Requests
+    async function friendRequests() {
+        try {
+            const response = await fetch("../Controller/getFriendRequests.php");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            requestList.innerHTML = ""; // Clear previous results
+
+            if (data.length > 0) {
+                data.forEach((friend) => {
+                    const li = document.createElement("li");
+                    li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
+                    li.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                        </div>
+                        <div class="ml-2">
+                            <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
+                            <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
+                        </div>
+                    </div>
+                    <button type="button" id="${friend.userId}" class="confirmBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        Confirm Request
+                    </button>
+                `;
+                    requestList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.className = "flex items-center justify-center w-full h-96";
+                li.innerHTML = `
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
+                    <p>No friend requests found.</p>
+                </div>
+            `;
+                requestList.appendChild(li);
+            }
+
+            return data.length;
+
+        } catch (error) {
+            console.error("Error fetching friend requests:", error);
+            requestList.innerHTML = `
+            <li class="flex items-center justify-center w-full h-96">
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
+                    <p>An error occurred. Please try again later.</p>
+                </div>
+            </li>
+        `;
+        }
+    }
+    // Friend RequestsFollow Friend
+    async function followFriend() {
+        try {
+            const response = await fetch("../Controller/getFollowFriend.php");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            followList.innerHTML = ""; // Clear previous results
+
+            if (data.length > 0) {
+                data.forEach((friend) => {
+                    const li = document.createElement("li");
+                    li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
+                    li.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                        </div>
+                        <div class="ml-2">
+                            <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
+                            <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
+                        </div>
+                    </div>
+                    <button type="button" id="${friend.userId}" class="requestBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        Friend Request
+                    </button>
+                `;
+                    followList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.className = "flex items-center justify-center w-full h-96";
+                li.innerHTML = `
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
+                    <p>Search Your Friends!</p>
+                </div>
+            `;
+                followList.appendChild(li);
+            }
+
+            return data.length;
+        } catch (error) {
+            console.error("Error fetching friend requests:", error);
+            followList.innerHTML = `
+            <li class="flex items-center justify-center w-full h-96">
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
+                    <p>An error occurred. Please try again later.</p>
+                </div>
+            </li>
+        `;
+        }
+    }
+
     let intervalId; // Variable to store the interval ID
 
-    setInterval(() => {
-        getFriendList();
+    setInterval(async () => {
+        await getFriendList();
+        let length = await friendRequests();
+        await followFriend()
+        document.querySelector("#reqCount").textContent = length;
     }, 1000)
 
 
@@ -468,12 +597,9 @@ if ($result && mysqli_num_rows($result) > 0) {
             }
 
             const data = await response.json();
-
-            // Clear previous search results
-            searchItems.innerHTML = "";
+            searchItems.innerHTML = ""; // Clear previous results
 
             if (data.length > 0) {
-                // Display search results
                 data.forEach((friend) => {
                     let actionBtn = "Add Friend";
                     let controllBtn = "requestBtn";
@@ -490,102 +616,37 @@ if ($result && mysqli_num_rows($result) > 0) {
                     }
 
                     const li = document.createElement("li");
-                    li.className = "p-3 rounded-md bg-slate-50 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
+                    li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
                     li.innerHTML = `
-                        <div class="flex items-center">
-                            <div class="relative">
-                                <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
-                            </div>
-                            <div class="ml-2">
-                                <h4 class="font-bold dark:text-white">${friend.name}</h4>
-                                <span class="text-xs opacity-50 dark:text-gray-300">${friend.status}</span>
-                            </div>
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
                         </div>
-                        <button type="button" id="${friend.userId}" class="p-2 ${controllBtn} inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                            ${actionBtn}
-                        </button>
-                    `;
+                        <div class="ml-2">
+                            <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
+                            <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
+                        </div>
+                    </div>
+                    <button type="button" id="${friend.userId}" class="p-2 ${controllBtn} inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        ${actionBtn}
+                    </button>
+                `;
                     searchItems.appendChild(li);
                 });
             } else {
-                // Display "No results found" message
                 const li = document.createElement("li");
                 li.className = "flex items-center justify-center w-full h-96";
                 li.innerHTML = `
-                    <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                        <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
-                        <p>No results found.</p>
-                    </div>
-                `;
+                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
+                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
+                    <p>No results found.</p>
+                </div>
+            `;
                 searchItems.appendChild(li);
             }
-
-
         } catch (error) {
             console.error("Error fetching search results:", error);
             searchItems.innerHTML = `
-                <li class="flex items-center justify-center w-full h-96">
-                    <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                        <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
-                        <p>An error occurred. Please try again later.</p>
-                    </div>
-                </li>
-            `;
-        }
-    }
-
-    // Friend Requests
-    async function friendRequests() {
-         // Ensure you have an element with id="requestList"
-
-        try {
-            const response = await fetch("../Controller/getFriendRequests.php");
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const data = await response.json();
-
-            // Clear previous search results
-            requestList.innerHTML = "";
-
-            if (data.length > 0) {
-                // Display search results
-                data.forEach((friend) => {
-                    const li = document.createElement("li");
-                    li.className = "p-3 rounded-md bg-slate-50 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
-                    li.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
-                        </div>
-                        <div class="ml-2">
-                            <h4 class="font-bold dark:text-white">${friend.name}</h4>
-                            <span class="text-xs opacity-50 dark:text-gray-300">${friend.status}</span>
-                        </div>
-                    </div>
-                    <button type="button" id="${friend.userId}" class="confirmBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                        Confirm Request
-                    </button>
-                `;
-                    requestList.appendChild(li);
-                });
-            } else {
-                // Display "No results found" message
-                const li = document.createElement("li");
-                li.className = "flex items-center justify-center w-full h-96";
-                li.innerHTML = `
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
-                    <p>No friend requests found.</p>
-                </div>
-            `;
-                requestList.appendChild(li);
-            }
-        } catch (error) {
-            console.error("Error fetching friend requests:", error);
-            requestList.innerHTML = `
             <li class="flex items-center justify-center w-full h-96">
                 <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
                     <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
@@ -594,69 +655,5 @@ if ($result && mysqli_num_rows($result) > 0) {
             </li>
         `;
         }
-
-    }
-
-    // Friend RequestsFollow Friend
-    async function followFriend() {
-         // Ensure you have an element with id="requestList"
-
-        try {
-            const response = await fetch("../Controller/getFollowFriend.php");
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const data = await response.json();
-
-            // Clear previous search results
-            followList.innerHTML = "";
-
-            if (data.length > 0) {
-                // Display search results
-                data.forEach((friend) => {
-                    const li = document.createElement("li");
-                    li.className = "p-3 rounded-md bg-slate-50 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
-                    li.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <img class="w-12 h-12 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
-                        </div>
-                        <div class="ml-2">
-                            <h4 class="font-bold dark:text-white">${friend.name}</h4>
-                            <span class="text-xs opacity-50 dark:text-gray-300">${friend.status}</span>
-                        </div>
-                    </div>
-                    <button type="button" id="${friend.userId}" class="requestBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                        Friend Request
-                    </button>
-                `;
-                    followList.appendChild(li);
-                });
-            } else {
-                // Display "No results found" message
-                const li = document.createElement("li");
-                li.className = "flex items-center justify-center w-full h-96";
-                li.innerHTML = `
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
-                    <p>Search Your Friends!</p>
-                </div>
-            `;
-                followList.appendChild(li);
-            }
-        } catch (error) {
-            console.error("Error fetching friend requests:", error);
-            followList.innerHTML = `
-            <li class="flex items-center justify-center w-full h-96">
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
-                    <p>An error occurred. Please try again later.</p>
-                </div>
-            </li>
-        `;
-        }
-
     }
 </script>

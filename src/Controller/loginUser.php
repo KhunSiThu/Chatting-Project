@@ -20,7 +20,7 @@ if (!empty($_POST['email']) && !empty($_POST['password'])) {
             $_SESSION['user_email'] = $userData['email'];
 
             // Update user status to active
-            $updateSql = "UPDATE user SET status = 'Active Now' WHERE email = '$email'";
+            $updateSql = "UPDATE user SET status = 'Online' WHERE email = '$email'";
             mysqli_query($conn, $updateSql);
 
             $response["success"] = true;

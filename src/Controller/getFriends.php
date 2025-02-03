@@ -53,6 +53,7 @@ if (!mysqli_stmt_execute($stmt)) {
 
 // Fetch results
 $result = mysqli_stmt_get_result($stmt);
+
 if (!$result) {
     http_response_code(500);
     echo json_encode(["error" => "Failed to fetch results: " . mysqli_error($conn)]);
@@ -62,12 +63,38 @@ if (!$result) {
 
 $results = [];
 while ($row = mysqli_fetch_assoc($result)) {
+
+    // Prepare SQL query to fetch last message
+    $messQuery = "SELECT * FROM messages 
+    WHERE (receive_id = ? AND send_id = ?) OR (receive_id = ? AND send_id = ?) 
+    ORDER BY messages.message_id DESC LIMIT 1";
+
+    $stmtMess = $conn->prepare($messQuery);
+    $stmtMess->bind_param("iiii", $userId, $row['userId'], $row['userId'], $userId);
+    $stmtMess->execute();
+    $messResult = $stmtMess->get_result();
+
+    $message = $messResult->fetch_assoc();
+
+    // Limit the message to 40 characters
+    $messageText = $message ? $message['message'] : 'No messages yet';
+    $maxLength = 40;  // Set the maximum character length
+
+    if (strlen($messageText) > $maxLength) {
+        $messageText = substr($messageText, 0, $maxLength) . '...';
+    }
+
+    // Prepare result with message
     $results[] = [
         'userId' => $row['userId'],
         'name' => $row['name'],
         'profileImage' => $row['profileImage'],
-        'status' => $row['status']
+        'status' => $row['status'],
+        'lastMessage' => $messageText,  // Store the limited message
     ];
+
+    // Free message result
+    mysqli_free_result($messResult);
 }
 
 // Free resources

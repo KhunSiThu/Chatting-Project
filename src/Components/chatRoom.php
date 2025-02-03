@@ -15,20 +15,20 @@
     <!-- Input Section -->
     <section class="p-4 bg-slate-100 dark:bg-gray-800 w-full h-20 absolute bottom-0 z-40 right-0 flex justify-center items-center gap-x-5">
         <!-- Attachment Button -->
-        <button class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 dark:text-white">
+        <button class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-800 dark:text-white">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
             </svg>
         </button>
 
         <!-- Message Input -->
         <div class="w-2/3">
-            <input id="sendMessage" type="text" class="w-full p-2 rounded-md bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="Type a message...">
+            <input id="sendMessage" type="text" class="w-full p-2 rounded-md bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 transition-colors duration-200" placeholder="Type a message...">
         </div>
 
         <!-- Send Button -->
-        <button id="sendBtn" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 dark:text-white">
+        <button id="sendBtn" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-800 dark:text-white">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
             </svg>
         </button>
@@ -51,6 +51,8 @@
     // Hero Section
     const chatFriend = async (chooseId) => {
         const chatRoomHeader = document.querySelector("#chatRoomHeader");
+
+        sessionStorage.removeItem("messLength");
 
         try {
             const response = await fetch("../Controller/getFriendById.php", {
@@ -78,17 +80,22 @@
                 const friend = data[0]; // Assuming the first result is the friend
                 chatRoomHeader.innerHTML = `
                 <div class="flex items-center">
-                    <button id="closeChat" class='mr-3 md:hidden text-gray-800 dark:text-gray-200 opacity-40 hover:opacity-100 '><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
+                    <!-- Close Chat Button (Visible on Mobile) -->
+                    <button id="closeChat" class="mr-3 md:hidden text-gray-800 dark:text-gray-200 opacity-40 hover:opacity-100 transition-opacity duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
                     </button>
+
+                    <!-- Friend's Profile Image -->
                     <div class="relative">
-                        <img class="md:w-14 md:h-14 w-10 h-10 rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
-                        
+                        <img class="md:w-14 md:h-14 w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
                     </div>
+
+                    <!-- Friend's Name and Status -->
                     <div class="ml-2">
-                        <h4 class="font-bold dark:text-white">${friend.name}</h4>
-                        <span class="text-xs text-green-400">${friend.status}</span>
+                        <h4 class="font-bold text-gray-800 dark:text-gray-100">${friend.name}</h4>
+                        <span class="text-xs ${friend.status === 'Online' ? 'text-green-400' : 'text-gray-500 dark:text-gray-400'}">${friend.status}</span>
                     </div>
                 </div>
             `;
@@ -98,15 +105,18 @@
                     var userId = "<?php echo $_SESSION['user_id'] ?? ''; ?>";
                     const isSentByMe = message.send_id == userId;
                     const messageElement = `
-                        <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
-                            <div class="chat-image avatar">
-                                <div class="w-6 md:w-10 rounded-full">
-                                    <img alt="Profile image" src="../uploads/${message.profileImage}" />
-                                </div>
+                    <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
+                        <!-- Profile Image -->
+                        <div class="chat-image avatar">
+                            <div class="w-6 md:w-10 rounded-full">
+                                <img alt="Profile image" src="../uploads/${message.profileImage}" />
                             </div>
-                            <div class="chat-header dark:text-white">
-                                ${isSentByMe ? 'You' : message.name}
-                               <time class="text-xs opacity-50 dark:text-gray-300">
+                        </div>
+
+                        <!-- Sender Name and Timestamp -->
+                        <div class="chat-header dark:text-white">
+                            ${isSentByMe ? 'You' : message.name}
+                            <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">
                                 ${new Date(message.createdAt).toLocaleString('en-US', {
                                     month: 'short', // Short month name (e.g., "Oct")
                                     day: 'numeric', // Day of the month (e.g., "5")
@@ -114,12 +124,25 @@
                                     minute: '2-digit', // Minute (e.g., "07")
                                     hour12: true // Use 12-hour format (e.g., "3:07 PM")
                                 })}
-                                </time>
-                            </div>
-                            <div class="chat-bubble text-justify ${isSentByMe ? 'bg-blue-500 text-white dark:bg-blue-600' : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white'}">${message.message}</div>
-                            <div class="chat-footer opacity-50 dark:text-gray-300">${isSentByMe ? 'Sent' : 'Received'}</div>
+                            </time>
                         </div>
-                    `;
+
+                        <!-- Message Bubble -->
+                        <div class="chat-bubble  text-justify ${
+                            isSentByMe
+                                ? 'bg-blue-500 text-white dark:bg-blue-600' // Sent message style
+                                : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' // Received message style
+                        }">
+                            ${message.message}
+                        </div>
+
+                        <!-- Message Status (Sent/Received) -->
+                        <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
+                            ${isSentByMe ? 'Sent' : 'Received'}
+                        </div>
+                    </div>
+                `;
+
                     messageShowCon.insertAdjacentHTML('beforeend', messageElement);
 
                 }
@@ -130,14 +153,25 @@
                         const response = await fetch("../Controller/getMessage.php");
                         const messages = await response.json();
                         messageShowCon.innerHTML = "";
-                        messages.forEach(displayMessage);
 
-                        
+                        let messLength = sessionStorage.getItem("messLength");
+
+                        await messages.forEach(displayMessage);
+
+                        if (messLength != messages.length) {
+                            messageShowCon.scrollTo({
+                                top: messageShowCon.scrollHeight,
+                                behavior: "smooth"
+                            });
+                            sessionStorage.setItem("messLength", messages.length)
+                        }
 
                     } catch (error) {
                         console.error("Error fetching messages:", error);
                     }
-                }, 10);
+                }, 1000);
+
+
 
             } else {
                 chatRoomHeader.innerHTML = `<p class="text-gray-500 dark:text-gray-300">No friend found.</p>`;
@@ -149,25 +183,24 @@
 
         // Controll
         sideBar.classList.add("hidden");
-                        document.querySelector("#chatRoomCon").classList.remove("hidden");
-                        document.querySelector("#noSelect").classList.add("md:hidden");
+        document.querySelector("#chatRoomCon").classList.remove("hidden");
+        document.querySelector("#noSelect").classList.add("md:hidden");
 
 
-                        document.querySelector("#closeChat").addEventListener("click", () => {
-                            sideBar.classList.remove("hidden");
-                            document.querySelector("#chatRoomCon").classList.add("hidden");
-                            document.querySelector("#noSelect").classList.add("md:flex");
-                        })
-
+        document.querySelector("#closeChat").addEventListener("click", () => {
+            sideBar.classList.remove("hidden");
+            document.querySelector("#chatRoomCon").classList.add("hidden");
+            document.querySelector("#noSelect").classList.add("md:flex");
+        })
 
     };
 
 
 
-    friendList.addEventListener("click", (e) => {
+    friendList.addEventListener("click", async (e) => {
         if (e.target.matches(".chatItem")) {
             const id = e.target.getAttribute("id");
-            chatFriend(id) // Fetch messages after selecting a friend
+            await chatFriend(id) // Fetch messages after selecting a friend
         }
     });
 

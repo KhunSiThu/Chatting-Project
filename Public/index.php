@@ -10,10 +10,10 @@ $result = mysqli_query($conn, $sql);
 if ($result && mysqli_num_rows($result) > 0) {
     $userData = mysqli_fetch_assoc($result);
 
-    if ($userData['status'] == 'Active Now' && $userData['profileImage']) {
+    if ($userData['status'] == 'Online' && $userData['profileImage']) {
         header("Location: ../src/Views/MainPage.php");
         exit;
-    } else if ($userData['status'] == 'Active Now' && !$userData['profileImage']) {
+    } else if ($userData['status'] == 'Online' && !$userData['profileImage']) {
         header("Location: ../src/Views/UploadProfilePage.php");
         exit;
     } else {
