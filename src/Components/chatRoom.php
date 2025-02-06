@@ -32,6 +32,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
             </svg>
         </button>
+
+        <!--Group Send Button -->
+        <button id="groupSendBtn" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-800 dark:text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+            </svg>
+        </button>
     </section>
 </div>
 
@@ -42,205 +49,8 @@
 </div>
 
 <script>
-    const sideBar = document.querySelector("#sidebar");
-    const friendList = document.querySelector(".friendList");
-    const sendMessageInput = document.querySelector("#sendMessage");
-    const sendBtn = document.querySelector("#sendBtn");
-    const messageShowCon = document.querySelector("#messageShowCon");
-
-    // Hero Section
-    const chatFriend = async (chooseId) => {
-        const chatRoomHeader = document.querySelector("#chatRoomHeader");
-
-        sessionStorage.removeItem("messLength");
-
-        try {
-            const response = await fetch("../Controller/getFriendById.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    chooseId
-                }), // Send the selected friend's ID
-            });
-
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
-            }
-
-            // Update the chat room header with the friend's details
-            if (data.length > 0) {
-                const friend = data[0]; // Assuming the first result is the friend
-                chatRoomHeader.innerHTML = `
-                <div class="flex items-center">
-                    <!-- Close Chat Button (Visible on Mobile) -->
-                    <button id="closeChat" class="mr-3 md:hidden text-gray-800 dark:text-gray-200 opacity-40 hover:opacity-100 transition-opacity duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                    </button>
-
-                    <!-- Friend's Profile Image -->
-                    <div class="relative">
-                        <img class="md:w-14 md:h-14 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
-                    </div>
-
-                    <!-- Friend's Name and Status -->
-                    <div class="ml-2">
-                        <h4 class="font-bold text-gray-800 dark:text-gray-100">${friend.name}</h4>
-                        <span class="text-xs ${friend.status === 'Online' ? 'text-green-400' : 'text-gray-500 dark:text-gray-400'}">${friend.status}</span>
-                    </div>
-                </div>
-            `;
-
-                // Function to display messages dynamically
-                function displayMessage(message) {
-                    var userId = "<?php echo $_SESSION['user_id'] ?? ''; ?>";
-                    const isSentByMe = message.send_id == userId;
-                    const messageElement = `
-                    <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
-                        <!-- Profile Image -->
-                        <div class="chat-image avatar">
-                            <div class="w-6 md:w-10 rounded-full">
-                                <img alt="Profile image" src="../uploads/${message.profileImage}" />
-                            </div>
-                        </div>
-
-                        <!-- Sender Name and Timestamp -->
-                        <div class="chat-header dark:text-white">
-                            ${isSentByMe ? 'You' : message.name}
-                            <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">
-                                ${new Date(message.createdAt).toLocaleString('en-US', {
-                                    month: 'short', // Short month name (e.g., "Oct")
-                                    day: 'numeric', // Day of the month (e.g., "5")
-                                    hour: 'numeric', // Hour (e.g., "3")
-                                    minute: '2-digit', // Minute (e.g., "07")
-                                    hour12: true // Use 12-hour format (e.g., "3:07 PM")
-                                })}
-                            </time>
-                        </div>
-
-                        <!-- Message Bubble -->
-                        <div class="chat-bubble  text-justify ${
-                            isSentByMe
-                                ? 'bg-blue-500 text-white dark:bg-blue-600' // Sent message style
-                                : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' // Received message style
-                        }">
-                            ${message.message}
-                        </div>
-
-                        <!-- Message Status (Sent/Received) -->
-                        <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
-                            ${isSentByMe ? 'Sent' : 'Received'}
-                        </div>
-                    </div>
-                `;
-
-                    messageShowCon.insertAdjacentHTML('beforeend', messageElement);
-
-                }
-
-                // Polling (alternative to WebSocket)
-                setInterval(async () => {
-                    try {
-                        const response = await fetch("../Controller/getMessage.php");
-                        const messages = await response.json();
-                        messageShowCon.innerHTML = "";
-
-                        let messLength = sessionStorage.getItem("messLength");
-
-                        await messages.forEach(displayMessage);
-
-                        if (messLength != messages.length) {
-                            messageShowCon.scrollTo({
-                                top: messageShowCon.scrollHeight,
-                                behavior: "smooth"
-                            });
-                            sessionStorage.setItem("messLength", messages.length)
-                        }
-
-                    } catch (error) {
-                        console.error("Error fetching messages:", error);
-                    }
-                }, 1000);
+    
 
 
 
-            } else {
-                chatRoomHeader.innerHTML = `<p class="text-gray-500 dark:text-gray-300">No friend found.</p>`;
-            }
-        } catch (error) {
-            console.error("Error fetching friend details:", error);
-            chatRoomHeader.innerHTML = `<p class="text-red-500 dark:text-red-300">Error loading friend details. Please try again.</p>`;
-        }
-
-        // Controll
-        sideBar.classList.add("hidden");
-        document.querySelector("#chatRoomCon").classList.remove("hidden");
-        document.querySelector("#noSelect").classList.add("md:hidden");
-
-
-        document.querySelector("#closeChat").addEventListener("click", () => {
-            sideBar.classList.remove("hidden");
-            document.querySelector("#chatRoomCon").classList.add("hidden");
-            document.querySelector("#noSelect").classList.add("md:flex");
-        })
-
-    };
-
-
-
-    friendList.addEventListener("click", async (e) => {
-        if (e.target.matches(".chatItem")) {
-            const id = e.target.getAttribute("id");
-            await chatFriend(id) // Fetch messages after selecting a friend
-        }
-    });
-
-    // Function to send a message
-    async function sendMessage(message) {
-        try {
-            const response = await fetch("../Controller/sendMessage.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    message
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            if (data.success) {
-                console.log("Message sent successfully!");
-                sendMessageInput.value = ""; // Clear the input field
-            } else {
-                throw new Error(data.error || "Failed to send message");
-            }
-        } catch (error) {
-            console.error("Error sending message:", error);
-            alert("Failed to send message. Please try again.");
-        }
-    }
-
-    // Event listener for the send button
-    sendBtn.addEventListener("click", () => {
-        const message = sendMessageInput.value.trim();
-        if (message) {
-            sendMessage(message);
-        } else {
-            alert("Please enter a message.");
-        }
-    });
 </script>

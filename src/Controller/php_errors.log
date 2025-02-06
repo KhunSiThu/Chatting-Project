@@ -1,5 +1,0 @@
-[30-Jan-2025 20:59:55 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'id' in 'where clause' in /home/khun-si-thu/Desktop/Chatting Project/src/Controller/uploadProfile.php:66
-Stack trace:
-#0 /home/khun-si-thu/Desktop/Chatting Project/src/Controller/uploadProfile.php(66): mysqli_prepare()
-#1 {main}
-  thrown in /home/khun-si-thu/Desktop/Chatting Project/src/Controller/uploadProfile.php on line 66

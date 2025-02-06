@@ -4,7 +4,7 @@
       <div class="p-2 mb-4 border rounded-lg dark:border-gray-700">
          <button class="flex items-center w-full text-left">
             <div class="p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
-               <img class="w-8 h-8 object-cover rounded-full" src="../uploads/<?= $userData['groupProfileImage'] ?>" alt="Profile Image">
+               <img class="w-8 h-8 object-cover rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="Profile Image">
             </div>
             <div class="ml-3">
                <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200"><?= $userData['name'] ?></h3>

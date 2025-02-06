@@ -128,7 +128,9 @@ if ($result && mysqli_num_rows($result) > 0) {
     header("location: ../../Public/index.php");
 }
 ?>
-
+<script>
+    var userId = "<?php echo $_SESSION['user_id'] ?? ''; ?>";
+</script>
 <script src="../JS/selector.js"></script>
 <script src="../JS/mainPage.js"></script>
 <script src="../JS/function.js"></script>
