@@ -76,12 +76,14 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     $message = $messResult->fetch_assoc();
 
+    $sendName = ($message["send_id"] == $row['userId']) ? $row['name'] : "You";
+
     // Limit the message to 40 characters
     $messageText = $message ? $message['message'] : 'No messages yet';
     $maxLength = 40;  // Set the maximum character length
 
     if (strlen($messageText) > $maxLength) {
-        $messageText = substr($messageText, 0, $maxLength) . '...';
+        $messageText =  substr($messageText, 0, $maxLength) . '...';
     }
 
     // Prepare result with message
@@ -90,7 +92,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         'name' => $row['name'],
         'profileImage' => $row['profileImage'],
         'status' => $row['status'],
-        'lastMessage' => $messageText,  // Store the limited message
+        'lastMessage' => $sendName . " : " .$messageText,  // Store the limited message
     ];
 
     // Free message result

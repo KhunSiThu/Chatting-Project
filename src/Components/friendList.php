@@ -21,7 +21,15 @@
             <input name="searchText" type="search" id="default-search" class="searchBox block w-full p-3  ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search friends ... " required />
          </div>
       </form>
-      <h3 id="mainTitle" class="py-5 text-xl font-bold text-black dark:text-white">Chat Box</h3>
+      <div class="flex justify-between items-center">
+         <h3 id="mainTitle" class="py-5 text-xl font-bold text-black dark:text-white">Chat Box</h3>
+         <button type="button" id="createGroupBtn" class="text-blue-700 flex hidden items-center justify-center hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+            <span>Create</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+         </button>
+      </div>
    </div>
 
    <!-- Chat Items -->
@@ -64,89 +72,45 @@
    </div>
 </div>
 
-
-<aside id="default-sidebar" class="fixed sideMenu md:hidden flex top-0 left-0 z-50 w-full h-screen transition-transform -translate-x-full " aria-label="Sidebar">
-   <div class="h-full px-3 w-4/6 py-4 overflow-y-auto bg-white dark:bg-gray-900">
-      <!-- Profile Section -->
-      <div class="p-2 mb-4 border rounded-lg dark:border-gray-700">
-         <button class="flex items-center w-full text-left">
-            <div class="p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
-               <img class="w-10 h-10 rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="Profile Image">
+<!-- Group Creation Modal -->
+<div id="groupModal" class="fixed top-0 left-0 z-50 w-screen flex h-screen hidden justify-center items-center bg-black bg-opacity-50 bg-blur">
+   <div class="bg-gray-800 text-gray-200 p-6 rounded-lg shadow-lg w-96">
+      <div class="flex justify-center relative">
+         <!-- Profile Upload -->
+         <label for="groupProfileUpload" class="cursor-pointer">
+            <div class="bg-blue-500  flex items-center rounded-full  justify-center">
+               <img id="groupProfileImage" src="https://png.pngtree.com/png-vector/20241101/ourmid/pngtree-simple-camera-icon-with-line-png-image_14216604.png"
+                  alt="group-icon" class="p-1 object-cover rounded-full w-16 h-16 ">
             </div>
-            <div class="ml-3">
-               <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200"><?= $userData['name'] ?></h3>
-               <span class="text-xs text-gray-500 dark:text-gray-400"><?= $userData['email'] ?></span>
-            </div>
-         </button>
+         </label>
+         <input type="file" id="groupProfileUpload" accept="image/*" class="hidden">
       </div>
-
-      <!-- Menu Items -->
-      <ul class="space-y-2 font-medium">
-         <!-- My Profile -->
-         <li>
-            <a href="#" class="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 group">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-               </svg>
-               <span class="ml-3">My Profile</span>
-            </a>
-         </li>
-
-         <!-- Log Out -->
-         <li>
-            <button id="" class="logoutBtn flex items-center w-full p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 group">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-               </svg>
-               <span class="ml-3">Log Out</span>
-            </button>
-         </li>
-
-         <!-- Theme Toggle -->
-         <li class="flex items-center justify-between p-2 text-gray-700 dark:text-gray-200">
-            <div class="flex items-center">
-               <svg class="w-6 h-6 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-               </svg>
-               <span class="ml-3">Night Mode</span>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-               <input type="checkbox" id="theme-switch" class="sr-only peer">
-               <div class="w-10 h-5 bg-gray-300 rounded-full peer-checked:bg-blue-600 transition duration-300">
-                  <div class="absolute switch w-4 h-4 bg-white rounded-full left-1 top-0.5 transition-transform duration-300 peer-checked:translate-x-5"></div>
-               </div>
-            </label>
-         </li>
-
-      </ul>
+      <h2 class="text-center text-lg mt-4">Group Profile</h2>
+      <input id="groupNameInput" type="text"
+         class="w-full mt-2 p-2 border-b bg-transparent focus:outline-none focus:border-blue-500"
+         placeholder="Enter group name">
+      <div class="flex justify-between mt-4">
+         <button id="cancelBtn" class="text-blue-400 hover:text-blue-300">Cancel</button>
+         <button id="nextBtn" class="text-blue-400 hover:text-blue-300">Next</button>
+      </div>
    </div>
-   <div id="closeMenu" class="bg-blur w-2/6 h-screen"></div>
-</aside>
+</div>
 
-<script>
-   document.addEventListener("DOMContentLoaded", function() {
-      const themeSwitch = document.querySelector("#theme-switch");
-      const htmlElement = document.documentElement;
+<!-- Add Member Modal -->
+<div id="addMemberModal" class="fixed top-0 left-0 z-50 w-screen h-screen hidden justify-center items-center bg-black bg-opacity-50 bg-blur">
+   <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">Add Members</h2>
+      <form id="memberForm">
+         <div class="mb-6">
+            <label for="memberName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Member Name</label>
+            <input type="text" id="memberName" name="memberName" placeholder="Enter member name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required />
+         </div>
+         <div class="w-full flex justify-between space-x-5">
+            <button type="button" id="closeMemberModal" class="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-700">Cancel</button>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-600 dark:hover:bg-green-700">Add Member</button>
+         </div>
+      </form>
+   </div>
+</div>
 
-      // Check and apply saved theme
-      if (localStorage.getItem("color-theme") === "dark") {
-         htmlElement.classList.add("dark");
-         themeSwitch.checked = true;
-      }
 
-      // Toggle theme when switch is clicked
-      themeSwitch.addEventListener("change", function() {
-         if (themeSwitch.checked) {
-            htmlElement.classList.add("dark");
-            localStorage.setItem("color-theme", "dark");
-         } else {
-            htmlElement.classList.remove("dark");
-            localStorage.setItem("color-theme", "light");
-         }
-      });
-
-      document.querySelector("#closeMenu").addEventListener("click", () => {
-         document.querySelector('.sideMenu').classList.add("-translate-x-full")
-      })
-   });
-</script>

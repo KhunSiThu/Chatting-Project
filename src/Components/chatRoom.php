@@ -89,7 +89,7 @@
 
                     <!-- Friend's Profile Image -->
                     <div class="relative">
-                        <img class="md:w-14 md:h-14 w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
+                        <img class="md:w-14 md:h-14 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
                     </div>
 
                     <!-- Friend's Name and Status -->
