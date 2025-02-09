@@ -16,7 +16,11 @@ const groupList = document.querySelector(".groupList");
 const chatBoxBtn = document.querySelector('#chatBoxBtn');
 const requestBtn = document.querySelector('#requestBtn');
 const followBtn = document.querySelector('#followBtn');
-const groupBtn = document.querySelector('#groupBtn');
+const groupBtn = document.querySelector('#groupBtn'); 
+
+const userProfileBtn = document.querySelector("#userProfileBtn");
+const userProfileShowCon = document.getElementById("userProfileShowCon");
+const mobileUserProfileBtn = document.getElementById("mobileUserProfileBtn");
 
 // Group 
 
@@ -32,6 +36,8 @@ const forMemberList = document.getElementById("forMemberList");
 const memberName = document.getElementById("memberName");
 const closeAddMember = document.getElementById("closeAddMember");
 const groupSendBtn = document.getElementById('groupSendBtn');
+const editGroupModal = document.getElementById('editGroupModal');
+const changeGroupProfile = document.getElementById('changeGroupProfile');
 
 // Chat Room
 const sideBar = document.querySelector("#sidebar");
@@ -39,3 +45,4 @@ const friendList = document.querySelector(".friendList");
 const sendMessageInput = document.querySelector("#sendMessage");
 const sendBtn = document.querySelector("#sendBtn");
 const messageShowCon = document.querySelector("#messageShowCon");
+const chatRoomCon = document.querySelector('#chatRoomCon')

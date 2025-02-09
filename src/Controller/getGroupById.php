@@ -18,6 +18,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $chooseId = $data['chooseId'] ?? null;
 
 $_SESSION['chooseId'] = $data['chooseId'];
+$_SESSION['groupId'] = $chooseId;
 
 if (!$chooseId || !is_numeric($chooseId)) {
     http_response_code(400);
@@ -25,14 +26,9 @@ if (!$chooseId || !is_numeric($chooseId)) {
     exit();
 }
 
-// Query to fetch group information based on the given group ID
+// Query to fetch group information
 $groupQuery = "
-    SELECT 
-        *
-    FROM 
-        `group`
-    WHERE 
-        groupId = ? 
+    SELECT * FROM `group` WHERE groupId = ?
 ";
 
 $stmtGroup = $conn->prepare($groupQuery);
@@ -40,7 +36,7 @@ $stmtGroup->bind_param("i", $chooseId);
 
 if (!$stmtGroup->execute()) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch group data: " . mysqli_stmt_error($stmtGroup)]);
+    echo json_encode(["error" => "Failed to fetch group data: " . $stmtGroup->error]);
     $stmtGroup->close();
     exit();
 }
@@ -55,15 +51,40 @@ if ($groupResult->num_rows === 0) {
 }
 
 $groupData = $groupResult->fetch_assoc();
-
-// Close resources
-mysqli_free_result($groupResult);
 $stmtGroup->close();
-mysqli_close($conn);
 
-// Return group data
+// Query to fetch all members of the group
+$memberQuery = "
+    SELECT u.userId, u.name, u.profileImage,u.status
+    FROM groupMember gm
+    JOIN user u ON gm.memberId = u.userId
+    WHERE gm.groupId = ?
+";
+
+$stmtMembers = $conn->prepare($memberQuery);
+$stmtMembers->bind_param("i", $chooseId);
+
+if (!$stmtMembers->execute()) {
+    http_response_code(500);
+    echo json_encode(["error" => "Failed to fetch group members: " . $stmtMembers->error]);
+    $stmtMembers->close();
+    exit();
+}
+
+$memberResult = $stmtMembers->get_result();
+$members = [];
+
+while ($row = $memberResult->fetch_assoc()) {
+    $members[] = $row;
+}
+
+$stmtMembers->close();
+$conn->close();
+
+// Return group and member data
 echo json_encode([
     "success" => true,
-    "group" => $groupData
+    "group" => $groupData,
+    "members" => $members
 ]);
 ?>

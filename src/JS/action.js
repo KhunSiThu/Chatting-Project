@@ -1,3 +1,10 @@
+document.querySelector('body').addEventListener("click", (e) => {
+    if (e.target.classList.contains("bg-blur")) {
+        e.target.classList.add("hidden");
+    }
+});
+
+
 
 chatBoxBtn.addEventListener("click", () => {
     chatItems.classList.remove("hidden");
@@ -63,6 +70,17 @@ followBtn.addEventListener("click", () => {
         }
     })
 });
+
+userProfileBtn.addEventListener("click", () => {
+    document.querySelector("#noSelect").classList.add("md:hidden");
+    userProfileShowCon.classList.remove("hidden");
+    chatRoomCon.classList.add("hidden")
+})
+
+mobileUserProfileBtn.addEventListener("click", () => {
+    userProfileShowCon.classList.remove("hidden");
+    sideBar.classList.add("hidden")
+})
 
 
 // Toggle visibility of search results
@@ -159,29 +177,29 @@ nextBtn.addEventListener("click", function () {
 
         const formData = new FormData();
         formData.append("groupProfileImage", file);
-        formData.append("groupName",groupName);
+        formData.append("groupName", groupName);
 
-        fetch("../Controller/createGroup.php",{
+        fetch("../Controller/createGroup.php", {
             method: 'POST',
             body: formData,
         })
-        .then((res) => res.json())
-        .then((data) => {
-            if(data.success) {
-                groupModal.classList.add("hidden");
-                groupNameInput.value = "";
-                groupProfileImage.src = "https://png.pngtree.com/png-vector/20241101/ourmid/pngtree-simple-camera-icon-with-line-png-image_14216604.png";
-                addMemberModal.classList.remove("hidden");
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    groupModal.classList.add("hidden");
+                    groupNameInput.value = "";
+                    groupProfileImage.src = "https://png.pngtree.com/png-vector/20241101/ourmid/pngtree-simple-camera-icon-with-line-png-image_14216604.png";
+                    addMemberModal.classList.remove("hidden");
 
-                getFriendByName("");
-            }
-        })
+                    getFriendByName("");
+                }
+            })
 
-       
+
     }
 });
 
-memberName.addEventListener("keyup", () => { 
+memberName.addEventListener("keyup", () => {
     getFriendByName(memberName.value);
 });
 
@@ -215,7 +233,7 @@ forMemberList.addEventListener("click", async (e) => {
     }
 });
 
-closeAddMember.addEventListener("click",()=> {
+closeAddMember.addEventListener("click", () => {
     addMemberModal.classList.add("hidden");
 })
 
@@ -225,7 +243,7 @@ groupProfileUpload.addEventListener("change", function (event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            groupProfileImage.src = e.target.result;
+            groupProfileImage.src = e.target.result;        
         };
         reader.readAsDataURL(file);
     } else {
@@ -237,7 +255,7 @@ groupProfileUpload.addEventListener("change", function (event) {
 groupList.addEventListener("click", async (e) => {
     if (e.target.matches(".groupItem")) {
         const id = e.target.getAttribute("id");
-        await groupChat(id) // Fetch messages after selecting a friend
+        await groupChat(id) // Fetch messages after selecting a friend       
     }
 });
 
@@ -249,6 +267,7 @@ groupSendBtn.addEventListener("click", () => {
         alert("Please enter a message.");
     }
 });
+
 
 // Chat Room
 // Event listener for the send button

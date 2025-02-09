@@ -96,34 +96,3 @@
    </div>
 </div>
 
-<!-- Add Member Modal -->
-<div id="addMemberModal" class="fixed top-0 left-0 z-50 w-screen h-screen flex hidden justify-center items-center bg-black bg-opacity-50 bg-blur">
-   <div class="bg-white relative dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
-      <button class="absolute top-4 right-4 z-50" id="closeAddMember">
-         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-         </svg>
-      </button>
-      <h2 class="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">Add Members</h2>
-      <form id="memberForm">
-         <div>
-            <label for="memberName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Member Name</label>
-            <input type="text" id="memberName" name="memberName" placeholder="Enter member name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100" required />
-         </div>
-         <hr class="my-6">
-         <div id="forMemberList" class="w-full flex flex-col space-y-3  h-[360px] overflow-auto scroll-none">
-
-         </div>
-      </form>
-   </div>
-</div>
-
-<!-- Custom Alert Box -->
-<div id="customAlertBox" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 bg-blur">
-   <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-      <div id="alertMessage" class="text-blue-600 dark:text-blue-400 mb-4">Upload group profile!</div>
-      <button id="closeAlertBtn" class="bg-blue-500 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-600 dark:hover:bg-blue-500">
-         OK
-      </button>
-   </div>
-</div>

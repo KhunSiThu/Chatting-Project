@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once("./dbConnect.php");
 
@@ -68,7 +68,17 @@ $stmt->bind_param("sis", $groupName, $userId, $newFileName);
 if ($stmt->execute()) {
     $groupId = $conn->insert_id; // Get the last inserted group ID
     $_SESSION['groupId'] = $groupId;
-    echo json_encode(["success" => true, "message" => "Group created successfully", "groupId" => $groupId]);
+
+    // Insert into database
+    $sql1 = "INSERT INTO `groupMember` (groupId, memberId) VALUES (? , ?)";
+    $stmt1 = $conn->prepare($sql1);
+    $stmt1->bind_param("ii", $groupId, $userId);
+
+    if ($stmt1->execute()) { 
+        echo json_encode(["success" => true, "message" => "Group created successfully", "groupId" => $groupId]);
+    }
+
+    
 } else {
     http_response_code(500);
     echo json_encode(["error" => "Database error: " . $stmt->error]);
@@ -76,5 +86,3 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
-
-?>
