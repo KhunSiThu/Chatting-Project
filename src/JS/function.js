@@ -527,6 +527,52 @@ const chatFriend = async (chooseId) => {
             function displayMessage(message) {
 
                 const isSentByMe = message.send_id == userId;
+
+                const imagesHTML = message.images && message.images.length > 0
+                    ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
+                        ${message.images.map(image => `
+                            <img src="../Controller/uploads/images/${image}" alt="Attached Image" 
+                                class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                onclick="openImageModal('${image}')">
+                        `).join('')}
+                    </div>`
+                    : '';
+
+                const filesHTML = message.files && message.files.length > 0
+                    ? `<div class="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Attachments</h3>
+                        <div class="flex flex-col gap-3">
+                            ${message.files.map(file => {
+                                        const ext = file.split('.').pop().toLowerCase();
+                                        const filePath = `../Controller/uploads/documents/${file}`;
+                                        const fileIcon = {
+                                            'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png', 'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+                                            'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png', 'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+                                            'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png', 'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+                                            'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png', 'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
+                                        }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
+
+                                        return `
+                                    <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg shadow">
+                                        <div class="flex items-center gap-3">
+                                            <img class="w-6" src="${fileIcon}" alt="">
+                                            <a href="${filePath}" target="_blank" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">${file}</a>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <a href="${filePath}" download 
+                                                class="flex items-center gap-2 px-5 py-2 text-sm text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-transform transform hover:scale-105  active:scale-95">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>`;
+                                    }).join('')}
+                        </div>
+                    </div>`
+                    : '';
+
+
                 const messageElement = `
                     <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
                         <!-- Profile Image -->
@@ -541,35 +587,25 @@ const chatFriend = async (chooseId) => {
                             ${isSentByMe ? 'You' : message.name}
                             <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">
                                 ${new Date(message.createdAt).toLocaleString('en-US', {
-                    month: 'short', // Short month name (e.g., "Oct")
-                    day: 'numeric', // Day of the month (e.g., "5")
-                    hour: 'numeric', // Hour (e.g., "3")
-                    minute: '2-digit', // Minute (e.g., "07")
-                    hour12: true // Use 12-hour format (e.g., "3:07 PM")
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
                 })}
                             </time>
                         </div>
 
                         <!-- Message Bubble -->
                         <div class="chat-bubble text-justify p-3 rounded-lg shadow-md max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
-                            ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-500 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">
+                            ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-400 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">  
                             
                             <p>${message.message}</p>
-
-                            ${message.images && message.images.length > 0
-                                                ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
-                                    ${message.images.map(image => `
-                                        <img src="../Controller/${image}" alt="Attached Image" 
-                                            class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
-                                            onclick="openImageModal('${image}')">
-                                    `).join('')}
-                                </div>`
-                                                : ''
-                                            }
+                            ${imagesHTML}
+                            ${filesHTML}
                         </div>
 
-
-                        <!-- Message Status (Sent/Received) -->
+                        <!-- Message Status -->
                         <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
                             ${isSentByMe ? 'Sent' : 'Received'}
                         </div>
@@ -578,6 +614,7 @@ const chatFriend = async (chooseId) => {
 
                 messageShowCon.insertAdjacentHTML('beforeend', messageElement);
             }
+
 
             // Function to fetch and display messages
             async function fetchAndDisplayMessages() {
@@ -650,7 +687,7 @@ function openImageModal(imageSrc) {
     const modal = `
         <div id="openImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-lg" onclick="closeImageModal()">
             <div class="relative w-full h-full flex items-center justify-center">
-                <img src="../Controller/${imageSrc}" alt="Enlarged Image" class="max-w-full max-h-full object-contain p-3 md:p-10">
+                <img src="../Controller/uploads/images/${imageSrc}" alt="Enlarged Image" class="max-w-full max-h-full object-contain p-3 md:p-10">
                 <button onclick="closeImageModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -674,7 +711,7 @@ function closeImageModal() {
 
 function saveImage(imageSrc) {
     const link = document.createElement('a');
-    link.href = `../Controller/${imageSrc}`;
+    link.href = `../Controller/uploads/images/${imageSrc}`;
     link.download = 'downloaded_image.jpg';
     document.body.appendChild(link);
     link.click();
@@ -687,7 +724,8 @@ function saveImage(imageSrc) {
 // Function to send a message or upload images
 async function sendMessage() {
     const messageInput = document.getElementById("sendMessage");
-    const fileInput = document.getElementById("sendImage");
+    const fileInputImages = document.getElementById("sendImage");
+    const fileInputDocuments = document.getElementById("sendFile");
     const formData = new FormData();
 
     // Add message to FormData if it exists
@@ -695,22 +733,29 @@ async function sendMessage() {
         formData.append("message", messageInput.value.trim());
     }
 
-    // Add files to FormData if they exist
-    if (fileInput.files.length > 0) {
-        // Check if more than 5 files are selected
-        if (fileInput.files.length > 5) {
+    // Add image files to FormData if they exist
+    if (fileInputImages.files.length > 0) {
+        // Check if more than 5 images are selected
+        if (fileInputImages.files.length > 5) {
             alert("You can upload a maximum of 5 images.");
             return;
         }
 
-        for (let i = 0; i < fileInput.files.length; i++) {
-            formData.append("files[]", fileInput.files[i]);
+        for (let i = 0; i < fileInputImages.files.length; i++) {
+            formData.append("image_files[]", fileInputImages.files[i]);
+        }
+    }
+
+    // Add document files to FormData if they exist
+    if (fileInputDocuments.files.length > 0) {
+        for (let i = 0; i < fileInputDocuments.files.length; i++) {
+            formData.append("document_files[]", fileInputDocuments.files[i]);
         }
     }
 
     // If no message and no files, return
-    if (!formData.has("message") && !formData.has("files[]")) {
-        alert("Please enter a message or select an image.");
+    if (!formData.has("message") && !formData.has("image_files[]") && !formData.has("document_files[]")) {
+        alert("Please enter a message or select files.");
         return;
     }
 
@@ -728,7 +773,8 @@ async function sendMessage() {
         if (data.success) {
             console.log("Message sent successfully!");
             messageInput.value = ""; // Clear the input field
-            fileInput.value = ""; // Clear the file input
+            fileInputImages.value = ""; // Clear the image input
+            fileInputDocuments.value = ""; // Clear the document input
         } else {
             throw new Error(data.error || "Failed to send message");
         }
@@ -737,6 +783,7 @@ async function sendMessage() {
         alert("Failed to send message. Please try again.");
     }
 }
+
 
 // Attach event listener to the send button
 document.getElementById("sendBtn").addEventListener("click", sendMessage);

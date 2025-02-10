@@ -1,86 +1,106 @@
 <?php
 header('Content-Type: application/json');
-
 require_once("./dbConnect.php");
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
+// Allowed Microsoft file extensions
+$allowedExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx','txt','pdf'];
+
+// Check if the user is logged in and has a chosen recipient
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
     http_response_code(401);
-    echo json_encode(["error" => "User not logged in"]);
+    echo json_encode(["error" => "Unauthorized access"]);
     exit();
 }
 
 $sendId = $_SESSION['user_id'];
 $receiveId = $_SESSION['chooseId'];
 
-// Handle text message
-$sendMessage = $_POST['message'] ?? '';
+try {
+    // Begin Transaction
+    $conn->begin_transaction();
 
-// Handle image uploads
-$uploadedFiles = [];
-if (!empty($_FILES['files'])) {
-    // Check if more than 5 files are uploaded
-    if (count($_FILES['files']['tmp_name']) > 5) {
-        http_response_code(400);
-        echo json_encode(["error" => "You can upload a maximum of 5 images."]);
-        exit();
+    // Insert the message
+    $query = "INSERT INTO messages (send_id, receive_id, message, createdAt) VALUES (?, ?, ?, NOW())";
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement.");
     }
 
-    $targetDir = "uploads/";
-    if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0777, true);
+    // Bind parameters
+    $stmt->bind_param("iis", $sendId, $receiveId, $message);
+    $message = $_POST['message'] ?? '';
+
+    // Execute the message query
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to execute SQL statement.");
     }
 
-    foreach ($_FILES['files']['tmp_name'] as $key => $tmpName) {
-        $fileName = basename($_FILES['files']['name'][$key]);
-        $targetPath = $targetDir . uniqid() . "_" . $fileName;
+    $messageId = $stmt->insert_id;
+    $imageFiles = $_FILES['image_files'] ?? [];
+    $documentFiles = $_FILES['document_files'] ?? [];
 
-        // Validate file type (allow only images)
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $fileType = mime_content_type($tmpName);
-        if (!in_array($fileType, $allowedTypes)) {
-            http_response_code(400);
-            echo json_encode(["error" => "Only image files are allowed."]);
-            exit();
+    $images = [];
+    $documents = [];
+
+    // Handle image files
+    if ($imageFiles) {
+        foreach ($imageFiles['tmp_name'] as $index => $tmpName) {
+            $fileName = "image_" . $messageId . "_" . $index . ".jpg";
+            $destination = "uploads/images/" . $fileName;
+            if (move_uploaded_file($tmpName, $destination)) {
+                $images[] = $fileName;
+            } else {
+                throw new Exception("Failed to upload image.");
+            }
         }
+    }
 
-        // Move the file to the target directory
-        if (move_uploaded_file($tmpName, $targetPath)) {
-            $uploadedFiles[] = $targetPath;
-        } else {
-            http_response_code(500);
-            echo json_encode(["error" => "Failed to upload file."]);
-            exit();
+    // Handle document files (Allow only Microsoft Office files)
+    if ($documentFiles) {
+        foreach ($documentFiles['tmp_name'] as $index => $tmpName) {
+            $fileExt = strtolower(pathinfo($documentFiles['name'][$index], PATHINFO_EXTENSION));
+
+            // Validate file type
+            if (!in_array($fileExt, $allowedExtensions)) {
+                throw new Exception("Invalid file type: Only Microsoft Office files allowed.");
+            }
+
+            // Save file
+            $fileName = "document_" . $messageId . "_" . $index . "." . $fileExt;
+            $destination = "uploads/documents/" . $fileName;
+            if (move_uploaded_file($tmpName, $destination)) {
+                $documents[] = $fileName;
+            } else {
+                throw new Exception("Failed to upload document.");
+            }
         }
     }
-}
 
-// Ensure at least one of message or images is provided
-if (empty($sendMessage) && empty($uploadedFiles)) {
-    http_response_code(400);
-    echo json_encode(["error" => "Please provide a message or an image."]);
-    exit();
-}
+    // Save file paths in the database
+    $imageFilesString = implode(",", $images);
+    $documentFilesString = implode(",", $documents);
 
-// Insert message and file paths into the database
-$query = "INSERT INTO messages (send_id, receive_id, message, images, createdAt) VALUES (?, ?, ?, ?, NOW())";
-$stmt = mysqli_prepare($conn, $query);
-
-if ($stmt) {
-    $images = !empty($uploadedFiles) ? implode(",", $uploadedFiles) : null;
-    mysqli_stmt_bind_param($stmt, "iiss", $sendId, $receiveId, $sendMessage, $images);
-
-    if (mysqli_stmt_execute($stmt)) {
-        echo json_encode(["success" => true]);
-    } else {
-        http_response_code(500);
-        echo json_encode(["error" => "Failed to send message"]);
+    $query = "UPDATE messages SET images = ?, file = ? WHERE message_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssi", $imageFilesString, $documentFilesString, $messageId);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to update message with files.");
     }
-    mysqli_stmt_close($stmt);
-} else {
+
+    // Commit the transaction if all operations succeed
+    $conn->commit();
+
+    echo json_encode(["success" => true]);
+} catch (Exception $e) {
+    // Rollback if an error occurs
+    $conn->rollback();
     http_response_code(500);
-    echo json_encode(["error" => "Database error"]);
+    echo json_encode(["error" => $e->getMessage()]);
+} finally {
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    $conn->close();
 }
-
-mysqli_close($conn);
 ?>
