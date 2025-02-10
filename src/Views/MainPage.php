@@ -19,7 +19,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         <!-- Sidebar -->
         <div id="sidebar" class="relative flex md:flex h-screen md:w-auto bg-white dark:bg-gray-800 border-e border-gray-200 dark:border-gray-700 z-40">
-            <nav class="md:relative fixed bottom-0 z-40 md:h-full w-full h-20 md:w-24 flex justify-between  items-center md:flex-col bg-gray-200 dark:bg-gray-900 rounded-t-xl md:bg-white md:dark:bg-gray-800 md:border-e border-t-2 border-blue-400 md:border-gray-200 md:dark:border-gray-700">
+            <nav class="md:relative fixed bottom-0 z-40 md:h-full w-full h-20 md:w-24 flex justify-between  items-center md:flex-col bg-gray-200 dark:bg-gray-900 rounded-t-xl md:rounded-none md:bg-white md:dark:bg-gray-800 md:border-e border-t-2 border-blue-400 md:border-gray-200 md:dark:border-gray-700">
                 <div class="flex md:flex-col items-center justify-evenly md:justify-start gap-y-6 w-full h-full">
                     <div class="w-full md:block hidden">
                         <img class="p-2 mx-auto" src="https://static.vecteezy.com/system/resources/thumbnails/028/754/648/small_2x/3d-purple-online-chatting-bubble-icon-for-ui-ux-web-mobile-apps-social-media-ads-designs-png.png" alt="">

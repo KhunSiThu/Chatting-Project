@@ -254,18 +254,14 @@ groupProfileUpload.addEventListener("change", function (event) {
 // Group Chat 
 groupList.addEventListener("click", async (e) => {
     if (e.target.matches(".groupItem")) {
+       
         const id = e.target.getAttribute("id");
         await groupChat(id) // Fetch messages after selecting a friend       
     }
 });
 
 groupSendBtn.addEventListener("click", () => {
-    const message = sendMessageInput.value.trim();
-    if (message) {
-        groupSendMessage(message);
-    } else {
-        alert("Please enter a message.");
-    }
+    groupSendMessage();
 });
 
 
@@ -273,12 +269,13 @@ groupSendBtn.addEventListener("click", () => {
 // Event listener for the send button
 sendBtn.addEventListener("click", () => {
    
-    sendMessage(message);
+    sendMessage();
 });
 
 // Chat Friend
 friendList.addEventListener("click", async (e) => {
     if (e.target.matches(".chatItem")) {
+       
         const id = e.target.getAttribute("id");
         await chatFriend(id) // Fetch messages after selecting a friend
     }
