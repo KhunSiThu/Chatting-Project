@@ -272,12 +272,8 @@ groupSendBtn.addEventListener("click", () => {
 // Chat Room
 // Event listener for the send button
 sendBtn.addEventListener("click", () => {
-    const message = sendMessageInput.value.trim();
-    if (message) {
-        sendMessage(message);
-    } else {
-        alert("Please enter a message.");
-    }
+   
+    sendMessage(message);
 });
 
 // Chat Friend

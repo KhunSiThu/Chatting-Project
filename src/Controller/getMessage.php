@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 require_once("./dbConnect.php");
 session_start();
 
+// Check if the user is logged in and has a chosen recipient
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
     http_response_code(401);
     echo json_encode(["error" => "Unauthorized access"]);
@@ -12,23 +13,56 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
 $sendId = $_SESSION['user_id'];
 $receiveId = $_SESSION['chooseId'];
 
-// Prepare SQL query
-$query = "SELECT messages.*, user.*, messages.createdAt 
-          FROM messages 
-          LEFT JOIN user ON user.userId = messages.send_id 
-          WHERE (receive_id = ? AND send_id = ?) OR (receive_id = ? AND send_id = ?) 
-          ORDER BY messages.message_id ASC";
+try {
+    // Prepare SQL query to fetch messages between two users
+    $query = "SELECT messages.*, user.*, messages.createdAt 
+              FROM messages 
+              LEFT JOIN user ON user.userId = messages.send_id 
+              WHERE (receive_id = ? AND send_id = ?) OR (receive_id = ? AND send_id = ?) 
+              ORDER BY messages.message_id ASC";
 
-$stmt = $conn->prepare($query);
-$stmt->bind_param("iiii", $sendId, $receiveId, $receiveId, $sendId);
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception("Failed to prepare the SQL statement.");
+    }
 
-$messages = [];
-while ($row = $result->fetch_assoc()) {
-    $messages[] = $row;
+    // Bind parameters
+    $stmt->bind_param("iiii", $sendId, $receiveId, $receiveId, $sendId);
+
+    // Execute the query
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to execute the SQL statement.");
+    }
+
+    // Fetch the result
+    $result = $stmt->get_result();
+    if (!$result) {
+        throw new Exception("Failed to fetch the result.");
+    }
+
+    // Fetch all messages
+    $messages = [];
+    while ($row = $result->fetch_assoc()) {
+        // Split the images into an array if they exist
+        if (!empty($row['images'])) {
+            $row['images'] = explode(",", $row['images']);
+        } else {
+            $row['images'] = []; // Set to an empty array if no images
+        }
+        $messages[] = $row;
+    }
+
+    // Return the messages as JSON
+    echo json_encode(["success" => true, "messages" => $messages]);
+} catch (Exception $e) {
+    // Handle errors
+    http_response_code(500);
+    echo json_encode(["error" => $e->getMessage()]);
+} finally {
+    // Close the statement and connection
+    if (isset($stmt)) {
+        $stmt->close();
+    }
+    $conn->close();
 }
-
-echo json_encode($messages);
-$stmt->close();
-$conn->close();
+?>

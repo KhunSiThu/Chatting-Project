@@ -462,6 +462,8 @@ async function searchFriend(searchText) {
     }
 }
 
+
+
 // Hero Section
 const chatFriend = async (chooseId) => {
     const chatRoomHeader = document.querySelector("#chatRoomHeader");
@@ -519,6 +521,8 @@ const chatFriend = async (chooseId) => {
                 </div>
             `;
 
+
+
             // Function to display messages dynamically
             function displayMessage(message) {
 
@@ -547,12 +551,23 @@ const chatFriend = async (chooseId) => {
                         </div>
 
                         <!-- Message Bubble -->
-                        <div class="chat-bubble  text-justify ${isSentByMe
-                        ? 'bg-blue-500 text-white dark:bg-blue-600' // Sent message style
-                        : 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white' // Received message style
-                    }">
-                            ${message.message}
+                        <div class="chat-bubble text-justify p-3 rounded-lg shadow-md max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
+                            ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-500 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">
+                            
+                            <p>${message.message}</p>
+
+                            ${message.images && message.images.length > 0
+                                                ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
+                                    ${message.images.map(image => `
+                                        <img src="../Controller/${image}" alt="Attached Image" 
+                                            class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                            onclick="openImageModal('${image}')">
+                                    `).join('')}
+                                </div>`
+                                                : ''
+                                            }
                         </div>
+
 
                         <!-- Message Status (Sent/Received) -->
                         <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
@@ -562,33 +577,50 @@ const chatFriend = async (chooseId) => {
                 `;
 
                 messageShowCon.insertAdjacentHTML('beforeend', messageElement);
-
             }
 
-            // Polling (alternative to WebSocket)
-            setInterval(async () => {
+            // Function to fetch and display messages
+            async function fetchAndDisplayMessages() {
                 try {
                     const response = await fetch("../Controller/getMessage.php");
-                    const messages = await response.json();
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+
+                    // Check if the response contains the expected data
+                    if (!data.success || !Array.isArray(data.messages)) {
+                        throw new Error("Invalid response format: Expected an array of messages.");
+                    }
+
+                    // Clear the message container
                     messageShowCon.innerHTML = "";
 
+                    // Track the number of messages in session storage
                     let messLength = sessionStorage.getItem("messLength");
 
-                    await messages.forEach(displayMessage);
+                    // Display each message
+                    data.messages.forEach(displayMessage);
 
-                    if (messLength != messages.length) {
+                    // Scroll to the bottom if new messages are added
+                    if (messLength != data.messages.length) {
                         messageShowCon.scrollTo({
                             top: messageShowCon.scrollHeight,
                             behavior: "smooth"
                         });
-                        sessionStorage.setItem("messLength", messages.length)
+                        sessionStorage.setItem("messLength", data.messages.length);
                     }
-
                 } catch (error) {
                     console.error("Error fetching messages:", error);
                 }
-            }, 1000);
+            }
 
+            // Polling (alternative to WebSocket)
+            setInterval(fetchAndDisplayMessages, 1000);
+
+            // Initial fetch when the page loads
+            fetchAndDisplayMessages();
 
 
         } else {
@@ -614,17 +646,78 @@ const chatFriend = async (chooseId) => {
 
 };
 
-// Function to send a message
-async function sendMessage(message) {
+function openImageModal(imageSrc) {
+    const modal = `
+        <div id="openImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-lg" onclick="closeImageModal()">
+            <div class="relative w-full h-full flex items-center justify-center">
+                <img src="../Controller/${imageSrc}" alt="Enlarged Image" class="max-w-full max-h-full object-contain p-3 md:p-10">
+                <button onclick="closeImageModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <button onclick="saveImage('${imageSrc}')" class="absolute bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
+                    Save Image
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modal);
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('openImageModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function saveImage(imageSrc) {
+    const link = document.createElement('a');
+    link.href = `../Controller/${imageSrc}`;
+    link.download = 'downloaded_image.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+
+
+
+// Function to send a message or upload images
+async function sendMessage() {
+    const messageInput = document.getElementById("sendMessage");
+    const fileInput = document.getElementById("sendImage");
+    const formData = new FormData();
+
+    // Add message to FormData if it exists
+    if (messageInput.value.trim()) {
+        formData.append("message", messageInput.value.trim());
+    }
+
+    // Add files to FormData if they exist
+    if (fileInput.files.length > 0) {
+        // Check if more than 5 files are selected
+        if (fileInput.files.length > 5) {
+            alert("You can upload a maximum of 5 images.");
+            return;
+        }
+
+        for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append("files[]", fileInput.files[i]);
+        }
+    }
+
+    // If no message and no files, return
+    if (!formData.has("message") && !formData.has("files[]")) {
+        alert("Please enter a message or select an image.");
+        return;
+    }
+
     try {
         const response = await fetch("../Controller/sendMessage.php", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                message
-            }),
+            body: formData, // Use FormData for file uploads
         });
 
         if (!response.ok) {
@@ -634,7 +727,8 @@ async function sendMessage(message) {
         const data = await response.json();
         if (data.success) {
             console.log("Message sent successfully!");
-            sendMessageInput.value = ""; // Clear the input field
+            messageInput.value = ""; // Clear the input field
+            fileInput.value = ""; // Clear the file input
         } else {
             throw new Error(data.error || "Failed to send message");
         }
@@ -643,6 +737,14 @@ async function sendMessage(message) {
         alert("Failed to send message. Please try again.");
     }
 }
+
+// Attach event listener to the send button
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+// Attach event listener to the send button
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+
+// Attach event listener to the send button
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
 //group chat Hero Section
 const groupChat = async (chooseId) => {
@@ -698,7 +800,7 @@ const groupChat = async (chooseId) => {
                     </li>
                 `;
             });
-            
+
             const group = data.group; // Assuming data.group contains the group details
             chatRoomHeader.innerHTML = `
                 <div class="flex items-center">
@@ -720,7 +822,7 @@ const groupChat = async (chooseId) => {
                         <div>
 
                             <button id="memberListShowBtn" class="text-black dark:text-white text-xs " type="button">
-                            ${data.members.length } members
+                            ${data.members.length} members
                             </button>
 
                             <!-- Dropdown menu -->
@@ -944,7 +1046,7 @@ const groupChat = async (chooseId) => {
                         });
                 });
             }
-            
+
 
             window.addEventListener('click', (event) => {
                 if (event.target === leaveGroupModal) {
@@ -1072,4 +1174,3 @@ async function groupSendMessage(message) {
         alert("Failed to send message. Please try again.");
     }
 }
-
