@@ -514,8 +514,8 @@ const chatFriend = async (chooseId) => {
                 <div class="flex items-center">
                     <!-- Close Chat Button (Visible on Mobile) -->
                     <button id="closeChat" class="mr-3 md:hidden text-gray-800 dark:text-gray-200 opacity-40 hover:opacity-100 transition-opacity duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                         </svg>
                     </button>
 
@@ -585,7 +585,7 @@ const chatFriend = async (chooseId) => {
 
 
                 const messageElement = `
-                    <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
+                    <div class="relative my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
                         <!-- Profile Image -->
                         <div class="chat-image avatar">
                             <div class="w-6 md:w-10 rounded-full">
@@ -608,12 +608,14 @@ const chatFriend = async (chooseId) => {
                         </div>
 
                         <!-- Message Bubble -->
-                        <div class="chat-bubble text-justify p-3 rounded-lg shadow-lg max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
+                        <div id=${message.message_id} class="relative ${isSentByMe ? 'yourMessage' : ""} chat-bubble text-justify p-3 rounded-lg shadow-lg max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
                             ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-400 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">  
                             
                             <p>${message.message}</p>
+
                             ${imagesHTML}
                             ${filesHTML}
+
                         </div>
 
                         <!-- Message Status -->
@@ -625,7 +627,6 @@ const chatFriend = async (chooseId) => {
 
                 messageShowCon.insertAdjacentHTML('beforeend', messageElement);
             }
-
 
             // Function to fetch and display messages
             async function fetchAndDisplayMessages() {
@@ -642,16 +643,52 @@ const chatFriend = async (chooseId) => {
                         throw new Error("Invalid response format: Expected an array of messages.");
                     }
 
-                               
+
                     // Track the number of messages in session storage
                     let messLength = sessionStorage.getItem("messLength");
-            
+
                     // Clear the message container
                     messageShowCon.innerHTML = "";
-            
+
                     // Display each message
                     data.messages.forEach(displayMessage);
-            
+
+                    // Delete Message
+
+                    const yourMessage = document.querySelectorAll(".yourMessage");
+                    
+                    yourMessage.forEach(btn => {
+                        btn.addEventListener("contextmenu", (e) => {
+                            e.preventDefault();
+                            let id = btn.getAttribute("id");
+                            messDropdown.classList.remove("hidden");
+                    
+                            deleteMessageBtn.addEventListener("click" ,async () => {
+                                try {
+                                    const res = await fetch("../Controller/deleteMessage.php", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ id })
+                                    });
+                    
+                                    if (!res.ok) {
+                                        throw new Error("Network response was not ok");
+                                    }
+                    
+                                    const data = await res.json();
+                    
+                                    if (data.success) {
+                                        messDropdown.classList.add("hidden");
+                                        e.target.remove();
+                                    }
+                                } catch (error) {
+                                    console.error("Error deleting message:", error);
+                                }
+                            })
+                        });
+                    });
                     // Scroll to the bottom if new messages are added
                     if (messLength != data.messages.length) {
                         scrollToBottom(messageShowCon);
@@ -763,8 +800,8 @@ const groupChat = async (chooseId) => {
                 <div class="flex items-center">
                     <!-- Close Chat Button (Visible on Mobile) -->
                     <button id="closeChat" class="mr-3 md:hidden text-gray-800 dark:text-gray-200 opacity-40 hover:opacity-100 transition-opacity duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                         </svg>
                     </button>
 
@@ -1013,7 +1050,7 @@ const groupChat = async (chooseId) => {
 
             const displayMessage = (message) => {
                 const isSentByMe = message.sendId == userId;
-            
+
                 const imagesHTML = message.images && message.images.length > 0
                     ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
                         ${message.images.map(image => `
@@ -1023,26 +1060,26 @@ const groupChat = async (chooseId) => {
                         `).join('')}
                       </div>`
                     : '';
-            
+
                 const filesHTML = message.files && message.files.length > 0
                     ? `<div class="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Attachments</h3>
                         <div class="flex flex-col gap-3">
                             ${message.files.map(file => {
-                                const ext = file.split('.').pop().toLowerCase();
-                                const filePath = `../Controller/uploads/documents/${file}`;
-                                const fileIcon = {
-                                    'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-                                    'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-                                    'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-                                    'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-                                    'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-                                    'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-                                    'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
-                                    'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
-                                }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
-            
-                                return `
+                        const ext = file.split('.').pop().toLowerCase();
+                        const filePath = `../Controller/uploads/documents/${file}`;
+                        const fileIcon = {
+                            'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+                            'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+                            'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+                            'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+                            'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+                            'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+                            'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
+                            'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
+                        }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
+
+                        return `
                                     <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg shadow">
                                         <div class="flex items-center gap-3">
                                             <img class="w-6" src="${fileIcon}" alt="">
@@ -1057,11 +1094,11 @@ const groupChat = async (chooseId) => {
                                             </a>
                                         </div>
                                     </div>`;
-                            }).join('')}
+                    }).join('')}
                         </div>
                       </div>`
                     : '';
-            
+
                 const formattedTime = new Date(message.createdAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -1069,7 +1106,7 @@ const groupChat = async (chooseId) => {
                     minute: '2-digit',
                     hour12: true
                 });
-            
+
                 const messageElement = `
                     <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
                         <div class="chat-image avatar">
@@ -1081,7 +1118,7 @@ const groupChat = async (chooseId) => {
                             ${isSentByMe ? 'You' : message.username}
                             <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">${formattedTime}</time>
                         </div>
-                        <div class="chat-bubble text-justify p-3 rounded-lg shadow-md max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
+                        <div id=${message.messageId} class="chat-bubble ${isSentByMe ? 'yourMessage' : ""} text-justify p-3 rounded-lg shadow-md max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
                             ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-400 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">  
                             <p>${message.message}</p>
                             ${imagesHTML}
@@ -1092,9 +1129,9 @@ const groupChat = async (chooseId) => {
                         </div>
                     </div>
                 `;
-            
+
                 messageShowCon.insertAdjacentHTML('beforeend', messageElement);
-                
+
             };
 
             // Function to fetch and display messages
@@ -1104,21 +1141,61 @@ const groupChat = async (chooseId) => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-            
+
                     const data = await response.json();
                     if (!data.success || !Array.isArray(data.messages)) {
                         throw new Error("Invalid response format");
                     }
-            
+
                     // Track the number of messages in session storage
                     let messLength = sessionStorage.getItem("messLength");
-            
+
                     // Clear the message container
                     messageShowCon.innerHTML = "";
-            
+
+
+                    // Delete Message
+
                     // Display each message
                     data.messages.forEach(displayMessage);
-            
+
+                    // Delete Message
+
+                    const yourMessage = document.querySelectorAll(".yourMessage");
+                    
+                    yourMessage.forEach(btn => {
+                        btn.addEventListener("contextmenu", (e) => {
+                            e.preventDefault();
+                            let id = btn.getAttribute("id");
+                            messDropdown.classList.remove("hidden");
+                    
+                            deleteMessageBtn.addEventListener("click" ,async () => {
+                                try {
+                                    const res = await fetch("../Controller/deleteGroupMessage.php", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ id })
+                                    });
+                    
+                                    if (!res.ok) {
+                                        throw new Error("Network response was not ok");
+                                    }
+                    
+                                    const data = await res.json();
+                    
+                                    if (data.success) {
+                                        messDropdown.classList.add("hidden");
+                                        e.target.remove();
+                                    }
+                                } catch (error) {
+                                    console.error("Error deleting message:", error);
+                                }
+                            })
+                        });
+                    });
+
                     // Scroll to the bottom if new messages are added
                     if (messLength != data.messages.length) {
                         scrollToBottom(messageShowCon);
@@ -1130,20 +1207,20 @@ const groupChat = async (chooseId) => {
             };
 
             const startPolling = () => {
-            
+
                 // Start polling every second
                 const pollingInterval = setInterval(fetchAndDisplayMessages, 1000);
-            
+
                 // Optionally, stop polling when the user navigates away from the page
                 window.addEventListener("beforeunload", () => {
                     clearInterval(pollingInterval);
                 });
             };
-            
+
             // Start polling when the script loads
             startPolling();
 
-            
+
 
 
         } else {

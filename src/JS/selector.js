@@ -21,6 +21,7 @@ const groupBtn = document.querySelector('#groupBtn');
 const userProfileBtn = document.querySelector("#userProfileBtn");
 const userProfileShowCon = document.getElementById("userProfileShowCon");
 const mobileUserProfileBtn = document.getElementById("mobileUserProfileBtn");
+const closeMenu = document.querySelector("#closeMenu");
 
 // Group 
 
@@ -45,4 +46,6 @@ const friendList = document.querySelector(".friendList");
 const sendMessageInput = document.querySelector("#sendMessage");
 const sendBtn = document.querySelector("#sendBtn");
 const messageShowCon = document.querySelector("#messageShowCon");
-const chatRoomCon = document.querySelector('#chatRoomCon')
+const chatRoomCon = document.querySelector('#chatRoomCon');
+const messDropdown = document.getElementById("messDropdown");
+const deleteMessageBtn = document.getElementById("deleteMessageBtn");

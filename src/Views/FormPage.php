@@ -1,11 +1,12 @@
 <?php require_once "../Components/header.php"; ?>
 
-<div>
+
+<div class="bg-white dark:bg-gray-900">
     <!-- Sign Up -->
-    <div class="index signUp flex w-screen h-screen justify-center items-center">
+    <div class="index signUp flex w-screen h-screen justify-center items-center ">
         <div class="flex flex-col min-w-full justify-center p-10 lg:px-8">
             <div class="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col justify-center items-center" id="desktop">
-                <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+                <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight  dark:text-gray-100 text-gray-900">
                     Sign up for your account
                 </h2>
             </div>
@@ -13,17 +14,17 @@
             <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form class="space-y-6" action="../Controller/signUp.php" method="POST" id="signup-form">
                     <div>
-                        <label for="fullName" class="block text-sm/6 font-medium text-gray-900">Full Name</label>
+                        <label for="fullName" class="block text-sm/6 font-medium dark:text-gray-100 text-gray-900">Full Name</label>
                         <div class="mt-2">
                             <input type="text" name="name" id="fullName" required
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base dark:text-gray-100 text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                         </div>
                     </div>
                     <div>
-                        <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
+                        <label for="email" class="block text-sm/6 font-medium dark:text-gray-100 text-gray-900">Email address</label>
                         <div class="mt-2">
                             <input type="text" name="email" id="email" autocomplete="email" required
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base dark:text-gray-100 text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                         </div>
                         <div id="email-criteria" class="text-sm text-gray-600 mt-2">
                             <span id="email-message" class="text-red-500"></span>
@@ -31,10 +32,10 @@
                     </div>
 
                     <div>
-                        <label for="password1" class="block text-sm font-medium text-gray-900">Create Password</label>
+                        <label for="password1" class="block text-sm font-medium dark:text-gray-100 text-gray-900">Create Password</label>
                         <div class="mt-2 pass-con relative">
                             <input type="password" name="password" id="password1" required
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base dark:text-gray-100 text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                             <i class="eye-icon1 fa-regular fa-eye-slash absolute right-3 top-4 cursor-pointer"></i>
                         </div>
 
@@ -45,10 +46,10 @@
                     </div>
 
                     <div>
-                        <label for="password2" class="block text-sm font-medium text-gray-900">Confirm Password</label>
+                        <label for="password2" class="block text-sm font-medium dark:text-gray-100 text-gray-900">Confirm Password</label>
                         <div class="mt-2 pass-con relative">
                             <input type="password" name="password2" id="password2" required
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base dark:text-gray-100 text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                             <i class="eye-icon2 fa-regular fa-eye-slash absolute right-3 top-4 cursor-pointer"></i>
                         </div>
 
@@ -75,11 +76,11 @@
     </div>
 
     <!-- Login -->
-    <div class="index login flex w-screen h-screen justify-center items-center">
+    <div class="index login flex w-screen h-screen justify-center items-center ">
         <div class="flex flex-col min-w-full justify-center p-10 lg:px-8">
             <div class="sm:mx-auto sm:w-full sm:max-w-sm flex flex-col justify-center items-center">
 
-                <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+                <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight dark:text-gray-100 text-gray-900">
                     Sign in to your account
                 </h2>
             </div>
@@ -87,10 +88,10 @@
             <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form class="space-y-6" action="../Controller/login.php" method="POST" id="login-form">
                     <div>
-                        <label for="email" class="block text-sm/6 font-medium text-gray-900">User Name or Email</label>
+                        <label for="email" class="block text-sm/6 font-medium dark:text-gray-100 text-gray-900">User Name or Email</label>
                         <div class="mt-2">
                             <input type="text" name="email" id="email1"
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base dark:text-gray-100 text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                         </div>
                         <div id="password2-criteria" class="text-sm text-gray-600 mt-2">
                             <span id="emailError" class="text-red-500"></span>
@@ -101,7 +102,7 @@
                         <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
                         <div class="mt-2 relative">
                             <input type="password" name="password" id="password"
-                                class="block w-full rounded-md bg-white p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                                class="block w-full rounded-md bg-white dark:bg-gray-700 p-3 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                             <i class="eye-icon fa-regular fa-eye-slash absolute right-3 top-4 cursor-pointer"></i>
                         </div>
                         <div id="password2-criteria" class="text-sm text-gray-600 mt-2">
@@ -117,18 +118,53 @@
                     </div>
                 </form>
 
-                <p class="mt-10 text-center text-sm/6 text-gray-500">
+                <p class="mt-10 text-center  text-sm/6 text-gray-500">
                     Don't have an account?
                     <button type="button" id="signup-link" class="signUp-link font-semibold text-indigo-600 hover:text-indigo-500">Sign Up</button>
                 </p>
             </div>
         </div>
     </div>
+
+    <!-- Dark Mode Toggle Button -->
+    <button id="theme-toggle" type="button" class=" bg-white outline-none p-2 dark:bg-gray-900 fixed bottom-3 left-3 rounded-md">
+        <i id="theme-icon" class="fa-solid fa-moon text-gray-800 dark:text-gray-100"></i>
+    </button>
+
 </div>
 
 <?php require_once '../Components/footer.php'; ?>
 
 <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    function setTheme(mode) {
+        if (mode === 'dark') {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+    }
+
+    // Load theme from local storage
+    const savedTheme = localStorage.getItem('color-theme') || 'light';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        if (document.documentElement.classList.contains('dark')) {
+            setTheme('light');
+        } else {
+            setTheme('dark');
+        }
+    });
+
+
+
     document.addEventListener("DOMContentLoaded", function() {
         const signUpSection = document.querySelector('.signUp');
         const loginSection = document.querySelector('.login');
@@ -229,7 +265,7 @@
         // Add event listeners
         password1.addEventListener("input", validatePasswords);
         password2.addEventListener("input", validatePasswords);
-        
+
         document.getElementById("login-form").addEventListener("submit", function(event) {
             event.preventDefault();
 

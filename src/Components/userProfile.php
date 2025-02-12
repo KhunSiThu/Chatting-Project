@@ -1,4 +1,13 @@
 <div id="userProfileShowCon" class="h-screen hidden w-full overflow-auto relative bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-none">
+
+    <div class="w-full sticky top-0 z-50 p-2 bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+        <button id="closeProfile" type="button" class="inline-flex  md:hidden mr-3 items-center p-2  text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+        </button>
+    </div>
+
     <!-- Banner Section -->
     <section class="relative block h-48 sm:h-64 md:h-80 lg:h-96">
         <img src="https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80" class="w-full h-full bg-center bg-cover" alt="">
@@ -186,6 +195,7 @@
     const editProfileModal = document.getElementById('editProfileModal');
     const editProfileButton = document.querySelector('#editProfileBtn');
     const closeModalButton = document.getElementById('closeModal');
+    const closeProfile = document.getElementById("closeProfile");
 
     // Function to open the modal
     editProfileButton.addEventListener('click', () => {
@@ -203,4 +213,9 @@
             editProfileModal.classList.add('hidden');
         }
     });
+
+    closeProfile.addEventListener("click", () => {
+        sideBar.classList.remove("hidden");
+        document.querySelector("#userProfileShowCon").classList.add("hidden");
+    })
 </script>

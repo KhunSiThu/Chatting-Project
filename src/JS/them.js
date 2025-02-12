@@ -74,7 +74,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    document.querySelector("#closeMenu").addEventListener("click", () => {
-        document.querySelector('.sideMenu').classList.add("-translate-x-full")
-    })
+
 });

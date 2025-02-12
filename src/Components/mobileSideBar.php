@@ -1,14 +1,14 @@
 <aside id="default-sidebar" class="fixed sideMenu md:hidden flex top-0 left-0 z-50 w-full h-screen transition-transform -translate-x-full " aria-label="Sidebar">
-   <div class="h-full px-3 w-4/6 py-4 overflow-y-auto bg-white dark:bg-gray-900">
+   <div class="h-full px-3 w-9/12 py-4 overflow-y-auto bg-white dark:bg-gray-900">
       <!-- Profile Section -->
       <div class="p-2 mb-4 border rounded-lg dark:border-gray-700">
-         <button id="mobileUserProfileBtn" class="flex items-center w-full text-left">
+         <button  class="flex items-center w-full text-left">
             <div class="p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                <img class="w-8 h-8 object-cover rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="Profile Image">
             </div>
             <div class="ml-3">
                <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200"><?= $userData['name'] ?></h3>
-               <span class="text-xs ntext-gray-500 dark:text-gray-400"><?= $userData['email'] ?></span>
+               <span class="text-xs text-gray-500 dark:text-gray-400 break-words"><?= htmlspecialchars($userData['email']) ?></span>
             </div>
          </button>
       </div>
@@ -16,7 +16,7 @@
       <!-- Menu Items -->
       <ul class="space-y-2 font-medium">
          <!-- My Profile -->
-         <li>
+         <li id="mobileUserProfileBtn">
             <a href="#" class="flex items-center p-2 text-gray-700 rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 group">
                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -53,5 +53,5 @@
 
       </ul>
    </div>
-   <div id="closeMenu" class="bg-blur w-2/6 h-screen"></div>
+   <div id="closeMenu" class=" h-screen w-3/12 bg-black/85"></div>
 </aside>

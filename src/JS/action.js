@@ -4,7 +4,9 @@ document.querySelector('body').addEventListener("click", (e) => {
     }
 });
 
-
+closeMenu.addEventListener("click", () => {
+    document.querySelector('.sideMenu').classList.add("-translate-x-full")
+})
 
 chatBoxBtn.addEventListener("click", () => {
     chatItems.classList.remove("hidden");
@@ -74,12 +76,14 @@ followBtn.addEventListener("click", () => {
 userProfileBtn.addEventListener("click", () => {
     document.querySelector("#noSelect").classList.add("md:hidden");
     userProfileShowCon.classList.remove("hidden");
-    chatRoomCon.classList.add("hidden")
+    chatRoomCon.classList.add("hidden");
 })
 
 mobileUserProfileBtn.addEventListener("click", () => {
     userProfileShowCon.classList.remove("hidden");
-    sideBar.classList.add("hidden")
+    sideBar.classList.add("hidden");
+    document.querySelector('.sideMenu').classList.add("-translate-x-full");
+
 })
 
 
