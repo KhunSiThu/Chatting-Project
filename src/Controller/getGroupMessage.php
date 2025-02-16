@@ -52,6 +52,8 @@ try {
         // Split file attachments into an array if they exist
         $row['files'] = !empty($row['file']) ? explode(",", $row['file']) : [];
 
+        $row['videos'] = !empty($row['videos']) ? explode(",", $row['videos']) : [];
+
         $messages[] = $row;
     }
 

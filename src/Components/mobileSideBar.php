@@ -1,5 +1,5 @@
 <aside id="default-sidebar" class="fixed sideMenu md:hidden flex top-0 left-0 z-50 w-full h-screen transition-transform -translate-x-full " aria-label="Sidebar">
-   <div class="h-full px-3 w-9/12 py-4 overflow-y-auto bg-white dark:bg-gray-900">
+   <div class="h-full px-3 w-10/12 py-4 overflow-y-auto bg-white dark:bg-gray-900">
       <!-- Profile Section -->
       <div class="p-2 mb-4 border rounded-lg dark:border-gray-700">
          <button  class="flex items-center w-full text-left">
@@ -53,5 +53,5 @@
 
       </ul>
    </div>
-   <div id="closeMenu" class=" h-screen w-3/12 bg-black/85"></div>
+   <div id="closeMenu" class=" h-screen w-2/12 bg-black/85"></div>
 </aside>

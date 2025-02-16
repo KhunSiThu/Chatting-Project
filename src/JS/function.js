@@ -37,20 +37,14 @@ async function getFriendList() {
                     <div class="relative">
                         <!-- Profile Image -->
                         <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
-
-                        <!-- Online Status Indicator -->
-                        <span class="bottom-0 left-7 absolute w-4 h-4 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${friend.status !== 'Online' ? 'opacity-0' : 'opacity-100'}"></span>
                     </div>
                         <div class="ml-2">
                         <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
                         <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.lastMessage}</span>
                     </div>
                 </div>
-                <button class="">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-black dark:text-white">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                    </svg>
-                </button>
+                 <!-- Online Status Indicator -->
+                <span class="w-4 h-4 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${friend.status !== 'Online' ? 'bg-slate-400' : 'bg-green-400'}"></span>
             </li>
         `).join('') : `
             <li class="flex items-center justify-center w-full h-96">
@@ -536,24 +530,25 @@ const chatFriend = async (chooseId) => {
 
             // Function to display messages dynamically
             function displayMessage(message) {
-
                 const isSentByMe = message.send_id == userId;
 
+                // Display images if they exist
                 const imagesHTML = message.images && message.images.length > 0
                     ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
-                        ${message.images.map(image => `
-                            <img src="../Controller/uploads/images/${image}" alt="Attached Image" 
-                                class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
-                                onclick="openImageModal('${image}')">
-                        `).join('')}
-                    </div>`
+                            ${message.images.map(image => `
+                                <img src="../Controller/uploads/images/${image}" alt="Attached Image" 
+                                    class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                    onclick="openImageModal('${image}')">
+                            `).join('')}
+                        </div>`
                     : '';
 
+                // Display documents if they exist
                 const filesHTML = message.files && message.files.length > 0
                     ? `<div class="mt-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Attachments</h3>
-                        <div class="flex flex-col gap-3">
-                            ${message.files.map(file => {
+                            <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Attachments</h3>
+                            <div class="flex flex-col gap-3">
+                                ${message.files.map(file => {
                         const ext = file.split('.').pop().toLowerCase();
                         const filePath = `../Controller/uploads/documents/${file}`;
                         const fileIcon = {
@@ -564,69 +559,87 @@ const chatFriend = async (chooseId) => {
                         }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
 
                         return `
-                                    <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg shadow">
-                                        <div class="flex items-center gap-3">
-                                            <img class="w-6" src="${fileIcon}" alt="">
-                                            <a href="${filePath}" target="_blank" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">${file}</a>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <a href="${filePath}" download 
-                                                class="flex items-center gap-2 px-5 py-2 text-sm text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-transform transform hover:scale-105  active:scale-95">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </div>`;
+                                        <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg shadow">
+                                            <div class="flex items-center gap-3">
+                                                <img class="w-6" src="${fileIcon}" alt="">
+                                                <a href="${filePath}" target="_blank" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">${file}</a>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <a href="${filePath}" download 
+                                                    class="flex items-center gap-2 px-5 py-2 text-sm text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-transform transform hover:scale-105  active:scale-95">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>`;
                     }).join('')}
-                        </div>
+                            </div>
+                        </div>`
+                    : '';
+
+                // Display videos if they exist
+                const videosHTML = message.videos && message.videos.length > 0
+                    ? `<div class="mt-2 bg-slate-50 rounded-md grid gap-2 ${message.videos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
+                        ${message.videos.map(video => {
+                        const videoPath = `../Controller/uploads/videos/${video}`;
+                        return `
+                                <img src="https://followgreg.com/gregoryng/wp-content/uploads/2012/05/defaultThumbnail-overlay.png" alt="Video Thumbnail" 
+                                    class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                    onclick="openVideoModal('${videoPath}')">
+                            `;
+                    }).join('')}
                     </div>`
                     : '';
 
 
+                // Construct the message element
                 const messageElement = `
-                    <div class="relative my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
-                        <!-- Profile Image -->
-                        <div class="chat-image avatar">
-                            <div class="w-6 md:w-10 rounded-full">
-                                <img alt="Profile image" src="../uploads/${message.profileImage}" />
+                        <div class="relative my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
+                            <!-- Profile Image -->
+                            <div class="chat-image avatar">
+                                <div class="w-6 md:w-10 rounded-full">
+                                    <img alt="Profile image" src="../uploads/${message.profileImage}" />
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Sender Name and Timestamp -->
-                        <div class="chat-header dark:text-white">
-                            ${isSentByMe ? 'You' : message.name}
-                            <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">
-                                ${new Date(message.createdAt).toLocaleString('en-US', {
+                            <!-- Sender Name and Timestamp -->
+                            <div class="chat-header dark:text-white">
+                                ${isSentByMe ? 'You' : message.name}
+                                <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">
+                                    ${new Date(message.createdAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     hour: 'numeric',
                     minute: '2-digit',
                     hour12: true
                 })}
-                            </time>
+                                </time>
+                            </div>
+
+                            <!-- Message Bubble -->
+                            <div id=${message.message_id} class="relative ${isSentByMe ? 'yourMessage' : ""} chat-bubble text-justify p-3 rounded-lg shadow-lg max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
+                                ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-400 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">  
+                                
+                                <p>${message.message}</p>
+
+                                ${imagesHTML}
+                                ${filesHTML}
+                                ${videosHTML}
+
+                            </div>
+
+                            <!-- Message Status -->
+                            <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
+                                ${isSentByMe ? 'Sent' : 'Received'}
+                            </div>
                         </div>
+                    `;
 
-                        <!-- Message Bubble -->
-                        <div id=${message.message_id} class="relative ${isSentByMe ? 'yourMessage' : ""} chat-bubble text-justify p-3 rounded-lg shadow-lg max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
-                            ${isSentByMe ? 'bg-blue-400 text-white dark:bg-blue-400 self-end' : 'bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-white self-start'}">  
-                            
-                            <p>${message.message}</p>
-
-                            ${imagesHTML}
-                            ${filesHTML}
-
-                        </div>
-
-                        <!-- Message Status -->
-                        <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
-                            ${isSentByMe ? 'Sent' : 'Received'}
-                        </div>
-                    </div>
-                `;
-
+                // Append the message element to the container
                 messageShowCon.insertAdjacentHTML('beforeend', messageElement);
             }
+
 
             // Function to fetch and display messages
             async function fetchAndDisplayMessages() {
@@ -656,14 +669,14 @@ const chatFriend = async (chooseId) => {
                     // Delete Message
 
                     const yourMessage = document.querySelectorAll(".yourMessage");
-                    
+
                     yourMessage.forEach(btn => {
                         btn.addEventListener("contextmenu", (e) => {
                             e.preventDefault();
                             let id = btn.getAttribute("id");
                             messDropdown.classList.remove("hidden");
-                    
-                            deleteMessageBtn.addEventListener("click" ,async () => {
+
+                            deleteMessageBtn.addEventListener("click", async () => {
                                 try {
                                     const res = await fetch("../Controller/deleteMessage.php", {
                                         method: "POST",
@@ -672,13 +685,13 @@ const chatFriend = async (chooseId) => {
                                         },
                                         body: JSON.stringify({ id })
                                     });
-                    
+
                                     if (!res.ok) {
                                         throw new Error("Network response was not ok");
                                     }
-                    
+
                                     const data = await res.json();
-                    
+
                                     if (data.success) {
                                         messDropdown.classList.add("hidden");
                                         e.target.remove();
@@ -748,6 +761,9 @@ const groupChat = async (chooseId) => {
     groupSendBtn.classList.remove("hidden");
     sendBtn.classList.add("hidden");
 
+    chatRoomHeader.innerHTML="";
+    messageShowCon.innerHTML ="";
+
 
     try {
         const response = await fetch("../Controller/getGroupById.php", {
@@ -781,13 +797,13 @@ const groupChat = async (chooseId) => {
                         <div class="flex pointer-events-auto items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
                             <div class="relative">
                                 <!-- Profile Image -->
-                               <img class="w-6 h-6 me-2 rounded-full" src="../uploads/${member.profileImage}" alt="${member.name} image">
+                               <img class="w-6 h-6 me-2 object-cover rounded-full" src="../uploads/${member.profileImage}" alt="${member.name} image">
 
                                 <!-- Online Status Indicator -->
                                 <span class="bottom-0 left-4 absolute w-2 h-2 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${member.status !== 'Online' ? 'opacity-0' : 'opacity-100'}"></span>
                             </div>
                             
-                            <div class="flex w-full justify-between items-center">
+                            <div class="flex w-full ml-2 justify-between items-center">
                                 <h2 class='text-sm'>${member.name}</h2> <span class="text-green-500  text-xs">${isAdmin}</span>
                             </div>
                         </div>
@@ -821,9 +837,9 @@ const groupChat = async (chooseId) => {
 
                             <!-- Dropdown menu -->
                             <div id="memberListCon" class="hidden w-full h-screen absolute top-0 left-0 flex justify-center items-center bg-blur">
-                                <div  class="fixed flex flex-col items-end  mt-5 z-50 bg-slate-50 rounded-lg shadow-lg w-60 dark:bg-gray-700">
-                                    <h3 class="text-center my-5 w-full">Group Members</h3>
-                                    <ul id="memberListShow" class="h-48 w-full pb-3 overflow-y-auto border-b dark:border-gray-500 text-gray-700 bg-blur dark:text-gray-200 pointer-events-none" >
+                                <div  class="fixed flex flex-col items-end  mt-5 z-50 bg-gray-100 rounded-lg shadow-lg w-80 dark:bg-gray-700">
+                                    <h3 class="text-center text-black dark:text-white my-5 w-full">Group Members</h3>
+                                    <ul id="memberListShow" class="h-60 w-full py-3 overflow-y-auto border-b bg-gray-200 dark:bg-gray-800 dark:border-gray-500 text-gray-700 bg-blur dark:text-gray-200 pointer-events-none" >
 
                                     ${membersHTML}
                                         
@@ -1099,6 +1115,20 @@ const groupChat = async (chooseId) => {
                       </div>`
                     : '';
 
+                                    // Display videos if they exist
+                const videosHTML = message.videos && message.videos.length > 0
+                ? `<div class="mt-2 bg-slate-50 rounded-md grid gap-2 ${message.videos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
+                    ${message.videos.map(video => {
+                    const videoPath = `../Controller/uploads/videos/${video}`;
+                    return `
+                            <img src="https://followgreg.com/gregoryng/wp-content/uploads/2012/05/defaultThumbnail-overlay.png" alt="Video Thumbnail" 
+                                class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
+                                onclick="openVideoModal('${videoPath}')">
+                        `;
+                }).join('')}
+                </div>`
+                : '';
+
                 const formattedTime = new Date(message.createdAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -1115,7 +1145,7 @@ const groupChat = async (chooseId) => {
                             </div>
                         </div>
                         <div class="chat-header dark:text-white">
-                            ${isSentByMe ? 'You' : message.username}
+                            ${isSentByMe ? 'You' : message.name}
                             <time class="text-xs opacity-50 text-gray-800 dark:text-gray-300">${formattedTime}</time>
                         </div>
                         <div id=${message.messageId} class="chat-bubble ${isSentByMe ? 'yourMessage' : ""} text-justify p-3 rounded-lg shadow-md max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl 
@@ -1123,6 +1153,7 @@ const groupChat = async (chooseId) => {
                             <p>${message.message}</p>
                             ${imagesHTML}
                             ${filesHTML}
+                             ${videosHTML}
                         </div>
                         <div class="chat-footer text-gray-700 opacity-50 dark:text-gray-300">
                             ${isSentByMe ? 'Sent' : 'Received'}
@@ -1162,14 +1193,14 @@ const groupChat = async (chooseId) => {
                     // Delete Message
 
                     const yourMessage = document.querySelectorAll(".yourMessage");
-                    
+
                     yourMessage.forEach(btn => {
                         btn.addEventListener("contextmenu", (e) => {
                             e.preventDefault();
                             let id = btn.getAttribute("id");
                             messDropdown.classList.remove("hidden");
-                    
-                            deleteMessageBtn.addEventListener("click" ,async () => {
+
+                            deleteMessageBtn.addEventListener("click", async () => {
                                 try {
                                     const res = await fetch("../Controller/deleteGroupMessage.php", {
                                         method: "POST",
@@ -1178,13 +1209,13 @@ const groupChat = async (chooseId) => {
                                         },
                                         body: JSON.stringify({ id })
                                     });
-                    
+
                                     if (!res.ok) {
                                         throw new Error("Network response was not ok");
                                     }
-                    
+
                                     const data = await res.json();
-                    
+
                                     if (data.success) {
                                         messDropdown.classList.add("hidden");
                                         e.target.remove();
@@ -1264,6 +1295,29 @@ function openImageModal(imageSrc) {
     document.body.insertAdjacentHTML('beforeend', modal);
 }
 
+function openVideoModal(videoSrc) {
+    const modal = `
+        <div id="openImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-lg" onclick="closeImageModal()">
+            <div class="relative w-full h-full flex items-center justify-center">
+                <video controls class="max-w-full max-h-full object-contain p-3 md:p-10">
+                    <source src="${videoSrc}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+               
+                <button onclick="closeImageModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <a href="${videoSrc}" download class="absolute bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition">
+                    Save Video
+                </a>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modal);
+}
+
 function closeImageModal() {
     const modal = document.getElementById('openImageModal');
     if (modal) {
@@ -1280,109 +1334,111 @@ function saveImage(imageSrc) {
     document.body.removeChild(link);
 }
 
-// Function to send a message or upload images
 async function sendMessage() {
     const messageInput = document.getElementById("sendMessage");
-    const fileInputImages = document.getElementById("sendImage");
-    const fileInputDocuments = document.getElementById("sendFile");
+    const fileInputs = {
+        images: document.getElementById("sendImage"),
+        documents: document.getElementById("sendFile"),
+        videos: document.getElementById("sendVideo"),
+    };
     const formData = new FormData();
 
-    // Add message to FormData if it exists
+    // File size limits (in bytes)
+    const FILE_LIMITS = {
+        images: { maxSize: 5 * 1024 * 1024, maxCount: 5, field: "image_files[]" },
+        documents: { maxSize: 10 * 1024 * 1024, maxCount: 10, field: "document_files[]" },
+        videos: { maxSize: 100 * 1024 * 1024, maxCount: 1, field: "video_files[]" },
+    };
+
     if (messageInput.value.trim()) {
         formData.append("message", messageInput.value.trim());
     }
 
-    // Add image files to FormData if they exist
-    if (fileInputImages.files.length > 0) {
-        // Check if more than 5 images are selected
-        if (fileInputImages.files.length > 5) {
-            alert("You can upload a maximum of 5 images.");
-            return;
-        }
+    // Validate and append files
+    for (const [key, input] of Object.entries(fileInputs)) {
+        if (input.files.length > 0) {
+            if (input.files.length > FILE_LIMITS[key].maxCount) {
+                alert(`You can upload a maximum of ${FILE_LIMITS[key].maxCount} ${key}.`);
+                return;
+            }
 
-        for (let i = 0; i < fileInputImages.files.length; i++) {
-            formData.append("image_files[]", fileInputImages.files[i]);
-        }
-    }
-
-    // Add document files to FormData if they exist
-    if (fileInputDocuments.files.length > 0) {
-        for (let i = 0; i < fileInputDocuments.files.length; i++) {
-            formData.append("document_files[]", fileInputDocuments.files[i]);
+            for (const file of input.files) {
+                if (file.size > FILE_LIMITS[key].maxSize) {
+                    alert(`${key.charAt(0).toUpperCase() + key.slice(1)} ${file.name} exceeds the maximum size of ${FILE_LIMITS[key].maxSize / (1024 * 1024)}MB.`);
+                    return;
+                }
+                formData.append(FILE_LIMITS[key].field, file);
+            }
         }
     }
 
     // If no message and no files, return
-    if (!formData.has("message") && !formData.has("image_files[]") && !formData.has("document_files[]")) {
-        alert("Please enter a message or select files.");
+    if (!formData.has("message") && !Object.values(FILE_LIMITS).some(limit => formData.has(limit.field))) {
         return;
     }
 
     try {
         const response = await fetch("../Controller/sendMessage.php", {
             method: "POST",
-            body: formData, // Use FormData for file uploads
+            body: formData,
         });
 
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
 
         const data = await response.json();
-        if (data.success) {
-            console.log("Message sent successfully!");
-            messageInput.value = ""; // Clear the input field
-            fileInputImages.value = ""; // Clear the image input
-            fileInputDocuments.value = ""; // Clear the document input
-        } else {
-            throw new Error(data.error || "Failed to send message");
-        }
+        if (!data.success) throw new Error(data.error || "Failed to send message");
+
+        console.log("Message sent successfully!");
+        messageInput.value = "";
+        Object.values(fileInputs).forEach(input => (input.value = ""));
     } catch (error) {
         console.error("Error sending message:", error);
         alert("Failed to send message. Please try again.");
     }
 }
 
+
 // Function to send a message
 async function groupSendMessage() {
     const messageInput = document.getElementById("sendMessage");
-    const fileInputImages = document.getElementById("sendImage");
-    const fileInputDocuments = document.getElementById("sendFile");
+    const fileInputs = {
+        images: document.getElementById("sendImage"),
+        documents: document.getElementById("sendFile"),
+        videos: document.getElementById("sendVideo"),
+    };
     const formData = new FormData();
+
+    // File size limits (in bytes)
+    const FILE_LIMITS = {
+        images: { maxSize: 5 * 1024 * 1024, maxCount: 5, field: "image_files[]" },
+        documents: { maxSize: 10 * 1024 * 1024, maxCount: 10, field: "document_files[]" },
+        videos: { maxSize: 100 * 1024 * 1024, maxCount: 1, field: "video_files[]" },
+    };
 
     if (messageInput.value.trim()) {
         formData.append("message", messageInput.value.trim());
     }
 
-    // Image files validation
-    if (fileInputImages.files.length > 5) {
-        alert("You can upload a maximum of 5 images.");
-        return;
-    }
+    // Validate and append files
+    for (const [key, input] of Object.entries(fileInputs)) {
+        if (input.files.length > 0) {
+            if (input.files.length > FILE_LIMITS[key].maxCount) {
+                alert(`You can upload a maximum of ${FILE_LIMITS[key].maxCount} ${key}.`);
+                return;
+            }
 
-    for (let i = 0; i < fileInputImages.files.length; i++) {
-        const file = fileInputImages.files[i];
-        if (!file.type.startsWith("image/")) {
-            alert("Only image files are allowed.");
-            return;
+            for (const file of input.files) {
+                if (file.size > FILE_LIMITS[key].maxSize) {
+                    alert(`${key.charAt(0).toUpperCase() + key.slice(1)} ${file.name} exceeds the maximum size of ${FILE_LIMITS[key].maxSize / (1024 * 1024)}MB.`);
+                    return;
+                }
+                formData.append(FILE_LIMITS[key].field, file);
+            }
         }
-        formData.append("image_files[]", file);
     }
 
-    // Document files validation
-    const allowedDocs = ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "pdf"];
-    for (let i = 0; i < fileInputDocuments.files.length; i++) {
-        const file = fileInputDocuments.files[i];
-        const fileExt = file.name.split(".").pop().toLowerCase();
-        if (!allowedDocs.includes(fileExt)) {
-            alert("Invalid document format. Allowed: " + allowedDocs.join(", "));
-            return;
-        }
-        formData.append("document_files[]", file);
-    }
-
-    if (!formData.has("message") && !formData.has("image_files[]") && !formData.has("document_files[]")) {
-        alert("Please enter a message or select files.");
+    // If no message and no files, return
+    if (!formData.has("message") && !Object.values(FILE_LIMITS).some(limit => formData.has(limit.field))) {
         return;
     }
 
@@ -1392,15 +1448,15 @@ async function groupSendMessage() {
             body: formData,
         });
 
+        if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
+
         const data = await response.json();
-        if (data.success) {
-            console.log("Message sent successfully!");
-            messageInput.value = "";
-            fileInputImages.value = "";
-            fileInputDocuments.value = "";
-        } else {
-            throw new Error(data.error || "Failed to send message");
-        }
+        if (!data.success) throw new Error(data.error || "Failed to send message");
+
+        console.log("Message sent successfully!");
+        messageInput.value = "";
+        Object.values(fileInputs).forEach(input => (input.value = ""));
+
     } catch (error) {
         console.error("Error sending message:", error);
         alert("Failed to send message. Please try again.");

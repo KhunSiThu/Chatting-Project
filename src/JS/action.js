@@ -270,6 +270,14 @@ groupSendBtn.addEventListener("click", () => {
 
 
 // Chat Room
+sendFilesBtn.addEventListener("click", () => {
+    if(sendFiles.classList.contains("hidden")) {
+        sendFiles.classList.remove("hidden");
+    } else {
+        sendFiles.classList.add("hidden");
+    }
+})
+
 // Event listener for the send button
 sendBtn.addEventListener("click", () => {
    

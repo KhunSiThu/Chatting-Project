@@ -49,3 +49,6 @@ const messageShowCon = document.querySelector("#messageShowCon");
 const chatRoomCon = document.querySelector('#chatRoomCon');
 const messDropdown = document.getElementById("messDropdown");
 const deleteMessageBtn = document.getElementById("deleteMessageBtn");
+
+const sendFiles = document.getElementById("sendFiles");
+const sendFilesBtn = document.getElementById("sendFilesBtn");

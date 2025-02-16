@@ -43,11 +43,10 @@ try {
     // Fetch all messages
     $messages = [];
     while ($row = $result->fetch_assoc()) {
-        // Split images into an array if they exist
+        // Ensure 'images' and 'files' are split into arrays if they exist
         $row['images'] = !empty($row['images']) ? explode(",", $row['images']) : [];
-
-        // Split file attachments into an array if they exist
         $row['files'] = !empty($row['file']) ? explode(",", $row['file']) : [];
+        $row['videos'] = !empty($row['videos']) ? explode(",", $row['videos']) : [];
 
         $messages[] = $row;
     }

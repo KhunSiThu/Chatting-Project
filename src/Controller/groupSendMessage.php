@@ -3,6 +3,40 @@ header('Content-Type: application/json');
 require_once("./dbConnect.php");
 session_start();
 
+$allowedExtensions = [
+    // Document extensions
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'ppt',
+    'pptx',
+    'txt',
+    'pdf',
+
+    // Image extensions
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'bmp',
+    'tiff',
+    'webp',
+    'svg',
+
+    // Video extensions
+    'mp4',
+    'mov',
+    'avi',
+    'mkv',
+    'flv',
+    'wmv',
+    'webm',
+    'ogv',
+    '3gp',
+    'mpeg'
+];
+
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
     http_response_code(401);
     echo json_encode(["error" => "Unauthorized access"]);
@@ -26,62 +60,50 @@ try {
     }
 
     $messageId = $stmt->insert_id;
-    $imageFiles = $_FILES['image_files'] ?? [];
-    $documentFiles = $_FILES['document_files'] ?? [];
 
-    $images = [];
-    $documents = [];
-    $allowedExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'];
+    // File upload handling
+    $uploads = [
+        'image_files' => 'uploads/images/',
+        'document_files' => 'uploads/documents/',
+        'video_files' => 'uploads/videos/'
+    ];
 
-    // Handle image uploads
-    if ($imageFiles) {
-        foreach ($imageFiles['tmp_name'] as $index => $tmpName) {
-            $fileType = mime_content_type($tmpName);
-            if (strpos($fileType, 'image/') !== 0) {
-                throw new Exception("Invalid image file type.");
+    $filesData = ['image_files' => [], 'document_files' => [], 'video_files' => []];
+
+
+
+    foreach ($uploads as $inputName => $uploadPath) {
+        if (!empty($_FILES[$inputName]['name'][0])) {
+            foreach ($_FILES[$inputName]['tmp_name'] as $index => $tmpName) {
+                $fileName = $_FILES[$inputName]['name'][$index];
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                if (!in_array($fileExt, $allowedExtensions)) {
+                    continue;
+                }
+
+                $newFileName = "{$inputName}_{$messageId}_{$index}.{$fileExt}";
+                $destination = $uploadPath . $newFileName;
+
+                if (move_uploaded_file($tmpName, $destination)) {
+                    $filesData[$inputName][] = $newFileName;
+                }
             }
-
-            $fileName = "image_" . $messageId . "_" . $index . ".jpg";
-            $destination = "uploads/images/" . $fileName;
-            if (!move_uploaded_file($tmpName, $destination)) {
-                throw new Exception("Failed to upload image.");
-            }
-            $images[] = $fileName;
         }
     }
 
-    // Handle document uploads
-    if ($documentFiles) {
-        foreach ($documentFiles['tmp_name'] as $index => $tmpName) {
-            $fileExt = strtolower(pathinfo($documentFiles['name'][$index], PATHINFO_EXTENSION));
-
-            if (!in_array($fileExt, $allowedExtensions)) {
-                throw new Exception("Invalid file type.");
-            }
-
-            $fileName = "document_" . $messageId . "_" . $index . "." . $fileExt;
-            $destination = "uploads/documents/" . $fileName;
-            if (!move_uploaded_file($tmpName, $destination)) {
-                throw new Exception("Failed to upload document.");
-            }
-            $documents[] = $fileName;
-        }
-    }
-
-    $imageFilesString = implode(",", $images);
-    $documentFilesString = implode(",", $documents);
-
-    $query = "UPDATE groupMessage SET images = ?, file = ? WHERE messageId = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ssi", $imageFilesString, $documentFilesString, $messageId);
-
-    if (!$stmt->execute()) {
-        throw new Exception("Failed to update message files.");
-    }
+    $stmt = $conn->prepare("UPDATE groupMessage SET images = ?, file = ?, videos = ? WHERE messageId = ?");
+    $stmt->bind_param(
+        "sssi",
+        implode(",", $filesData['image_files']),
+        implode(",", $filesData['document_files']),
+        implode(",", $filesData['video_files']),
+        $messageId
+    );
+    $stmt->execute();
 
     $conn->commit();
-    echo json_encode(["success" => true, "message" => "Message sent successfully"]);
-
+    echo json_encode(["success" => true]);
 } catch (Exception $e) {
     $conn->rollback();
     http_response_code(500);
@@ -92,4 +114,3 @@ try {
     }
     $conn->close();
 }
-?>

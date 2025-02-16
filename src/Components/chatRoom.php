@@ -14,20 +14,41 @@
 
     <!-- Input Section -->
     <section class="p-4 bg-slate-100 dark:bg-gray-800 w-full h-20 absolute bottom-0 z-20 right-0 flex justify-center items-center gap-x-5">
-        <!-- Image Attachment Button -->
-        <label for="sendImage" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-            </svg>
-        </label>
-        <input id="sendImage" class="hidden" type="file" name="images[]" multiple accept="image/*">
 
-        <!-- File Attachment Button (Documents) -->
-        <label for="sendFile" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+        <div id="sendFiles" class="w-48 text-slate-800 dark:text-slate-100 text-sm rounded-md flex hidden flex-col absolute bottom-20 mb-1 left-5 md:left-32 bg-slate-100 dark:bg-slate-800 p-3">
+            <!-- Video Attachment Button -->
+            <label for="sendVideo" class="p-2 mb-2 flex items-center bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-2">Video</span>
+            </label>
+            <input id="sendVideo" class="hidden" multiple type="file" name="videos[]" accept="video/*">
+
+            <!-- Image Attachment Button -->
+            <label for="sendImage" class="p-2 mb-2  flex items-center bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                    <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-2">Photos</span>
+            </label>
+            <input id="sendImage" class="hidden" type="file" name="images[]" multiple accept="image/*">
+
+            <!-- File Attachment Button (Documents) -->
+            <label for="sendFile" class="p-2 flex items-center bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                    <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625Z" />
+                    <path d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" />
+                </svg>
+                <span class="ml-2">Documents</span>
+            </label>
+            <input id="sendFile" class="hidden" type="file" name="documents[]" multiple accept=".pdf,.docx,.xlsx,.pptx,.doc,.xls,.ppt,.txt,.pdf">
+
+        </div>
+
+        <button id="sendFilesBtn" class="p-2 bg-slate-200 dark:bg-gray-700 rounded-md hover:bg-slate-300 dark:hover:bg-gray-600 transition-colors duration-200">
             📂
-        </label>
-        <input id="sendFile" class="hidden" type="file" name="documents[]" accept=".pdf,.docx,.xlsx,.pptx,.doc,.xls,.ppt,.txt,.pdf">
-
+        </button>
         <!-- Message Input -->
         <div class="w-2/3">
             <input id="sendMessage" type="text" class="w-full p-2 rounded-md bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 transition-colors duration-200" placeholder="Type a message...">
