@@ -42,7 +42,7 @@ if ($file['size'] > 5 * 1024 * 1024) {
 }
 
 // ** Upload Directory Setup ** //
-$uploadDir = '../uploads/';
+$uploadDir = '../uploads/profiles/';
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
@@ -58,27 +58,21 @@ if (!move_uploaded_file($file['tmp_name'], $filePath)) {
     exit;
 }
 
+// ** Sanitize Input ** //
+$uniqueFilename = mysqli_real_escape_string($conn, $uniqueFilename);
+$userId = mysqli_real_escape_string($conn, $userId);
+
 // ** Save File Name to Database ** //
-$sql = "UPDATE user SET profileImage = ? WHERE userId = ?";
-$stmt = mysqli_prepare($conn, $sql);
-
-if (!$stmt) {
-    echo json_encode(['success' => false, 'message' => 'Failed to prepare SQL statement: ' . mysqli_error($conn)]);
-    exit;
-}
-
-mysqli_stmt_bind_param($stmt, "si", $uniqueFilename, $userId);
-
-if (mysqli_stmt_execute($stmt)) {
+$sql = "UPDATE user SET profileImage = '$uniqueFilename' WHERE userId = '$userId'";
+if (mysqli_query($conn, $sql)) {
     echo json_encode([
         'success' => true, 
         'message' => 'Profile image uploaded successfully.', 
         'filePath' => $filePath
     ]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database update failed: ' . mysqli_stmt_error($stmt)]);
+    echo json_encode(['success' => false, 'message' => 'Database update failed: ' . mysqli_error($conn)]);
 }
 
-mysqli_stmt_close($stmt);
 mysqli_close($conn);
 ?>

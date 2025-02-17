@@ -120,7 +120,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <!-- Profile Icon -->
                 <div id="userProfileBtn" class="hs-tooltip [--placement:right] md:inline-block mb-5 hidden">
                     <a class="hs-tooltip-toggle p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                        <img class="w-10 h-10 object-cover rounded-full" src="../uploads/<?= $userData['profileImage'] ?>" alt="">
+                    <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/'.$userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="">
+                        
                         <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
                             Profile
                         </span>

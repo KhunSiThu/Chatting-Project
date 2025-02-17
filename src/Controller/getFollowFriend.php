@@ -12,28 +12,18 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
+// Prepare the SQL query
 $query = "SELECT user.userId, user.name, user.profileImage, user.status 
           FROM friendRequests 
           LEFT JOIN user ON friendRequests.forConfirm_id = user.userId 
-          WHERE friendRequests.request_id = ? 
+          WHERE friendRequests.request_id = $userId 
           ORDER BY user.name";
 
-$stmt = mysqli_prepare($conn, $query);
-
-if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database query preparation failed']);
-    exit();
-}
-
-mysqli_stmt_bind_param($stmt, 'i', $userId);
-mysqli_stmt_execute($stmt);
-
-$result = mysqli_stmt_get_result($stmt);
+$result = mysqli_query($conn, $query);
 
 if (!$result) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database query execution failed']);
+    echo json_encode(['error' => 'Database query execution failed: ' . mysqli_error($conn)]);
     exit();
 }
 
@@ -45,7 +35,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 echo json_encode($results);
 
-// Close the statement and connection
-mysqli_stmt_close($stmt);
+// Close the connection
 mysqli_close($conn);
 ?>

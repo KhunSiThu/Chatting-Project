@@ -35,7 +35,7 @@ if (empty($groupName)) {
 }
 
 // Upload directory
-$uploadDir = "../uploads/";
+$uploadDir = "../uploads/profiles/";
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
@@ -60,29 +60,28 @@ if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
     exit();
 }
 
-// Insert into database
-$sql = "INSERT INTO `group` (groupName, adminId, groupProfile) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sis", $groupName, $userId, $newFileName);
+// Sanitize inputs for SQL query
+$groupName = mysqli_real_escape_string($conn, $groupName);
+$newFileName = mysqli_real_escape_string($conn, $newFileName);
 
-if ($stmt->execute()) {
-    $groupId = $conn->insert_id; // Get the last inserted group ID
+// Insert into database
+$sql = "INSERT INTO `group` (groupName, adminId, groupProfile) VALUES ('$groupName', '$userId', '$newFileName')";
+if (mysqli_query($conn, $sql)) {
+    $groupId = mysqli_insert_id($conn); // Get the last inserted group ID
     $_SESSION['groupId'] = $groupId;
 
-    // Insert into database
-    $sql1 = "INSERT INTO `groupMember` (groupId, memberId) VALUES (? , ?)";
-    $stmt1 = $conn->prepare($sql1);
-    $stmt1->bind_param("ii", $groupId, $userId);
-
-    if ($stmt1->execute()) { 
+    // Insert into groupMember table
+    $sql1 = "INSERT INTO `groupMember` (groupId, memberId) VALUES ('$groupId', '$userId')";
+    if (mysqli_query($conn, $sql1)) {
         echo json_encode(["success" => true, "message" => "Group created successfully", "groupId" => $groupId]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Database error: " . mysqli_error($conn)]);
     }
-
-    
 } else {
     http_response_code(500);
-    echo json_encode(["error" => "Database error: " . $stmt->error]);
+    echo json_encode(["error" => "Database error: " . mysqli_error($conn)]);
 }
 
-$stmt->close();
-$conn->close();
+mysqli_close($conn);
+?>

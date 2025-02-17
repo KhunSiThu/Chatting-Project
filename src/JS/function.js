@@ -36,7 +36,7 @@ async function getFriendList() {
                 <div class="flex items-center pointer-events-none">
                     <div class="relative">
                         <!-- Profile Image -->
-                        <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
+                        <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}'s profile image">
                     </div>
                         <div class="ml-2">
                         <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
@@ -94,7 +94,7 @@ async function getFriendByName(name) {
                 <div class="flex items-center pointer-events-none">
                     <div class="relative">
                         <!-- Profile Image -->
-                        <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
+                        <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}'s profile image">
 
                         <!-- Online Status Indicator -->
                         <span class="bottom-0 left-7 absolute w-4 h-4 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${friend.status !== 'Online' ? 'opacity-0' : 'opacity-100'}"></span>
@@ -148,7 +148,7 @@ async function friendRequests() {
                 li.innerHTML = `
                     <div class="flex items-center">
                         <div class="relative">
-                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}">
                         </div>
                         <div class="ml-2">
                             <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
@@ -208,7 +208,7 @@ async function getUserGroup() {
                     <div class="relative">
                         <!-- Profile Image -->
                         <img class="w-12 h-12 object-cover rounded-full border-2 border-white dark:border-gray-800 transition-transform duration-200 hover:scale-105" 
-                             src="../uploads/${group.groupProfile}" 
+                             src="../uploads/profiles/${group.groupProfile}" 
                              alt="${group.groupName}'s profile image">
                         
                         <!-- Online Status Indicator -->
@@ -266,7 +266,7 @@ async function followFriend() {
                 li.innerHTML = `
                     <div class="flex items-center">
                         <div class="relative">
-                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}">
                         </div>
                         <div class="ml-2">
                             <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
@@ -419,7 +419,7 @@ async function searchFriend(searchText) {
                 li.innerHTML = `
                     <div class="flex items-center">
                         <div class="relative">
-                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/${friend.profileImage}" alt="${friend.name}">
+                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}">
                         </div>
                         <div class="ml-2">
                             <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
@@ -515,7 +515,7 @@ const chatFriend = async (chooseId) => {
 
                     <!-- Friend's Profile Image -->
                     <div class="relative">
-                        <img class="md:w-14 md:h-14 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${friend.profileImage}" alt="${friend.name}'s profile image">
+                        <img class="md:w-14 md:h-14 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}'s profile image">
                     </div>
 
                     <!-- Friend's Name and Status -->
@@ -536,7 +536,7 @@ const chatFriend = async (chooseId) => {
                 const imagesHTML = message.images && message.images.length > 0
                     ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
                             ${message.images.map(image => `
-                                <img src="../Controller/uploads/images/${image}" alt="Attached Image" 
+                                <img src="../uploads/images/${image}" alt="Attached Image" 
                                     class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
                                     onclick="openImageModal('${image}')">
                             `).join('')}
@@ -550,7 +550,7 @@ const chatFriend = async (chooseId) => {
                             <div class="flex flex-col gap-3">
                                 ${message.files.map(file => {
                         const ext = file.split('.').pop().toLowerCase();
-                        const filePath = `../Controller/uploads/documents/${file}`;
+                        const filePath = `../uploads/documents/${file}`;
                         const fileIcon = {
                             'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png', 'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
                             'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png', 'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
@@ -582,7 +582,7 @@ const chatFriend = async (chooseId) => {
                 const videosHTML = message.videos && message.videos.length > 0
                     ? `<div class="mt-2 bg-slate-50 rounded-md grid gap-2 ${message.videos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
                         ${message.videos.map(video => {
-                        const videoPath = `../Controller/uploads/videos/${video}`;
+                        const videoPath = `../uploads/videos/${video}`;
                         return `
                                 <img src="https://followgreg.com/gregoryng/wp-content/uploads/2012/05/defaultThumbnail-overlay.png" alt="Video Thumbnail" 
                                     class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
@@ -599,7 +599,7 @@ const chatFriend = async (chooseId) => {
                             <!-- Profile Image -->
                             <div class="chat-image avatar">
                                 <div class="w-6 md:w-10 rounded-full">
-                                    <img alt="Profile image" src="../uploads/${message.profileImage}" />
+                                    <img alt="Profile image" src="../uploads/profiles/${message.profileImage}" />
                                 </div>
                             </div>
 
@@ -797,7 +797,7 @@ const groupChat = async (chooseId) => {
                         <div class="flex pointer-events-auto items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
                             <div class="relative">
                                 <!-- Profile Image -->
-                               <img class="w-6 h-6 me-2 object-cover rounded-full" src="../uploads/${member.profileImage}" alt="${member.name} image">
+                               <img class="w-6 h-6 me-2 object-cover rounded-full" src="../uploads/profiles/${member.profileImage}" alt="${member.name} image">
 
                                 <!-- Online Status Indicator -->
                                 <span class="bottom-0 left-4 absolute w-2 h-2 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full transition-opacity duration-200 ${member.status !== 'Online' ? 'opacity-0' : 'opacity-100'}"></span>
@@ -823,7 +823,7 @@ const groupChat = async (chooseId) => {
 
                     <!-- group's Profile Image -->
                     <div class="relative">
-                        <img class="md:w-12 md:h-12 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/${group.groupProfile}" alt="${group.groupName}'s profile image">
+                        <img class="md:w-12 md:h-12 object-cover w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600" src="../uploads/profiles/${group.groupProfile}" alt="${group.groupName}'s profile image">
                     </div>
 
                     <!-- group's Name and Status -->
@@ -916,7 +916,7 @@ const groupChat = async (chooseId) => {
                         <!-- Profile Upload -->
                         <label for="groupProfileChange" class="cursor-pointer">
                             <div class="bg-blue-500  flex items-center rounded-full  justify-center">
-                            <img id="changeGroupProfile" src="../uploads/${group.groupProfile}"
+                            <img id="changeGroupProfile" src="../uploads/profiles/${group.groupProfile}"
                                 alt="group-icon" class="p-1 object-cover rounded-full w-16 h-16">
                             </div>
                         </label>
@@ -1070,7 +1070,7 @@ const groupChat = async (chooseId) => {
                 const imagesHTML = message.images && message.images.length > 0
                     ? `<div class="mt-2 grid gap-2 ${message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
                         ${message.images.map(image => `
-                            <img src="../Controller/uploads/images/${image}" alt="Attached Image" 
+                            <img src="../uploads/images/${image}" alt="Attached Image" 
                                 class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
                                 onclick="openImageModal('${image}')">
                         `).join('')}
@@ -1083,7 +1083,7 @@ const groupChat = async (chooseId) => {
                         <div class="flex flex-col gap-3">
                             ${message.files.map(file => {
                         const ext = file.split('.').pop().toLowerCase();
-                        const filePath = `../Controller/uploads/documents/${file}`;
+                        const filePath = `../uploads/documents/${file}`;
                         const fileIcon = {
                             'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
                             'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
@@ -1119,7 +1119,7 @@ const groupChat = async (chooseId) => {
                 const videosHTML = message.videos && message.videos.length > 0
                 ? `<div class="mt-2 bg-slate-50 rounded-md grid gap-2 ${message.videos.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}">
                     ${message.videos.map(video => {
-                    const videoPath = `../Controller/uploads/videos/${video}`;
+                    const videoPath = `../uploads/videos/${video}`;
                     return `
                             <img src="https://followgreg.com/gregoryng/wp-content/uploads/2012/05/defaultThumbnail-overlay.png" alt="Video Thumbnail" 
                                 class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-80 transition-opacity duration-200"
@@ -1141,7 +1141,7 @@ const groupChat = async (chooseId) => {
                     <div class="my-3 chat ${isSentByMe ? 'chat-end' : 'chat-start'}">
                         <div class="chat-image avatar">
                             <div class="w-6 md:w-10 rounded-full">
-                                <img alt="Profile image" src="../uploads/${message.profileImage}" />
+                                <img alt="Profile image" src="../uploads/profiles/${message.profileImage}" />
                             </div>
                         </div>
                         <div class="chat-header dark:text-white">

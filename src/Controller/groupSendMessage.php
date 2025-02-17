@@ -5,36 +5,13 @@ session_start();
 
 $allowedExtensions = [
     // Document extensions
-    'doc',
-    'docx',
-    'xls',
-    'xlsx',
-    'ppt',
-    'pptx',
-    'txt',
-    'pdf',
+    'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf',
 
     // Image extensions
-    'jpg',
-    'jpeg',
-    'png',
-    'gif',
-    'bmp',
-    'tiff',
-    'webp',
-    'svg',
+    'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp', 'svg',
 
     // Video extensions
-    'mp4',
-    'mov',
-    'avi',
-    'mkv',
-    'flv',
-    'wmv',
-    'webm',
-    'ogv',
-    '3gp',
-    'mpeg'
+    'mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', 'ogv', '3gp', 'mpeg'
 ];
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
@@ -45,32 +22,35 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
 
 $userId = $_SESSION['user_id'];
 $groupId = $_SESSION['chooseId'];
-
 $sendMessage = $_POST['message'] ?? '';
 
 try {
-    $conn->begin_transaction();
+    mysqli_begin_transaction($conn);
 
-    $query = "INSERT INTO groupMessage (groupId, sendId, message, createdAt) VALUES (?, ?, ?, NOW())";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("iis", $groupId, $userId, $sendMessage);
+    // Escape inputs for security
+    $groupId = mysqli_real_escape_string($conn, $groupId);
+    $userId = mysqli_real_escape_string($conn, $userId);
+    $sendMessage = mysqli_real_escape_string($conn, $sendMessage);
 
-    if (!$stmt->execute()) {
-        throw new Exception("Failed to send message.");
+    // Insert message into the database
+    $query = "INSERT INTO groupMessage (groupId, sendId, message, createdAt) 
+              VALUES ('$groupId', '$userId', '$sendMessage', NOW())";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        throw new Exception("Failed to send message: " . mysqli_error($conn));
     }
 
-    $messageId = $stmt->insert_id;
+    $messageId = mysqli_insert_id($conn);
 
     // File upload handling
     $uploads = [
-        'image_files' => 'uploads/images/',
-        'document_files' => 'uploads/documents/',
-        'video_files' => 'uploads/videos/'
+        'image_files' => '../uploads/images/',
+        'document_files' => '../uploads/documents/',
+        'video_files' => '../uploads/videos/'
     ];
 
     $filesData = ['image_files' => [], 'document_files' => [], 'video_files' => []];
-
-
 
     foreach ($uploads as $inputName => $uploadPath) {
         if (!empty($_FILES[$inputName]['name'][0])) {
@@ -92,25 +72,32 @@ try {
         }
     }
 
-    $stmt = $conn->prepare("UPDATE groupMessage SET images = ?, file = ?, videos = ? WHERE messageId = ?");
-    $stmt->bind_param(
-        "sssi",
-        implode(",", $filesData['image_files']),
-        implode(",", $filesData['document_files']),
-        implode(",", $filesData['video_files']),
-        $messageId
-    );
-    $stmt->execute();
+    // Update message with file paths
+    $images = implode(",", $filesData['image_files']);
+    $documents = implode(",", $filesData['document_files']);
+    $videos = implode(",", $filesData['video_files']);
 
-    $conn->commit();
+    // Escape file paths for security
+    $images = mysqli_real_escape_string($conn, $images);
+    $documents = mysqli_real_escape_string($conn, $documents);
+    $videos = mysqli_real_escape_string($conn, $videos);
+
+    $query = "UPDATE groupMessage 
+              SET images = '$images', file = '$documents', videos = '$videos' 
+              WHERE messageId = '$messageId'";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        throw new Exception("Failed to update message: " . mysqli_error($conn));
+    }
+
+    mysqli_commit($conn);
     echo json_encode(["success" => true]);
 } catch (Exception $e) {
-    $conn->rollback();
+    mysqli_rollback($conn);
     http_response_code(500);
     echo json_encode(["error" => $e->getMessage()]);
 } finally {
-    if (isset($stmt)) {
-        $stmt->close();
-    }
-    $conn->close();
+    mysqli_close($conn);
 }
+?>

@@ -17,7 +17,7 @@ $userId = $_SESSION['user_id'];
 $data = json_decode(file_get_contents('php://input'), true);
 $chooseId = $data['chooseId'] ?? null;
 
-$_SESSION['chooseId'] = $data['chooseId'];
+$_SESSION['chooseId'] = $chooseId;
 $_SESSION['groupId'] = $chooseId;
 
 if (!$chooseId || !is_numeric($chooseId)) {
@@ -27,59 +27,44 @@ if (!$chooseId || !is_numeric($chooseId)) {
 }
 
 // Query to fetch group information
-$groupQuery = "
-    SELECT * FROM `group` WHERE groupId = ?
-";
+$groupQuery = "SELECT * FROM `group` WHERE groupId = $chooseId";
+$groupResult = mysqli_query($conn, $groupQuery);
 
-$stmtGroup = $conn->prepare($groupQuery);
-$stmtGroup->bind_param("i", $chooseId);
-
-if (!$stmtGroup->execute()) {
+if (!$groupResult) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch group data: " . $stmtGroup->error]);
-    $stmtGroup->close();
+    echo json_encode(["error" => "Failed to fetch group data: " . mysqli_error($conn)]);
     exit();
 }
 
-$groupResult = $stmtGroup->get_result();
-
-if ($groupResult->num_rows === 0) {
+if (mysqli_num_rows($groupResult) === 0) {
     http_response_code(404);
     echo json_encode(["error" => "Group not found"]);
-    $stmtGroup->close();
     exit();
 }
 
-$groupData = $groupResult->fetch_assoc();
-$stmtGroup->close();
+$groupData = mysqli_fetch_assoc($groupResult);
 
 // Query to fetch all members of the group
 $memberQuery = "
-    SELECT u.userId, u.name, u.profileImage,u.status
+    SELECT u.userId, u.name, u.profileImage, u.status
     FROM groupMember gm
     JOIN user u ON gm.memberId = u.userId
-    WHERE gm.groupId = ?
+    WHERE gm.groupId = $chooseId
 ";
+$memberResult = mysqli_query($conn, $memberQuery);
 
-$stmtMembers = $conn->prepare($memberQuery);
-$stmtMembers->bind_param("i", $chooseId);
-
-if (!$stmtMembers->execute()) {
+if (!$memberResult) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch group members: " . $stmtMembers->error]);
-    $stmtMembers->close();
+    echo json_encode(["error" => "Failed to fetch group members: " . mysqli_error($conn)]);
     exit();
 }
 
-$memberResult = $stmtMembers->get_result();
 $members = [];
-
-while ($row = $memberResult->fetch_assoc()) {
+while ($row = mysqli_fetch_assoc($memberResult)) {
     $members[] = $row;
 }
 
-$stmtMembers->close();
-$conn->close();
+mysqli_close($conn);
 
 // Return group and member data
 echo json_encode([

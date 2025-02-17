@@ -35,54 +35,36 @@ $query = "
     ON 
         (friendList.request = user.userId OR friendList.confirm = user.userId) 
     WHERE 
-        (friendList.request = ? OR friendList.confirm = ?) 
-        AND user.userId != ? 
+        (friendList.request = $userId OR friendList.confirm = $userId) 
+        AND user.userId != $userId 
     ORDER BY 
         user.name;
 ";
 
-// Prepare and execute the query
-$stmt = mysqli_prepare($conn, $query);
-if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to prepare SQL statement: " . mysqli_error($conn)]);
-    exit();
-}
-
-// Bind parameters
-mysqli_stmt_bind_param($stmt, "iii", $userId, $userId, $userId);
-
-if (!mysqli_stmt_execute($stmt)) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_stmt_error($stmt)]);
-    mysqli_stmt_close($stmt);
-    exit();
-}
-
-// Fetch results
-$result = mysqli_stmt_get_result($stmt);
+$result = mysqli_query($conn, $query);
 
 if (!$result) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch results: " . mysqli_error($conn)]);
-    mysqli_stmt_close($stmt);
+    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_error($conn)]);
     exit();
 }
 
 // Query to get the group members to filter out users who are already in the group
-$groupQuery = "SELECT memberId FROM groupMember WHERE groupId = ?";
-$stmtGroup = $conn->prepare($groupQuery);
-$stmtGroup->bind_param("i", $groupId);
-$stmtGroup->execute();
-$groupResult = $stmtGroup->get_result();
+$groupQuery = "SELECT memberId FROM groupMember WHERE groupId = $groupId";
+$groupResult = mysqli_query($conn, $groupQuery);
+
+if (!$groupResult) {
+    http_response_code(500);
+    echo json_encode(["error" => "Failed to fetch group members: " . mysqli_error($conn)]);
+    exit();
+}
 
 $groupMembers = [];
-while ($row = $groupResult->fetch_assoc()) {
+while ($row = mysqli_fetch_assoc($groupResult)) {
     $groupMembers[] = $row['memberId'];
 }
 
 mysqli_free_result($groupResult);
-$stmtGroup->close();
 
 $results = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -102,7 +84,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 // Free resources
 mysqli_free_result($result);
-mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 // Return the results

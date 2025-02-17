@@ -26,17 +26,19 @@ if (!isset($data['action']) || $data['action'] !== "leave") {
     exit();
 }
 
-// Remove the user from the group
-$sql = "DELETE FROM `groupMember` WHERE memberId = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userId);
+// Escape the user ID to prevent SQL injection
+$userId = $conn->real_escape_string($userId);
 
-if ($stmt->execute()) {
+// Remove the user from the group
+$sql = "DELETE FROM `groupMember` WHERE memberId = '$userId'";
+$result = mysqli_query($conn, $sql);
+
+if ($result) {
     echo json_encode(["success" => true, "message" => "You have left the group"]);
 } else {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to leave the group"]);
+    echo json_encode(["error" => "Failed to leave the group: " . mysqli_error($conn)]);
 }
 
-$stmt->close();
-$conn->close();
+mysqli_close($conn);
+?>

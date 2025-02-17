@@ -16,26 +16,22 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit();
 }
 
-
 $groupId = $_SESSION['groupId'];
 
 // Fetch groupId from the database
-$groupQuery = "SELECT groupId FROM `group` WHERE groupId = ?";
-$stmt = $conn->prepare($groupQuery);
-$stmt->bind_param("i", $groupId);
-$stmt->execute();
-$result = $stmt->get_result();
+$groupQuery = "SELECT groupId FROM `group` WHERE groupId = $groupId";
+$result = mysqli_query($conn, $groupQuery);
 
-if ($result->num_rows === 0) {
+if (!$result || mysqli_num_rows($result) === 0) {
     http_response_code(404);
     echo json_encode(["error" => "Group not found"]);
     exit();
 }
 
-$groupRow = $result->fetch_assoc();
+$groupRow = mysqli_fetch_assoc($result);
 $groupId = $groupRow['groupId'];
 
-$stmt->close();
+mysqli_free_result($result);
 
 // Receive JSON Data
 $data = json_decode(file_get_contents("php://input"), true);
@@ -48,30 +44,24 @@ if (!$memberId || !$groupId) {
 }
 
 // Check if member is already in the group
-$checkSql = "SELECT * FROM groupMember WHERE groupId = ? AND memberId = ?";
-$checkStmt = $conn->prepare($checkSql);
-$checkStmt->bind_param("ii", $groupId, $memberId);
-$checkStmt->execute();
-$result = $checkStmt->get_result();
+$checkSql = "SELECT * FROM groupMember WHERE groupId = $groupId AND memberId = $memberId";
+$checkResult = mysqli_query($conn, $checkSql);
 
-if ($result->num_rows > 0) {
+if ($checkResult && mysqli_num_rows($checkResult) > 0) {
     echo json_encode(["error" => "Member is already in the group"]);
     exit();
 }
 
-// Insert into groupMember table
-$insertSql = "INSERT INTO groupMember (groupId, memberId) VALUES (?, ?)";
-$insertStmt = $conn->prepare($insertSql);
-$insertStmt->bind_param("ii", $groupId, $memberId);
+mysqli_free_result($checkResult);
 
-if ($insertStmt->execute()) {
+// Insert into groupMember table
+$insertSql = "INSERT INTO groupMember (groupId, memberId) VALUES ($groupId, $memberId)";
+if (mysqli_query($conn, $insertSql)) {
     echo json_encode(["success" => true, "message" => "Member added successfully"]);
 } else {
     http_response_code(500);
-    echo json_encode(["error" => "Database error: " . $insertStmt->error]);
+    echo json_encode(["error" => "Database error: " . mysqli_error($conn)]);
 }
 
-$insertStmt->close();
-$conn->close();
-
+mysqli_close($conn);
 ?>

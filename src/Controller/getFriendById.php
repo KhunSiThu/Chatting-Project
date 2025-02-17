@@ -15,14 +15,14 @@ if (!isset($_SESSION['user_id'])) {
 $data = json_decode(file_get_contents('php://input'), true);
 $chooseId = $data['chooseId'] ?? null;
 
-if (empty($chooseId)) {
+if (empty($chooseId) || !is_numeric($chooseId)) {
     http_response_code(400);
-    echo json_encode(["error" => "Invalid input: 'chooseId' is required"]);
+    echo json_encode(["error" => "Invalid input: 'chooseId' is required and must be a number"]);
     exit();
 }
 
 $userId = $_SESSION['user_id'];
-$_SESSION['chooseId'] = $data['chooseId'];
+$_SESSION['chooseId'] = $chooseId;
 
 // Prepare the SQL query to fetch the selected friend's details
 $query = "
@@ -38,40 +38,23 @@ $query = "
     ON 
         (friendList.request = user.userId OR friendList.confirm = user.userId) 
     WHERE 
-        ((friendList.request = ? AND friendList.confirm = ?) 
-        OR (friendList.request = ? AND friendList.confirm = ?)) 
-        AND user.userId = ? 
+        ((friendList.request = $userId AND friendList.confirm = $chooseId) 
+        OR (friendList.request = $chooseId AND friendList.confirm = $userId)) 
+        AND user.userId = $chooseId 
     ORDER BY 
         user.name;
 ";
 
-// Prepare and execute the query
-$stmt = mysqli_prepare($conn, $query);
-if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to prepare SQL statement: " . mysqli_error($conn)]);
-    exit();
-}
+// Execute the query
+$result = mysqli_query($conn, $query);
 
-// Bind parameters
-mysqli_stmt_bind_param($stmt, "iiiii", $userId, $chooseId, $chooseId, $userId, $chooseId);
-
-if (!mysqli_stmt_execute($stmt)) {
+if (!$result) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_stmt_error($stmt)]);
-    mysqli_stmt_close($stmt);
+    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_error($conn)]);
     exit();
 }
 
 // Fetch results
-$result = mysqli_stmt_get_result($stmt);
-if (!$result) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch results: " . mysqli_error($conn)]);
-    mysqli_stmt_close($stmt);
-    exit();
-}
-
 $results = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $results[] = [
@@ -84,7 +67,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 // Free resources
 mysqli_free_result($result);
-mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 // Return the results

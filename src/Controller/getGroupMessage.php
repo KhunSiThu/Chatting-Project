@@ -17,41 +17,32 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
 $groupId = $_SESSION['chooseId'];
 
 try {
+    // Escape the group ID for security
+    $groupId = mysqli_real_escape_string($conn, $groupId);
+
     // Prepare SQL query to fetch messages for the group
     $query = "SELECT groupMessage.*, user.name, user.profileImage 
               FROM groupMessage 
               LEFT JOIN user ON user.userId = groupMessage.sendId 
-              WHERE groupMessage.groupId = ? 
+              WHERE groupMessage.groupId = '$groupId' 
               ORDER BY groupMessage.messageId ASC";
 
-    $stmt = $conn->prepare($query);
-    if (!$stmt) {
-        throw new Exception("Failed to prepare the SQL statement: " . $conn->error);
-    }
-
-    // Bind the group ID parameter
-    $stmt->bind_param("i", $groupId);
-
     // Execute the query
-    if (!$stmt->execute()) {
-        throw new Exception("Failed to execute the SQL statement: " . $stmt->error);
-    }
-
-    // Fetch the result
-    $result = $stmt->get_result();
+    $result = mysqli_query($conn, $query);
     if (!$result) {
-        throw new Exception("Failed to fetch the result: " . $stmt->error);
+        throw new Exception("Failed to execute the SQL statement: " . mysqli_error($conn));
     }
 
     // Fetch all messages
     $messages = [];
-    while ($row = $result->fetch_assoc()) {
+    while ($row = mysqli_fetch_assoc($result)) {
         // Split images into an array if they exist
         $row['images'] = !empty($row['images']) ? explode(",", $row['images']) : [];
 
         // Split file attachments into an array if they exist
         $row['files'] = !empty($row['file']) ? explode(",", $row['file']) : [];
 
+        // Split videos into an array if they exist
         $row['videos'] = !empty($row['videos']) ? explode(",", $row['videos']) : [];
 
         $messages[] = $row;
@@ -67,10 +58,7 @@ try {
     http_response_code(500);
     echo json_encode(["error" => "Internal server error: " . $e->getMessage()]);
 } finally {
-    // Close the statement and connection
-    if (isset($stmt)) {
-        $stmt->close();
-    }
-    $conn->close();
+    // Close the connection
+    mysqli_close($conn);
 }
 ?>

@@ -27,63 +27,53 @@ $query = "
     ON 
         (friendList.request = user.userId OR friendList.confirm = user.userId) 
     WHERE 
-        (friendList.request = ? OR friendList.confirm = ?) 
-        AND user.userId != ? 
+        (friendList.request = $userId OR friendList.confirm = $userId) 
+        AND user.userId != $userId 
     ORDER BY 
         user.name;
 ";
 
-// Prepare and execute the query
-$stmt = mysqli_prepare($conn, $query);
-if (!$stmt) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to prepare SQL statement: " . mysqli_error($conn)]);
-    exit();
-}
-
-// Bind parameters
-mysqli_stmt_bind_param($stmt, "iii", $userId, $userId, $userId);
-
-if (!mysqli_stmt_execute($stmt)) {
-    http_response_code(500);
-    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_stmt_error($stmt)]);
-    mysqli_stmt_close($stmt);
-    exit();
-}
-
-// Fetch results
-$result = mysqli_stmt_get_result($stmt);
+// Execute the query
+$result = mysqli_query($conn, $query);
 
 if (!$result) {
     http_response_code(500);
-    echo json_encode(["error" => "Failed to fetch results: " . mysqli_error($conn)]);
-    mysqli_stmt_close($stmt);
+    echo json_encode(["error" => "Failed to execute SQL query: " . mysqli_error($conn)]);
     exit();
 }
 
 $results = [];
 while ($row = mysqli_fetch_assoc($result)) {
+    $friendId = $row['userId'];
 
-    // Prepare SQL query to fetch last message
-    $messQuery = "SELECT * FROM messages 
-    WHERE (receive_id = ? AND send_id = ?) OR (receive_id = ? AND send_id = ?) 
-    ORDER BY messages.message_id DESC LIMIT 1";
+    // Prepare SQL query to fetch the last message
+    $messQuery = "
+        SELECT * FROM messages 
+        WHERE (receive_id = $userId AND send_id = $friendId) 
+           OR (receive_id = $friendId AND send_id = $userId) 
+        ORDER BY messages.message_id DESC 
+        LIMIT 1
+    ";
 
-    $stmtMess = $conn->prepare($messQuery);
-    $stmtMess->bind_param("iiii", $userId, $row['userId'], $row['userId'], $userId);
-    $stmtMess->execute();
-    $messResult = $stmtMess->get_result();
+    $messResult = mysqli_query($conn, $messQuery);
 
-    $message = $messResult->fetch_assoc();
+    if (!$messResult) {
+        http_response_code(500);
+        echo json_encode(["error" => "Failed to fetch last message: " . mysqli_error($conn)]);
+        exit();
+    }
 
-    $sendName = ($message["send_id"] == $row['userId']) ? $row['name'] : "You";
+    $message = mysqli_fetch_assoc($messResult);
+
+    // Determine the sender's name
+    $sendName = ($message && $message["send_id"] == $friendId) ? $row['name'] : "You";
 
     // Limit the message to 40 characters
     $messageText = $message ? $message['message'] : 'No messages yet';
     $maxLength = 40;  // Set the maximum character length
 
     if (strlen($messageText) > $maxLength) {
-        $messageText =  substr($messageText, 0, $maxLength) . '...';
+        $messageText = substr($messageText, 0, $maxLength) . '...';
     }
 
     // Prepare result with message
@@ -92,7 +82,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         'name' => $row['name'],
         'profileImage' => $row['profileImage'],
         'status' => $row['status'],
-        'lastMessage' => $sendName . " : " .$messageText,  // Store the limited message
+        'lastMessage' => $sendName . " : " . $messageText,  // Store the limited message
     ];
 
     // Free message result
@@ -101,7 +91,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 // Free resources
 mysqli_free_result($result);
-mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 // Return the results

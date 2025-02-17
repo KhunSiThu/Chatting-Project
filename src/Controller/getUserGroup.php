@@ -11,31 +11,25 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
+// Escape the user ID to prevent SQL injection
+$userId = $conn->real_escape_string($userId);
+
 $sql = "SELECT *
         FROM groupMember 
         LEFT JOIN `group` ON group.groupId = groupMember.groupId
-        WHERE  groupMember.memberId = ?";
+        WHERE groupMember.memberId = '$userId'";
 
-$stmt = $conn->prepare($sql);
-if (!$stmt) {
+$result = mysqli_query($conn, $sql);
+
+if (!$result) {
     http_response_code(500);
-    echo json_encode(["error" => "SQL prepare error: " . $conn->error]);
+    echo json_encode(["error" => "SQL execution error: " . $conn->error]);
     exit();
 }
 
-$stmt->bind_param("i", $userId);
-
-if (!$stmt->execute()) {
-    http_response_code(500);
-    echo json_encode(["error" => "SQL execution error: " . $stmt->error]);
-    $stmt->close();
-    exit();
-}
-
-$result = $stmt->get_result();
 $groups = [];
 
-while ($row = $result->fetch_assoc()) {
+while ($row = mysqli_fetch_assoc($result)) {
     $groupId = $row["groupId"];
 
     if (!isset($groups[$groupId])) {
@@ -60,6 +54,5 @@ $groups = array_values($groups);
 // Return user groups as JSON response
 echo json_encode(["success" => true, "groups" => $groups]);
 
-$stmt->close();
-$conn->close();
+mysqli_close($conn);
 ?>

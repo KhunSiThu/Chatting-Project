@@ -19,35 +19,30 @@ if (is_null($groupId) || !is_numeric($groupId)) {
     exit();
 }
 
-// Query to get all user data and the group membership (LEFT JOIN)
-$sql = "SELECT * FROM groupMember WHERE groupId = ?";
+// Query to get all user data and the group membership
+$sql = "SELECT * FROM groupMember WHERE groupId = $groupId";
 
-$stmt = $conn->prepare($sql);
-if ($stmt === false) {
-    // Database connection or statement preparation failed
+$result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    // Database query failed
     http_response_code(500);
-    echo json_encode(["error" => "Failed to prepare statement"]);
+    echo json_encode(["error" => "Database query execution failed"]);
     exit();
 }
 
-$stmt->bind_param("i", $groupId);
+$members = [];
 
-if ($stmt->execute()) {
-    $result = $stmt->get_result();
-    $members = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $members[] = $row;
-    }
-
-    // Return the members as part of the response
-    echo json_encode(["success" => true, "members" => $members]);
-} else {
-    // Execution failed, report the error
-    http_response_code(500);
-    echo json_encode(["error" => "Database query execution failed"]);
+while ($row = mysqli_fetch_assoc($result)) {
+    $members[] = $row;
 }
 
-$stmt->close();
-$conn->close();
+// Close the result set
+mysqli_free_result($result);
+
+// Close the database connection
+mysqli_close($conn);
+
+// Return the members as JSON response
+echo json_encode(["success" => true, "members" => $members]);
 ?>

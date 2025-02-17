@@ -28,7 +28,7 @@ if (empty($groupId) || empty($groupName)) {
 }
 
 $newFileName = null;
-$uploadDir = "../uploads/";
+$uploadDir = "../uploads/profiles/";
 
 if (isset($_FILES['groupProfileImage']) && $_FILES['groupProfileImage']['error'] === UPLOAD_ERR_OK) {
     if (!is_dir($uploadDir)) {
@@ -55,22 +55,29 @@ if (isset($_FILES['groupProfileImage']) && $_FILES['groupProfileImage']['error']
     }
 }
 
+// Escape inputs for security
+$groupId = mysqli_real_escape_string($conn, $groupId);
+$groupName = mysqli_real_escape_string($conn, $groupName);
+$newFileName = $newFileName ? mysqli_real_escape_string($conn, $newFileName) : null;
+
 if ($newFileName) {
-    $sql = "UPDATE `group` SET groupName = ?, groupProfile = ? WHERE groupId = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $groupName, $newFileName, $groupId);
+    $sql = "UPDATE `group` 
+            SET groupName = '$groupName', groupProfile = '$newFileName' 
+            WHERE groupId = '$groupId'";
 } else {
-    $sql = "UPDATE `group` SET groupName = ? WHERE groupId = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $groupName, $groupId);
+    $sql = "UPDATE `group` 
+            SET groupName = '$groupName' 
+            WHERE groupId = '$groupId'";
 }
 
-if ($stmt->execute()) {
+$result = mysqli_query($conn, $sql);
+
+if ($result) {
     echo json_encode(["success" => true, "message" => "Group updated successfully"]);
 } else {
     http_response_code(500);
-    echo json_encode(["error" => "Database error: " . $stmt->error]);
+    echo json_encode(["error" => "Database error: " . mysqli_error($conn)]);
 }
 
-$stmt->close();
-$conn->close();
+mysqli_close($conn);
+?>
