@@ -247,7 +247,7 @@ groupProfileUpload.addEventListener("change", function (event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            groupProfileImage.src = e.target.result;        
+            groupProfileImage.src = e.target.result;
         };
         reader.readAsDataURL(file);
     } else {
@@ -258,7 +258,7 @@ groupProfileUpload.addEventListener("change", function (event) {
 // Group Chat 
 groupList.addEventListener("click", async (e) => {
     if (e.target.matches(".groupItem")) {
-       
+
         const id = e.target.getAttribute("id");
         await groupChat(id) // Fetch messages after selecting a friend       
     }
@@ -271,7 +271,7 @@ groupSendBtn.addEventListener("click", () => {
 
 // Chat Room
 sendFilesBtn.addEventListener("click", () => {
-    if(sendFiles.classList.contains("hidden")) {
+    if (sendFiles.classList.contains("hidden")) {
         sendFiles.classList.remove("hidden");
     } else {
         sendFiles.classList.add("hidden");
@@ -280,15 +280,23 @@ sendFilesBtn.addEventListener("click", () => {
 
 // Event listener for the send button
 sendBtn.addEventListener("click", () => {
-   
+
     sendMessage();
 });
 
 // Chat Friend
 friendList.addEventListener("click", async (e) => {
     if (e.target.matches(".chatItem")) {
-       
+
         const id = e.target.getAttribute("id");
         await chatFriend(id) // Fetch messages after selecting a friend
     }
 });
+
+// Posts 
+
+uploadPostBtn.addEventListener('click', () => {
+    console.log("click")
+
+    uploadPost();
+})

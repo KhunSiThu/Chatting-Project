@@ -134,8 +134,8 @@
 
 </div>
 
-<div id="noSelect" class="h-screen hidden md:flex w-full overflow-auto relative bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-none">
+<div id="noSelect" class="h-screen w-full overflow-auto relative bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-none">
 
-    <h1>Hello</h1>
+<?php require_once "../Components/posts.php"; ?>
 
 </div>

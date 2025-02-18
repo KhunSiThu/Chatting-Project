@@ -1,8 +1,8 @@
 <!-- Chat List -->
 <div class="md:w-96 w-full h-screen relative">
    <!-- Search box -->
-   <div class="w-full absolute top-0 left-0 z-40 h-32 bg-slate-100 dark:bg-gray-700 p-5">
-      <form id="search-form" class="w-full flex justify-between">
+   <div class="w-full absolute top-0 left-0 z-40 h-22 bg-slate-100 dark:bg-gray-700 p-5">
+      <!-- <form id="search-form" class="w-full flex justify-between">
 
 
          <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="inline-flex mr-3 items-center p-2  text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -20,7 +20,7 @@
             </div>
             <input name="searchText" type="search" id="default-search" class="searchBox block w-full p-3  ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search friends ... " required />
          </div>
-      </form>
+      </form> -->
       <div class="flex justify-between items-center">
          <h3 id="mainTitle" class="py-5 text-xl font-bold text-black dark:text-white">Chat Box</h3>
          <button type="button" id="createGroupBtn" class="text-blue-700 flex hidden items-center justify-center hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">

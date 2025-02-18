@@ -1463,6 +1463,72 @@ async function groupSendMessage() {
     }
 }
 
+async function uploadPost() {
+    const fileInputs = {
+        images: document.getElementById("photo-input"),
+        documents: document.getElementById("doc-input"),
+        videos: document.getElementById("video-input"),
+    };
+
+    const formData = new FormData();
+    const capation = document.getElementById("capation"); // Ensure this element exists
+
+    // File size limits (in bytes)
+    const FILE_LIMITS = {
+        images: { maxSize: 5 * 1024 * 1024, maxCount: 10, field: "image_files[]" },
+        documents: { maxSize: 10 * 1024 * 1024, maxCount: 10, field: "document_files[]" },
+        videos: { maxSize: 100 * 1024 * 1024, maxCount: 1, field: "video_files[]" },
+    };
+
+    // Append capation if it exists
+    if (capation && capation.value.trim()) {
+        formData.append("capation", capation.value.trim());
+    }
+
+    // Validate and append files
+    for (const [key, input] of Object.entries(fileInputs)) {
+        if (!input || !input.files || input.files.length === 0) continue;
+
+        if (input.files.length > FILE_LIMITS[key].maxCount) {
+            alert(`You can upload a maximum of ${FILE_LIMITS[key].maxCount} ${key}.`);
+            return;
+        }
+
+        for (const file of input.files) {
+            if (file.size > FILE_LIMITS[key].maxSize) {
+                alert(`${key.charAt(0).toUpperCase() + key.slice(1)} ${file.name} exceeds the maximum size of ${FILE_LIMITS[key].maxSize / (1024 * 1024)}MB.`);
+                return;
+            }
+            formData.append(FILE_LIMITS[key].field, file);
+        }
+    }
+
+    // If no capation and no files, return
+    if (!formData.has("capation") && !Object.values(FILE_LIMITS).some(limit => formData.has(limit.field))) {
+        alert("Please provide a capation or upload at least one file.");
+        return;
+    }
+
+    try {
+        console.log(true)
+        const response = await fetch("../Controller/uploadPost.php", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error || "Failed to upload post.");
+
+        console.log("Post uploaded successfully!");
+        if (capation) capation.value = "";
+        Object.values(fileInputs).forEach(input => input && (input.value = ""));
+    } catch (error) {
+        console.error("Error uploading post:", error);
+        alert("Failed to upload post. Please try again.");
+    }
+}
 
 
 
