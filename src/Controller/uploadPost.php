@@ -15,7 +15,7 @@ $allowedExtensions = [
 ];
 
 $userId = $_SESSION['user_id'] ?? null;
-$capation = $_POST['capation'] ?? '';
+$caption = $_POST['caption'] ?? '';
 
 if (!$userId) {
     http_response_code(401);
@@ -27,7 +27,7 @@ try {
     mysqli_begin_transaction($conn);
 
     // Insert post into the database
-    $sql = "INSERT INTO posts (user_id, capation, createdAt) VALUES ('$userId', '$capation', NOW())";
+    $sql = "INSERT INTO posts (user_id, caption, createdAt) VALUES ('$userId', '$caption', NOW())";
     if (!mysqli_query($conn, $sql)) {
         throw new Exception("Failed to insert post: " . mysqli_error($conn));
     }
@@ -67,7 +67,7 @@ try {
     $documents = implode(",", $filesData['document_files']);
     $videos = implode(",", $filesData['video_files']);
 
-    $sqlUpdate = "UPDATE posts SET images = '$images', file = '$documents', videos = '$videos' WHERE post_id = '$postId'";
+    $sqlUpdate = "UPDATE posts SET images = '$images', files = '$documents', videos = '$videos' WHERE post_id = '$postId'";
     if (!mysqli_query($conn, $sqlUpdate)) {
         throw new Exception("Failed to update post: " . mysqli_error($conn));
     }

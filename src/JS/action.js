@@ -16,7 +16,9 @@ chatBoxBtn.addEventListener("click", () => {
     groupItems.classList.add("hidden");
     mainTitle.textContent = "Chat Box";
     searchBox.value = "";
-    document.querySelector("#createGroupBtn").classList.add("hidden")
+    document.querySelector("#createGroupBtn").classList.add("hidden");
+
+    itemsContainer.classList.remove("hidden");
 });
 
 requestBtn.addEventListener("click", () => {
@@ -29,9 +31,9 @@ requestBtn.addEventListener("click", () => {
     searchBox.value = "";
     document.querySelector("#createGroupBtn").classList.add("hidden")
     const requestList = document.getElementById("requestList");
-    // setInterval(() => {
-    //     friendRequests();
-    // }, 1500);
+
+    itemsContainer.classList.remove("hidden");
+
     requestList.addEventListener("click", (e) => {
         if (e.target.matches(".confirmBtn")) {
             const id = e.target.getAttribute("id");
@@ -48,7 +50,9 @@ groupBtn.addEventListener("click", () => {
     groupItems.classList.remove("hidden");
     mainTitle.textContent = "Your Group";
     searchBox.value = "";
-    document.querySelector("#createGroupBtn").classList.remove("hidden")
+    document.querySelector("#createGroupBtn").classList.remove("hidden");
+
+    itemsContainer.classList.remove("hidden");
 });
 
 followBtn.addEventListener("click", () => {
@@ -61,9 +65,8 @@ followBtn.addEventListener("click", () => {
     searchBox.value = "";
     document.querySelector("#createGroupBtn").classList.add("hidden")
     const followList = document.getElementById("followList");
-    // setInterval(() => {
-    //     followFriend();
-    // }, 1500);
+
+    itemsContainer.classList.remove("hidden");
 
     followList.addEventListener("click", (e) => {
         if (e.target.matches(".requestBtn")) {
@@ -296,7 +299,6 @@ friendList.addEventListener("click", async (e) => {
 // Posts 
 
 uploadPostBtn.addEventListener('click', () => {
-    console.log("click")
 
     uploadPost();
 })

@@ -1,4 +1,4 @@
-
+const itemsContainer = document.getElementById("itemsContainer");
 
 const searchBox = document.querySelector(".searchBox");
 const chatItems = document.querySelector("#chatItems");

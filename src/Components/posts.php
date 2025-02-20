@@ -16,7 +16,7 @@ session_start();
     </div>
 
     <!-- Search Form -->
-    <form id="search-form" class="w-1/2 flex justify-between">
+    <form id="search-form" class="md:w-1/2 w-2/3 flex justify-between">
         <div class="relative w-full h-11 flex items-center justify-between bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all">
             <input name="searchText" type="search" id="default-search" class="searchBox px-4 block h-full w-full text-sm text-gray-900 bg-transparent dark:placeholder-gray-400 dark:text-white border-none focus:outline-none focus:ring-0" placeholder="Search friends..." required />
             <button type="submit" class="w-12 h-full flex items-center justify-center bg-gray-100 dark:bg-gray-600 rounded-r-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-all">
@@ -36,15 +36,17 @@ session_start();
 </div>
 
 <!-- Post Creation Form -->
-<div class="w-11/12 md:w-2/3 mx-auto" style="max-height:550px;">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg my-6 shadow-lg">
-        <form method="POST" enctype="multipart/form-data">
+<div class="w-11/12 md:w-2/3 mx-auto p-6 my-10 bg-gray-100 shadow-lg rounded-lg dark:bg-gray-800" style="max-height:550px;">
+
+        <form id="uploadPostForm" method="POST" enctype="multipart/form-data">
             <!-- Caption Textarea -->
-            <div class="flex items-start space-x-4 ">
-                <div class="p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
+            <div class="flex items-start w-full gap-x-3 justify-between">
+                <div class="text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                     <img class="w-8 h-8 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="Profile Image">
                 </div>
-                <textarea name="capation" id="capation" placeholder="What's on your mind?" rows="3" class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" required></textarea>
+                <div class="w-11/12 md:w-full">
+                <textarea name="caption" id="caption" placeholder="What's on your mind?" rows="3" class=" p-3 w-full rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" required></textarea>
+                </div>
             </div>
 
             <!-- Image Preview Container -->
@@ -56,121 +58,126 @@ session_start();
 
                     <input type="file" name="photos[]" id="photo-input" multiple
                         accept="image/*" style="display: none;">
-                    <input type="file" name="video" id="video-input" multiple
-                    accept="video/*" style="display: none;">
+                    <input type="file" name="video" id="video-input"
+                        accept="video/*" style="display: none;">
                     <input type="file" name="documents[]" id="doc-input" multiple
-                    accept=".pdf,.docx,.xlsx,.pptx,.doc,.xls,.ppt,.txt,.pdf" style="display: none;">
+                        accept=".pdf,.docx,.xlsx,.pptx,.doc,.xls,.ppt,.txt,.pdf" style="display: none;">
 
                     <!-- Upload Photos Button -->
-                    <label for="photo-input" type="button" class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                    <label for="photo-input" type="button" class="md:py-2.5 md:px-5 p-2 me-2 mb-2 text-sm flex items-center font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-green-400">
                             <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
                         </svg>
-                        <span class="ml-2">Photos</span>
+                        <span class="ml-2 md:block hidden">Photos</span>
                     </label>
 
                     <!-- Upload Videos Button -->
-                    <label for="video-input" type="button" class="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                    <label for="video-input" type="button" class="md:py-2.5 md:px-5 p-2 me-2 mb-2 text-sm flex items-center font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-purple-400">
                             <path fill-rule="evenodd" d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 18.375V5.625Zm1.5 0v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5A.375.375 0 0 0 3 5.625Zm16.125-.375a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5A.375.375 0 0 0 21 7.125v-1.5a.375.375 0 0 0-.375-.375h-1.5ZM21 9.375A.375.375 0 0 0 20.625 9h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5ZM4.875 18.75a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5ZM3.375 15h1.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375Zm0-3.75h1.5a.375.375 0 0 0 .375-.375v-1.5A.375.375 0 0 0 4.875 9h-1.5A.375.375 0 0 0 3 9.375v1.5c0 .207.168.375.375.375Zm4.125 0a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5h-9Z" clip-rule="evenodd" />
                         </svg>
-                        <span class="ml-2">Videos</span>
+                        <span class="ml-2 md:block hidden">Videos</span>
                     </label>
 
                     <!-- Upload Documents Button -->
-                    <label for="doc-input" type="button" class="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                            <path fill-rule="evenodd" d="M1.5 5.625c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v12.75c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 18.375V5.625Zm1.5 0v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5A.375.375 0 0 0 3 5.625Zm16.125-.375a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5A.375.375 0 0 0 21 7.125v-1.5a.375.375 0 0 0-.375-.375h-1.5ZM21 9.375A.375.375 0 0 0 20.625 9h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5Zm0 3.75a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5a.375.375 0 0 0 .375-.375v-1.5ZM4.875 18.75a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375h1.5ZM3.375 15h1.5a.375.375 0 0 0 .375-.375v-1.5a.375.375 0 0 0-.375-.375h-1.5a.375.375 0 0 0-.375.375v1.5c0 .207.168.375.375.375Zm0-3.75h1.5a.375.375 0 0 0 .375-.375v-1.5A.375.375 0 0 0 4.875 9h-1.5A.375.375 0 0 0 3 9.375v1.5c0 .207.168.375.375.375Zm4.125 0a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5h-9Z" clip-rule="evenodd" />
+                    <label for="doc-input" type="button" class="md:py-2.5 md:px-5 p-2 me-2 mb-2 text-sm flex items-center font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-yellow-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                         </svg>
-                        <span class="ml-2">Documents</span>
+                        <span class="ml-2 md:block hidden">Documents</span>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="button" id="uploadPostBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button type="button" id="uploadPostBtn" class="md:px-4 md:py-2 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-green-500">
                     Upload Post
                 </button>
             </div>
         </form>
-    </div>
+
 </div>
 
 <!-- Post Display Section -->
 <div class="w-11/12 md:w-2/3 mx-auto">
-    <div class="flex flex-col space-y-6">
-        <?php
-        $sql = "SELECT posts.*, user.name, user.profileImage 
-                FROM posts 
-                JOIN user ON posts.user_id = user.userId 
-                ORDER BY posts.createdAt DESC";
+<div id="postsContainer" class="flex flex-col space-y-10">
 
-        $res = mysqli_query($conn, $sql);
-
-        if (mysqli_num_rows($res) == 0) {
-            echo "<p class='text-center text-gray-500 dark:text-gray-400'>No posts available.</p>";
-        } else {
-            while ($row = mysqli_fetch_assoc($res)) {
-                $id = $row['post_id'];
-                $caption = $row['capation'];
-                $createdAt = $row['createdAt'];
-                // $photos_json = $row['photos'];
-
-                $row['images'] = !empty($row['images']) ? explode(",", $row['images']) : [];
-                $photos = $row['images'];
-                $photoCount = count($photos);
-        ?>
-                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <!-- User Info -->
-                    <div class="flex items-center space-x-3">
-                        <img src="../uploads/profiles/<?= htmlspecialchars($row['profileImage']) ?>" class="w-10 h-10 object-cover rounded-full" />
-                        <div>
-                            <p class="font-semibold text-gray-900 dark:text-gray-100"><?= htmlspecialchars($row['name']) ?></p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400"><?= $createdAt ?></p>
-                        </div>
-                    </div>
-
-                    <!-- Caption -->
-                    <p class="mt-3 text-gray-700 dark:text-gray-300">
-                        <?= nl2br(htmlspecialchars($caption)) ?>
-                    </p>
-
-                    <!-- Photo Box -->
-                    <?php if ($photoCount > 0): ?>
-                        <div class="grid grid-cols-<?= min($photoCount, 2) ?> gap-1 mt-3 relative">
-                            <?php foreach ($photos as $index => $photo): ?>
-                                <?php if ($index < 4): ?>
-                                    <a href="javascript:void(0);" onclick="openGallery(<?= htmlspecialchars(json_encode($photos)) ?>, <?= $index ?>)" class="relative">
-                                        <img src="../posts/images/<?= htmlspecialchars($photo) ?>" class="w-full h-80  object-cover rounded-lg <?= ($index == 1 && $photoCount == 1) ? ' h-96' : '' ?> <?= ($index == 3 && $photoCount > 4) ? 'opacity-50' : '' ?>" />
-                                        <?php if ($index == 3 && $photoCount > 4): ?>
-                                            <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl font-bold">
-                                                +<?= $photoCount - 4 ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Like, Comment Section -->
-                    <div class="flex justify-between items-center mt-3 text-gray-500 dark:text-gray-400">
-                        <button class="flex items-center hover:text-blue-500 transition-colors">👍<span class="ml-1">Like</span></button>
-                        <button class="flex items-center hover:text-green-500 transition-colors">💬 <span class="ml-1">Comment</span></button>
-                    </div>
-                </div>
-        <?php
-            }
-        }
-        ?>
     </div>
 </div>
 
-<!-- Fullscreen Gallery Modal -->
-<div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-80 hidden flex items-center justify-center z-50">
-    <button onclick="closeGallery()" class="absolute top-5 right-5 text-white text-2xl font-bold hover:text-gray-300 transition-colors">✕</button>
-    <button onclick="prevImage()" class="absolute left-5 text-white text-3xl font-bold hover:text-gray-300 transition-colors">◀</button>
-    <button onclick="nextImage()" class="absolute right-5 text-white text-3xl font-bold hover:text-gray-300 transition-colors">▶</button>
-    <img id="galleryImage" class="max-w-full max-h-[80vh] rounded-lg" />
+<!-- Gallery Modal -->
+<div id="galleryModal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 bg-blur">
+    <div class="relative w-full h-full flex items-center justify-center">
+        <!-- Close Button -->
+        <button type="button" onclick="closeGallery()" class="absolute top-4 right-4 text-white text-4xl transition-colors">
+            &times;
+        </button>
+
+        <!-- Save Button -->
+        <a id="saveImageButton" class="absolute bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition" download>
+            Save Image
+        </a>
+
+        <!-- Previous Button -->
+        <button type="button" onclick="prevImage()" class="absolute left-4 text-white text-2xl transition-colors">
+            &#10094;
+        </button>
+
+        <!-- Gallery Image -->
+        <img id="galleryImage" class="w-full h-full p-10 object-contain" src="" alt="Gallery Image" />
+
+        <!-- Next Button -->
+        <button type="button" onclick="nextImage()" class="absolute right-4 text-white text-2xl transition-colors">
+            &#10095;
+        </button>
+    </div>
 </div>
 
-<script src="..\Posts\Js_Post\newFeeds.js"></script>
+<script>
+    let postsGalleryImages = [];
+    let postsCurrentIndex = 0;
+
+    function setupGalleryEventListeners() {
+        document.querySelectorAll('.gallery-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                postsGalleryImages = JSON.parse(this.dataset.images);
+                postsCurrentIndex = parseInt(this.dataset.index);
+                document.getElementById("galleryModal").classList.remove("hidden");
+                updateGalleryImage();
+            });
+        });
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeGallery();
+            }
+        });
+    }
+
+    function updateGalleryImage() {
+        let imageUrl = "../posts/images/" + postsGalleryImages[postsCurrentIndex];
+        document.getElementById("galleryImage").src = imageUrl;
+
+        // Update Save Button
+        let saveButton = document.getElementById("saveImageButton");
+        saveButton.href = imageUrl;
+        saveButton.download = "image-" + postsCurrentIndex + ".jpg"; // Default file name
+    }
+
+    function closeGallery() {
+        document.getElementById("galleryModal").classList.add("hidden");
+    }
+
+    function prevImage() {
+        if (postsCurrentIndex > 0) {
+            postsCurrentIndex--;
+            updateGalleryImage();
+        }
+    }
+
+    function nextImage() {
+        if (postsCurrentIndex < postsGalleryImages.length - 1) {
+            postsCurrentIndex++;
+            updateGalleryImage();
+        }
+    }
+</script>
