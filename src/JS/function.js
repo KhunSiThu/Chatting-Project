@@ -1752,47 +1752,42 @@ async function getAllPosts() {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
 
-
                     // Parse the JSON response
                     const data = await response.json();
 
                     if (data.success) {
-
                         const comments = document.getElementById("comments" + postId);
                         comments.innerHTML = "";
                         data.comments.forEach((comment) => {
                             comments.innerHTML += `
-                            <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
-                                <div class="flex items-center justify-between">
-                                    <div class="chat chat-start">
-                                        <div class="chat-image avatar">
-                                            <div class="w-10 rounded-full">
-                                                <img alt="User profile" src="../uploads/profiles/${comment.profileImage}" />
+                                <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <div class="chat chat-start">
+                                            <div class="chat-image avatar">
+                                                <div class="w-10 rounded-full">
+                                                    <img alt="User profile" src="../uploads/profiles/${comment.profileImage}" />
+                                                </div>
+                                            </div>
+                                            <div class="chat-bubble">${comment.comment}</div>
+                                            <div class="chat-footer flex items-center gap-2">
+                                                <span>${comment.name}</span>
+                                                <time class="text-xs opacity-50">
+                                                    ${new Date(comment.createdAt).toLocaleString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true
+                            })}
+                                                </time>
                                             </div>
                                         </div>
-                                        <div class="chat-bubble">${comment.comment}</div>
-                                        <div class="chat-footer flex items-center gap-2">
-                                            <span>${comment.name}</span>
-                                            <time class="text-xs opacity-50">
-                                                ${new Date(comment.createdAt).toLocaleString('en-US', {
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    hour: 'numeric',
-                                                    minute: '2-digit',
-                                                    hour12: true
-                                                })}
-                                            </time>
-                                        </div>
+                                        <button class="reply-btn text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">5</span> Reply</button>
                                     </div>
-                                    <button class="reply-btn text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">5</span> Reply</button>
-                                </div>
-                            
-                                <div id="replyContainer${comment.comment_id}" class="replies hidden px-5 mx-4 border-l border-gray-300 ">
-
+                                
+                                    <div id="replyContainer${comment.comment_id}" class="replies hidden px-5 mx-4 border-l border-gray-300 ">
                                         <div id="replyComments" class="w-4/5 max-h-[300px] overflow-auto mx-auto mb-5">
-
                                         </div>
-
                                         <div class="flex items-center justify-between">
                                             <div class="w-8 rounded-full overflow-hidden mr-5">
                                                 <img alt="User profile" class="object-cover" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
@@ -1800,13 +1795,13 @@ async function getAllPosts() {
                                             <input type="text" class="reply-input w-full p-2 rounded-lg border" placeholder="Write a reply..." />
                                             <button class="submit-reply-btn bg-blue-500 text-white p-2 rounded-lg ml-5">Submit</button>
                                         </div>          
-                                </div>
-
-                            </div>`;
-
+                                    </div>
+                                </div>`;
                         });
 
                         const replies = document.querySelectorAll(".replies");
+
+
 
                         comments.addEventListener("click", (e) => {
                             if (e.target.classList.contains("reply-btn")) {
@@ -1815,28 +1810,20 @@ async function getAllPosts() {
                                     e.classList.add("hidden");
                                 });
                                 const replyContainer = document.getElementById("replyContainer" + commentId);
-                        
                                 replyContainer.classList.toggle("hidden");
-                        
                                 if (!replyContainer.classList.contains("hidden")) {
-
                                     const replyComments = replyContainer.querySelector("#replyComments");
-                                    const replyInput = replyContainer.querySelector(".reply-input");
-                                    const replySendBtn = replyContainer.querySelector(".submit-reply-btn");
-
                                     replyComments.innerHTML = `
-                                    <div class="text-center">
-                                        <div role="status">
-                                            <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                            </svg>
-                                            <span class="sr-only">Loading...</span>
-                                        </div>
-                                    </div>
-                                    `;
-
-                                    async function getReplyCommetns(commentId) {
+                                        <div class="text-center">
+                                            <div role="status">
+                                                <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908Z"/>
+                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.3422 4.10954 62.4127 2.27294 55.1682 2.02248C47.9236 1.77201 40.742 3.11538 34.2078 5.95658C27.6735 8.79778 21.9428 13.0453 17.6774 18.352C14.7578 22.0636 12.4053 26.2645 10.742 30.7784C9.07869 35.2922 8.13064 40.0459 8.00065 44.8606C7.87066 49.6753 8.561 54.4727 9.99401 59.0276C11.427 63.5825 13.5765 67.8251 16.3137 71.5286C19.0509 75.2322 22.3332 78.3297 26.0151 80.6322C27.9211 81.8855 30.1866 81.6454 31.746 80.002C33.3053 78.3587 33.1195 75.9935 31.2135 74.7402C28.138 72.927 25.4154 70.4621 23.1761 67.4813C21.1298 64.7184 19.5089 61.4518 18.4056 57.8331C17.3023 54.2145 16.7416 50.3019 16.7587 46.3678C16.7758 42.4338 17.3703 38.5265 18.5149 34.7796C19.6595 31.0327 21.3334 27.4879 23.4581 24.2905C27.1326 18.9647 32.1391 14.6902 37.9447 11.855C43.7503 9.01975 50.1632 7.7168 56.6142 8.06454C63.0652 8.41228 69.2979 10.3988 74.6936 13.8323C80.0894 17.2659 84.4806 22.0482 87.4846 27.8169C89.811 32.2256 91.4913 36.9912 92.4537 41.9116C93.0363 44.7424 95.468 46.6533 98.3179 46.2111Z"/>
+                                                </svg>
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </div>`;
+                                    async function getReplyComments(commentId) {
                                         try {
                                             const response = await fetch('../Controller/getReplyComment.php', {
                                                 method: 'POST',
@@ -1845,110 +1832,107 @@ async function getAllPosts() {
                                                 },
                                                 body: JSON.stringify({ id: commentId }), // Send the post ID in the request body
                                             });
-                        
+
                                             // Check if the request was successful
                                             if (!response.ok) {
                                                 throw new Error(`HTTP error! Status: ${response.status}`);
                                             }
-                        
-                        
+
                                             // Parse the JSON response
                                             const data = await response.json();
-                        
-                                            if (data.success) {
-                                                replyComments.innerHTML = ""
-                                                data.comments.forEach((e) => {
 
+                                            if (data.success) {
+                                                replyComments.innerHTML = "";
+                                                data.comments.forEach((e) => {
                                                     let chatPosition = e.userId === userId ? "chat-end" : "chat-start";
                                                     replyComments.innerHTML += `
-                                                    <div class="chat ${chatPosition}">
-                                                    <div class="chat-image avatar">
-                                                        <div class="w-8 rounded-full">
-                                                        <img
-                                                            alt="Tailwind CSS chat bubble component"
-                                                            src="../uploads/profiles/${e.profileImage}" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="chat-header">
-                                                        ${e.name}
-                                                        <time class="text-xs opacity-50">
-                                                            ${new Date(e.createdAt).toLocaleString('en-US', {
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                hour: 'numeric',
-                                                                minute: '2-digit',
-                                                                hour12: true
-                                                            })}
-                                                        </time>
-                                                    </div>
-                                                    <div class="chat-bubble">${e.comment}</div>
-                                                    <div class="chat-footer opacity-50">Delivered</div>
-                                                    </div>
-                                                `
-                                                })
-                                                
+                                                        <div class="chat ${chatPosition}">
+                                                            <div class="chat-image avatar">
+                                                                <div class="w-8 rounded-full">
+                                                                    <img alt="Tailwind CSS chat bubble component" src="../uploads/profiles/${e.profileImage}" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-header">
+                                                                ${e.name}
+                                                                <time class="text-xs opacity-50">
+                                                                    ${new Date(e.createdAt).toLocaleString('en-US', {
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        hour: 'numeric',
+                                                        minute: '2-digit',
+                                                        hour12: true
+                                                    })}
+                                                                </time>
+                                                            </div>
+                                                            <div class="chat-bubble">${e.comment}</div>
+                                                            <div class="chat-footer opacity-50">Delivered</div>
+                                                        </div>`;
+                                                });
                                             }
                                         } catch (error) {
-                                            
+                                            console.error("Error fetching replies:", error);
                                         }
                                     }
+                                    getReplyComments(commentId);
 
-                                    getReplyCommetns(commentId);
-                        
-                                    replySendBtn.addEventListener("click", () => {
-                                        const replyText = replyInput.value.trim();
-                        
-                                        if (replyText) {
-                                            // Send the reply to the server
-                                            sendReplyToServer(commentId, replyText)
-                                                .then(response => {
-                                                    if (response.success) {
-                                                        getReplyCommetns(commentId);
-                                                      
-                                                        replyInput.value = ""; // Clear the input field
-                                                        
-                                                    } else {
-                                                        alert("Failed to post reply: " + response.error);
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error("Error:", error);
-                                                    alert("An error occurred while posting the reply.");
-                                                });
-                                        } else {
-                                            alert("Please enter a reply before submitting.");
+                                                            // Function to handle reply submission
+                        async function handleReplySubmission(commentId) {
+                            const replyContainer = document.getElementById("replyContainer" + commentId);
+                            const replySendBtn = replyContainer.querySelector(".submit-reply-btn");
+                            const replyInput = replyContainer.querySelector(".reply-input");
+
+                            // Ensure the event listener is only added once
+                            if (!replySendBtn.dataset.listenerAdded) {
+                                replySendBtn.dataset.listenerAdded = true;
+
+                                replySendBtn.addEventListener("click", async () => {
+                                    const replyText = replyInput.value.trim();
+                                    if (replyText) {
+                                        try {
+                                            const response = await sendReplyToServer(commentId, replyText);
+                                            if (response.success) {
+                                                getReplyComments(commentId); // Refresh replies
+                                                replyInput.value = ""; // Clear the input field
+                                            } else {
+                                                alert("Failed to post reply: " + response.error);
+                                            }
+                                        } catch (error) {
+                                            console.error("Error sending reply:", error);
+                                            alert("An error occurred while posting the reply.");
                                         }
-                                    });
-                                }
-                            }
-                        });
-                        
-                        // Function to send the reply to the server
-                        async function sendReplyToServer(commentId, replyText) {
-                            try {
-                                const response = await fetch("../Controller/replyComment.php", {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                        id: commentId,
-                                        comment: replyText,
-                                    }),
+                                    } else {
+                                        alert("Please enter a reply before submitting.");
+                                    }
                                 });
-                        
-                                if (!response.ok) {
-                                    throw new Error("Network response was not ok");
-                                }
-                        
-                                return await response.json();
-                            } catch (error) {
-                                console.error("Error sending reply:", error);
-                                throw error;
                             }
                         }
 
+                                    // Handle reply submission
+                                    handleReplySubmission(commentId);
 
+                                    // const replySendBtn = replyContainer.querySelector(".submit-reply-btn");
+                                    // replySendBtn.addEventListener("click", async () => {
+                                    //     const replyText = replyContainer.querySelector(".reply-input").value.trim();
+                                    //     if (replyText) {
+                                    //         try {
+                                    //             const response = await sendReplyToServer(commentId, replyText);
+                                    //             if (response.success) {
+                                    //                 getReplyComments(commentId);
+                                    //                 replyContainer.querySelector(".reply-input").value = ""; // Clear the input field
+                                    //             } else {
+                                    //                 alert("Failed to post reply: " + response.error);
+                                    //             }
+                                    //         } catch (error) {
+                                    //             console.error("Error sending reply:", error);
+                                    //             alert("An error occurred while posting the reply.");
+                                    //         }
+                                    //     } else {
+                                    //         alert("Please enter a reply before submitting.");
+                                    //     }
+                                    // }, { once: true }); // Ensure the event listener is added only once
+                                }
+                            }
+                        });
 
                     } else {
                         console.error("Error fetching comments:", data.error);
@@ -1984,9 +1968,33 @@ async function getAllPosts() {
                 }
             }
 
+            // Function to send the reply to the server
+            async function sendReplyToServer(commentId, replyText) {
+                try {
+                    const response = await fetch("../Controller/replyComment.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            id: commentId,
+                            comment: replyText,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.error("Error sending reply:", error);
+                    throw error;
+                }
+            }
+
             // Event listener for the post container
             postContainer.addEventListener("click", async (e) => {
-
                 if (e.target.classList.contains("comment-btn")) {
                     const postId = parseInt(e.target.getAttribute("data-post-id"));
                     const commentContainer = document.getElementById("commentContainer" + postId);
@@ -1994,23 +2002,20 @@ async function getAllPosts() {
                     // Toggle comment container visibility
                     commentContainer.classList.toggle("hidden");
 
-
                     // Fetch comments if the container is visible
                     if (!commentContainer.classList.contains("hidden")) {
                         document.getElementById("comments" + postId).innerHTML = `
-                        <div class="text-center">
-                            <div role="status">
-                                <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                </svg>
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </div>
-                        `; // Clear existing comments
+                <div class="text-center">
+                    <div role="status">
+                        <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908Z"/>
+                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.3422 4.10954 62.4127 2.27294 55.1682 2.02248C47.9236 1.77201 40.742 3.11538 34.2078 5.95658C27.6735 8.79778 21.9428 13.0453 17.6774 18.352C14.7578 22.0636 12.4053 26.2645 10.742 30.7784C9.07869 35.2922 8.13064 40.0459 8.00065 44.8606C7.87066 49.6753 8.561 54.4727 9.99401 59.0276C11.427 63.5825 13.5765 67.8251 16.3137 71.5286C19.0509 75.2322 22.3332 78.3297 26.0151 80.6322C27.9211 81.8855 30.1866 81.6454 31.746 80.002C33.3053 78.3587 33.1195 75.9935 31.2135 74.7402C28.138 72.927 25.4154 70.4621 23.1761 67.4813C21.1298 64.7184 19.5089 61.4518 18.4056 57.8331C17.3023 54.2145 16.7416 50.3019 16.7587 46.3678C16.7758 42.4338 17.3703 38.5265 18.5149 34.7796C19.6595 31.0327 21.3334 27.4879 23.4581 24.2905C27.1326 18.9647 32.1391 14.6902 37.9447 11.855C43.7503 9.01975 50.1632 7.7168 56.6142 8.06454C63.0652 8.41228 69.2979 10.3988 74.6936 13.8323C80.0894 17.2659 84.4806 22.0482 87.4846 27.8169C89.811 32.2256 91.4913 36.9912 92.4537 41.9116C93.0363 44.7424 95.468 46.6533 98.3179 46.2111Z"/>
+                        </svg>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`; // Clear existing comments
                         await getComment(postId);
                     }
-
                 }
 
                 if (e.target.classList.contains("sendCommentBtn")) {
@@ -2031,10 +2036,7 @@ async function getAllPosts() {
                         await getComment(postId); // Refresh comments
                     }
                 }
-
-
             });
-
 
             // Event Listeners Setup
             setupGalleryEventListeners();
@@ -2080,4 +2082,3 @@ async function fetchLikeCounts() {
 
 // Call the function to fetch like counts
 fetchLikeCounts();
-
