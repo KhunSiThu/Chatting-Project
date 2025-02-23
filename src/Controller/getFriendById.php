@@ -25,25 +25,7 @@ $userId = $_SESSION['user_id'];
 $_SESSION['chooseId'] = $chooseId;
 
 // Prepare the SQL query to fetch the selected friend's details
-$query = "
-    SELECT 
-        user.userId, 
-        user.name, 
-        user.profileImage, 
-        user.status 
-    FROM 
-        friendList 
-    LEFT JOIN 
-        user 
-    ON 
-        (friendList.request = user.userId OR friendList.confirm = user.userId) 
-    WHERE 
-        ((friendList.request = $userId AND friendList.confirm = $chooseId) 
-        OR (friendList.request = $chooseId AND friendList.confirm = $userId)) 
-        AND user.userId = $chooseId 
-    ORDER BY 
-        user.name;
-";
+$query = "select * from user where userId = $chooseId";
 
 // Execute the query
 $result = mysqli_query($conn, $query);

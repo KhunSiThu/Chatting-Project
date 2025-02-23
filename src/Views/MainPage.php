@@ -53,8 +53,8 @@ if ($result && mysqli_num_rows($result) > 0) {
                     </div>
 
 
-                    <div id="newFeed" class="hs-tooltip [--placement:right] inline-block">
-                        <a href="" class="hs-tooltip-toggle p-3 md:mb-0 border-4 border-white dark:border-gray-800 md:border md:border-transparent inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-xl rounded-full  text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                    <div id="newFeedBtn" class="hs-tooltip [--placement:right] inline-block">
+                        <a href="#" class="hs-tooltip-toggle p-3 md:mb-0 border-4 border-white dark:border-gray-800 md:border md:border-transparent inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-xl rounded-full  text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-7 md:size-6">
                                 <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
                                 <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
@@ -73,17 +73,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                             <div id="reqCount" class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-1 -end-1 dark:border-gray-900">0</div>
                             <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
                                 Friends Request
-                            </span>
-                        </a>
-                    </div>
-
-                    <div id="followBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
-                            </svg>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
-                                Follow
                             </span>
                         </a>
                     </div>
@@ -118,7 +107,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 </div>
 
                 <!-- Profile Icon -->
-                <div id="userProfileBtn" class="hs-tooltip [--placement:right] md:inline-block mb-5 hidden">
+                <div id="userProfileBtn" class=" userProfileBtn hs-tooltip [--placement:right] md:inline-block mb-5 hidden">
                     <a class="hs-tooltip-toggle p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
                     <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/'.$userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="">
                         
@@ -135,8 +124,6 @@ if ($result && mysqli_num_rows($result) > 0) {
         </div>
 
         <?php require_once "../Components/chatRoom.php"; ?>
-
-        <?php require_once '../Components/userProfile.php'; ?>
 
     </main>
 

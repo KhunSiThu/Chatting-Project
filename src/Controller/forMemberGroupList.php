@@ -22,24 +22,7 @@ if (is_null($groupId) || !is_numeric($groupId)) {
 }
 
 // Prepare the SQL query to fetch friends
-$query = "
-    SELECT 
-        user.userId, 
-        user.name, 
-        user.profileImage, 
-        user.status 
-    FROM 
-        friendList 
-    LEFT JOIN 
-        user 
-    ON 
-        (friendList.request = user.userId OR friendList.confirm = user.userId) 
-    WHERE 
-        (friendList.request = $userId OR friendList.confirm = $userId) 
-        AND user.userId != $userId 
-    ORDER BY 
-        user.name;
-";
+$query = "SELECT * FROM user ORDER BY user.name";
 
 $result = mysqli_query($conn, $query);
 

@@ -1,101 +1,105 @@
-document.querySelector('body').addEventListener("click", (e) => {
-    if (e.target.classList.contains("bg-blur")) {
-        e.target.classList.add("hidden");
-    }
-});
-
-closeMenu.addEventListener("click", () => {
-    document.querySelector('.sideMenu').classList.add("-translate-x-full")
+// Event Listeners
+photoInput.addEventListener('change', handlePhotoInputChange);
+closeMenu.addEventListener("click", handleCloseMenu);
+newFeedBtn.addEventListener("click", handleNewFeedBtnClick);
+chatBoxBtn.addEventListener("click", handleChatBoxBtnClick);
+groupBtn.addEventListener("click", handleGroupBtnClick);
+userProfileBtn.forEach((btn) => {
+    btn.addEventListener('click', () => {
+        handleUserProfileClick();
+    })
 })
+searchBox.addEventListener("keyup", handleSearchBoxKeyup);
+searchItems.addEventListener("click", handleSearchItemsClick);
+searchForm.addEventListener("submit", handleSearchFormSubmit);
+createGroupBtn.addEventListener("click", handleCreateGroupBtnClick);
+cancelBtn.addEventListener("click", handleCancelBtnClick);
+nextBtn.addEventListener("click", handleNextBtnClick);
+memberName.addEventListener("keyup", handleMemberNameKeyup);
+forMemberList.addEventListener("click", handleForMemberListClick);
+closeAddMember.addEventListener("click", handleCloseAddMemberClick);
+groupProfileUpload.addEventListener("change", handleGroupProfileUploadChange);
+groupList.addEventListener("click", handleGroupListClick);
+groupSendBtn.addEventListener("click", handleGroupSendBtnClick);
+sendFilesBtn.addEventListener("click", handleSendFilesBtnClick);
+sendBtn.addEventListener("click", handleSendBtnClick);
+friendList.addEventListener("click", handleFriendListClick);
+uploadPostBtn.addEventListener('click', handleUploadPostBtnClick);
 
-chatBoxBtn.addEventListener("click", () => {
+// Functions
+function handlePhotoInputChange() {
+    previewContainer.innerHTML = '';
+    Array.from(this.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item relative';
+            div.innerHTML = `
+                <img src="${e.target.result}" class="preview-image">
+                <button type="button" class='text-red-500 absolute top-1 right-1' onclick="this.parentElement.remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function handleCloseMenu() {
+    
+    document.querySelector('.sideMenu').classList.add("-translate-x-full");
+}
+
+function handleNewFeedBtnClick() {
+    chatListContainer.classList.add("hidden");
+    chatRoomCon.classList.add("hidden");
+    userProfileShowCon.classList.add("hidden");
+    document.querySelector("#noSelect").classList.remove("hidden");
+    document.querySelector("#noSelect").classList.remove("md:hidden");
+    getAllPosts(false)
+}
+
+function handleChatBoxBtnClick() {
+    chatListContainer.classList.remove("hidden");
+
     chatItems.classList.remove("hidden");
     searchItemsCon.classList.add("hidden");
-    requestItems.classList.add("hidden");
-    followItems.classList.add("hidden");
     groupItems.classList.add("hidden");
     mainTitle.textContent = "Chat Box";
     searchBox.value = "";
+
+    document.querySelector("#noSelect").classList.add("hidden");
     document.querySelector("#createGroupBtn").classList.add("hidden");
+}
 
-    itemsContainer.classList.remove("hidden");
-});
+function handleGroupBtnClick() {
+    chatListContainer.classList.remove("hidden");
 
-requestBtn.addEventListener("click", () => {
     chatItems.classList.add("hidden");
     searchItemsCon.classList.add("hidden");
-    requestItems.classList.remove("hidden");
-    followItems.classList.add("hidden");
-    groupItems.classList.add("hidden");
-    mainTitle.textContent = "Friend Requests";
-    searchBox.value = "";
-    document.querySelector("#createGroupBtn").classList.add("hidden")
-    const requestList = document.getElementById("requestList");
-
-    itemsContainer.classList.remove("hidden");
-
-    requestList.addEventListener("click", (e) => {
-        if (e.target.matches(".confirmBtn")) {
-            const id = e.target.getAttribute("id");
-            confirmTest('../Controller/comfirmFri.php', id, e.target);
-        }
-    })
-});
-
-groupBtn.addEventListener("click", () => {
-    chatItems.classList.add("hidden");
-    searchItemsCon.classList.add("hidden");
-    requestItems.classList.add("hidden");
-    followItems.classList.add("hidden");
     groupItems.classList.remove("hidden");
     mainTitle.textContent = "Your Group";
     searchBox.value = "";
+
+    document.querySelector("#noSelect").classList.add("hidden");
     document.querySelector("#createGroupBtn").classList.remove("hidden");
+}
 
-    itemsContainer.classList.remove("hidden");
-});
-
-followBtn.addEventListener("click", () => {
-    chatItems.classList.add("hidden");
-    searchItemsCon.classList.add("hidden");
-    requestItems.classList.add("hidden");
-    followItems.classList.remove("hidden");
-    groupItems.classList.add("hidden");
-    mainTitle.textContent = "Your Requests";
-    searchBox.value = "";
-    document.querySelector("#createGroupBtn").classList.add("hidden")
-    const followList = document.getElementById("followList");
-
-    itemsContainer.classList.remove("hidden");
-
-    followList.addEventListener("click", (e) => {
-        if (e.target.matches(".requestBtn")) {
-            const id = e.target.getAttribute("id");
-            requestTest('../Controller/requestFri.php', id, e.target);
-        }
-    })
-});
-
-userProfileBtn.addEventListener("click", () => {
-    document.querySelector("#noSelect").classList.add("md:hidden");
-    userProfileShowCon.classList.remove("hidden");
+function handleUserProfileClick() {
     chatRoomCon.classList.add("hidden");
-})
-
-mobileUserProfileBtn.addEventListener("click", () => {
     userProfileShowCon.classList.remove("hidden");
-    sideBar.classList.add("hidden");
-    document.querySelector('.sideMenu').classList.add("-translate-x-full");
+    document.querySelector("#noSelect").classList.remove("hidden");
+    getAllPosts(true)
+}
 
-})
 
-
-// Toggle visibility of search results
-searchBox.addEventListener("keyup", () => {
+function handleSearchBoxKeyup() {
     const searchText = searchBox.value.trim();
 
     if (searchText) {
-
         chatItems.classList.add("hidden");
         requestItems.classList.add("hidden");
         followItems.classList.add("hidden");
@@ -103,30 +107,25 @@ searchBox.addEventListener("keyup", () => {
         groupItems.classList.add("hidden");
         mainTitle.textContent = "Search Friends";
 
-        // Clear any existing interval to avoid multiple intervals running
         if (intervalId) {
             clearInterval(intervalId);
         }
 
-        // Start a new interval to fetch real-time data every 2 seconds
         intervalId = setInterval(() => {
-            searchFriend(searchText); // Call search function
-        }, 1000); // Fetch data every 2 seconds
-
+            searchFriend(searchText);
+        }, 1000);
     } else {
         chatItems.classList.remove("hidden");
         searchItemsCon.classList.add("hidden");
         mainTitle.textContent = "Chat Box";
 
-        // Clear the interval when the search box is empty
         if (intervalId) {
             clearInterval(intervalId);
         }
     }
-});
+}
 
-// Event delegation for dynamically added buttons
-searchItems.addEventListener("click", (e) => {
+function handleSearchItemsClick(e) {
     if (e.target.matches(".requestBtn")) {
         const id = e.target.getAttribute("id");
         requestTest('../Controller/requestFri.php', id, e.target);
@@ -136,40 +135,31 @@ searchItems.addEventListener("click", (e) => {
         const id = e.target.getAttribute("id");
         confirmTest('../Controller/comfirmFri.php', id, e.target);
     }
-});
+}
 
-// Prevent form submission
-searchForm.addEventListener("submit", (e) => {
+function handleSearchFormSubmit(e) {
     e.preventDefault();
-});
+}
 
-// Group 
-
-// Open Modal
-createGroupBtn.addEventListener("click", function () {
+function handleCreateGroupBtnClick() {
     groupModal.classList.remove("hidden");
-});
+}
 
-// Close Modal
-cancelBtn.addEventListener("click", function () {
+function handleCancelBtnClick() {
     groupModal.classList.add("hidden");
     groupNameInput.value = "";
     groupProfileImage.src = "https://png.pngtree.com/png-vector/20241101/ourmid/pngtree-simple-camera-icon-with-line-png-image_14216604.png";
-});
+}
 
-// Confirm Group Creation
-nextBtn.addEventListener("click", function () {
+function handleNextBtnClick() {
     const groupName = groupNameInput.value.trim();
-    // Your original code with the custom alert
     if (groupProfileUpload.value === "") {
         showCustomAlert("<div class=' p-2 rounded'>Upload group profile!</div>");
-        return
+        return;
     }
     if (groupName === "") {
-        groupNameInput.focus()
+        groupNameInput.focus();
     } else {
-        console.log("Group Created:", groupName);
-
         const file = groupProfileUpload.files[0];
         if (!file) {
             alert("Please select an image to upload.");
@@ -201,19 +191,18 @@ nextBtn.addEventListener("click", function () {
                     getFriendByName("");
                 }
             })
-
-
+            .catch((error) => {
+                console.error("Error creating group:", error);
+            });
     }
-});
+}
 
-memberName.addEventListener("keyup", () => {
+function handleMemberNameKeyup() {
     getFriendByName(memberName.value);
-});
+}
 
-// Add Member
-forMemberList.addEventListener("click", async (e) => {
+async function handleForMemberListClick(e) {
     if (e.target.matches(".addMemberBtn")) {
-        // Get the parent 'li' element of the clicked button
         const parentLi = e.target.closest('li');
         const addId = e.target.getAttribute("id");
 
@@ -233,72 +222,76 @@ forMemberList.addEventListener("click", async (e) => {
             const data = await response.json();
             console.log("Member added successfully:", data);
 
-            parentLi.classList.add("hidden"); // Just an example class
+            parentLi.classList.add("hidden");
         } catch (error) {
             console.error("Error adding member:", error);
         }
     }
-});
+}
 
-closeAddMember.addEventListener("click", () => {
+function handleCloseAddMemberClick() {
     addMemberModal.classList.add("hidden");
-})
+}
 
-// Profile Image Upload
-groupProfileUpload.addEventListener("change", function (event) {
+function handleGroupProfileUploadChange(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = (e) => {
             groupProfileImage.src = e.target.result;
         };
         reader.readAsDataURL(file);
     } else {
-        alert("Upload group profile!")
+        alert("Upload group profile!");
     }
-});
+}
 
-// Group Chat 
-groupList.addEventListener("click", async (e) => {
+async function handleGroupListClick(e) {
     if (e.target.matches(".groupItem")) {
-
         const id = e.target.getAttribute("id");
-        await groupChat(id) // Fetch messages after selecting a friend       
+        await groupChat(id);
     }
-});
+}
 
-groupSendBtn.addEventListener("click", () => {
+function handleGroupSendBtnClick() {
     groupSendMessage();
-});
+}
 
+function handleSendFilesBtnClick() {
+    sendFiles.classList.toggle("hidden");
+}
 
-// Chat Room
-sendFilesBtn.addEventListener("click", () => {
-    if (sendFiles.classList.contains("hidden")) {
-        sendFiles.classList.remove("hidden");
-    } else {
-        sendFiles.classList.add("hidden");
-    }
-})
-
-// Event listener for the send button
-sendBtn.addEventListener("click", () => {
-
+function handleSendBtnClick() {
     sendMessage();
-});
+}
 
-// Chat Friend
-friendList.addEventListener("click", async (e) => {
+async function handleFriendListClick(e) {
     if (e.target.matches(".chatItem")) {
-
         const id = e.target.getAttribute("id");
-        await chatFriend(id) // Fetch messages after selecting a friend
+        await chatFriend(id);
+    }
+}
+
+function handleUploadPostBtnClick() {
+    uploadPost();
+}
+
+// Utility Functions
+function showCustomAlert(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'custom-alert';
+    alertDiv.innerHTML = message;
+    document.body.appendChild(alertDiv);
+    setTimeout(() => alertDiv.remove(), 3000);
+}
+
+function clearPreview() {
+    previewContainer.innerHTML = '';
+    photoInput.value = '';
+}
+
+document.querySelector('body').addEventListener("click", (e) => {
+    if (e.target.classList.contains("bg-blur")) {
+        e.target.classList.add("hidden");
     }
 });
-
-// Posts 
-
-uploadPostBtn.addEventListener('click', () => {
-
-    uploadPost();
-})

@@ -25,10 +25,9 @@ $query = "
     LEFT JOIN 
         user 
     ON 
-        (friendList.request = user.userId OR friendList.confirm = user.userId) 
+        (friendList.friend_id = user.userId) 
     WHERE 
-        (friendList.request = $userId OR friendList.confirm = $userId) 
-        AND user.userId != $userId 
+        friendList.user_id = $userId 
     ORDER BY 
         user.name;
 ";

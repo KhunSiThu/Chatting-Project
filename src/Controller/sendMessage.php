@@ -37,6 +37,7 @@ try {
     if (!mysqli_query($conn, $sql)) {
         throw new Exception("Failed to insert message: " . mysqli_error($conn));
     }
+    
     $messageId = mysqli_insert_id($conn);
 
     // File upload handling

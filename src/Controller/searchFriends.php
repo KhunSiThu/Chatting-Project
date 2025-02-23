@@ -24,12 +24,7 @@ if (empty($searchText)) {
 $searchText = mysqli_real_escape_string($conn, $searchText);
 
 // Construct the query
-$query = "SELECT user.*, 
-            (SELECT 'Request' FROM friendRequests WHERE request_id = '$userId' AND forConfirm_id = user.userId LIMIT 1) AS request_status,
-            (SELECT 'Confirm' FROM friendRequests WHERE forConfirm_id = '$userId' AND request_id = user.userId LIMIT 1) AS confirm_status,
-            (SELECT 'Friend' FROM friendList WHERE (request = '$userId' AND confirm = user.userId) OR (confirm = '$userId' AND request = user.userId) LIMIT 1) AS friend_status
-        FROM user
-        WHERE userId != '$userId' AND name LIKE '%$searchText%'";
+$query = "SELECT * FROM user WHERE userId != '$userId' AND name LIKE '%$searchText%'";
 
 $result = mysqli_query($conn, $query);
 

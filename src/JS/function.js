@@ -129,62 +129,37 @@ async function getFriendByName(name) {
     }
 }
 
-// Friend Requests
-async function friendRequests() {
+async function addFriend(friendId) {
     try {
-        const response = await fetch("../Controller/getFriendRequests.php");
+        const response = await fetch("../Controller/addFriend.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                friendId: friendId, // Ensure the key matches what the server expects
+            }),
+        });
 
+        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
-            throw new Error("Network response was not ok");
+            const errorData = await response.json(); // Parse error response if available
+            throw new Error(errorData.error || "Network response was not ok");
         }
 
+        // Parse the JSON response
         const data = await response.json();
-        requestList.innerHTML = ""; // Clear previous results
 
-        if (data.length > 0) {
-            data.forEach((friend) => {
-                const li = document.createElement("li");
-                li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
-                li.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}">
-                        </div>
-                        <div class="ml-2">
-                            <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
-                            <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
-                        </div>
-                    </div>
-                    <button type="button" id="${friend.userId}" class="confirmBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                        Confirm Request
-                    </button>
-                `;
-                requestList.appendChild(li);
-            });
+        // Check if the response contains a valid friendId
+        if (data.friendId) {
+            chatFriend(data.friendId); // Call chatFriend with the friendId
         } else {
-            const li = document.createElement("li");
-            li.className = "flex items-center justify-center w-full h-96";
-            li.innerHTML = `
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
-                    <p>No friend requests found.</p>
-                </div>
-            `;
-            requestList.appendChild(li);
+            throw new Error("Invalid response: friendId not found");
         }
-
-        return data.length;
-
     } catch (error) {
-        console.error("Error fetching friend requests:", error);
-        requestList.innerHTML = `
-            <li class="flex items-center justify-center w-full h-96">
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
-                    <p>An error occurred. Please try again later.</p>
-                </div>
-            </li>
-        `;
+        console.error("Error adding friend:", error.message);
+        // Handle the error (e.g., show a notification to the user)
+        alert("Failed to add friend: " + error.message);
     }
 }
 
@@ -246,138 +221,6 @@ async function getUserGroup() {
     }
 }
 
-
-// Friend RequestsFollow Friend
-async function followFriend() {
-    try {
-        const response = await fetch("../Controller/getFollowFriend.php");
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        followList.innerHTML = ""; // Clear previous results
-
-        if (data.length > 0) {
-            data.forEach((friend) => {
-                const li = document.createElement("li");
-                li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
-                li.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <img class="w-12 h-12 object-cover rounded-full" src="../uploads/profiles/${friend.profileImage}" alt="${friend.name}">
-                        </div>
-                        <div class="ml-2">
-                            <h4 class="font-bold text-black dark:text-white">${friend.name}</h4>
-                            <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
-                        </div>
-                    </div>
-                    <button type="button" id="${friend.userId}" class="requestBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                        Friend Request
-                    </button>
-                `;
-                followList.appendChild(li);
-            });
-        } else {
-            const li = document.createElement("li");
-            li.className = "flex items-center justify-center w-full h-96";
-            li.innerHTML = `
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-magnifying-glass text-4xl mb-5"></i>
-                    <p>Search Your Friends!</p>
-                </div>
-            `;
-            followList.appendChild(li);
-        }
-
-        return data.length;
-    } catch (error) {
-        console.error("Error fetching friend requests:", error);
-        followList.innerHTML = `
-            <li class="flex items-center justify-center w-full h-96">
-                <div class="flex flex-col justify-center items-center text-slate-500 dark:text-slate-300">
-                    <i class="fa-solid fa-exclamation-triangle text-4xl mb-5"></i>
-                    <p>An error occurred. Please try again later.</p>
-                </div>
-            </li>
-        `;
-    }
-}
-
-// Handle friend request action
-async function requestTest(action, id, button) {
-    try {
-        // button.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i>`;
-
-        const response = await fetch(action, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                id
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-
-        // Update button state based on response
-        if (data.success) {
-            button.textContent = "Request Sent";
-            button.classList.remove("bg-blue-100", "hover:bg-blue-200");
-            button.classList.add("bg-green-100", "hover:bg-green-200", "text-green-800");
-        } else {
-            button.textContent = "Add Friend";
-            alert(data.message || "Failed to send friend request.");
-        }
-    } catch (error) {
-        console.error("Error sending friend request:", error);
-        button.textContent = "Add Friend";
-        alert("An error occurred. Please try again later.");
-    }
-}
-
-async function confirmTest(action, id, button) {
-    try {
-        // button.innerHTML = `<i class="fa-solid fa-spinner fa-spin-pulse"></i>`;
-
-        const response = await fetch(action, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                id
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-
-        // Update button state based on response
-        if (data.success) {
-            button.textContent = "Unfriend";
-            button.classList.remove("bg-blue-100", "hover:bg-blue-200");
-            button.classList.add("bg-green-100", "hover:bg-green-200", "text-green-800");
-        } else {
-            button.textContent = "Confirm";
-            alert(data.message || "Failed to send friend confirm.");
-        }
-    } catch (error) {
-        console.error("Error sending friend confirm:", error);
-        button.textContent = "Confirm";
-        alert("An error occurred. Please try again later.");
-    }
-}
-
 // Function to search friends
 async function searchFriend(searchText) {
     try {
@@ -400,20 +243,6 @@ async function searchFriend(searchText) {
 
         if (data.length > 0) {
             data.forEach((friend) => {
-                let actionBtn = "Add Friend";
-                let controllBtn = "requestBtn";
-
-                if (friend.friend_status === "Friend") {
-                    actionBtn = "Unfriends";
-                    controllBtn = "confirmBtn";
-                } else if (friend.request_status === "Request") {
-                    actionBtn = "Request Sent";
-                    controllBtn = "requestBtn";
-                } else if (friend.confirm_status === "Confirm") {
-                    actionBtn = "Confirm Request";
-                    controllBtn = "confirmBtn";
-                }
-
                 const li = document.createElement("li");
                 li.className = "p-3 rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-900 flex items-center justify-between";
                 li.innerHTML = `
@@ -426,12 +255,20 @@ async function searchFriend(searchText) {
                             <span class="text-xs opacity-50 text-gray-700 dark:text-gray-300">${friend.status}</span>
                         </div>
                     </div>
-                    <button type="button" id="${friend.userId}" class="p-2 ${controllBtn} inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
-                        ${actionBtn}
+                    <button type="button" id="${friend.userId}" class="chatBtn p-2 inline-flex items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:hover:bg-blue-900">
+                        Chat Now
                     </button>
                 `;
                 searchItems.appendChild(li);
             });
+
+            const chatBtn = document.querySelectorAll(".chatBtn");
+            chatBtn.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    let id = btn.getAttribute('id');
+                    addFriend(id);
+                })
+            })
         } else {
             const li = document.createElement("li");
             li.className = "flex items-center justify-center w-full h-96";
@@ -742,8 +579,7 @@ const chatFriend = async (chooseId) => {
     // Controll
     sideBar.classList.add("hidden");
     document.querySelector("#chatRoomCon").classList.remove("hidden");
-    document.querySelector("#noSelect").classList.add("md:hidden");
-    userProfileShowCon.classList.add("hidden");
+    document.querySelector("#noSelect").classList.add("hidden");
 
 
     document.querySelector("#closeChat").addEventListener("click", () => {
@@ -1266,13 +1102,12 @@ const groupChat = async (chooseId) => {
     // Control visibility of chat elements
     sideBar.classList.add("hidden");
     document.querySelector("#chatRoomCon").classList.remove("hidden");
-    document.querySelector("#noSelect").classList.add("md:hidden");
-    userProfileShowCon.classList.add("hidden");
+    document.querySelector("#noSelect").classList.add("hidden");
 
     document.querySelector("#closeChat").addEventListener("click", () => {
         sideBar.classList.remove("hidden");
         document.querySelector("#chatRoomCon").classList.add("hidden");
-        document.querySelector("#noSelect").classList.add("md:flex");
+        document.querySelector("#noSelect").classList.add("flex");
     });
 };
 
@@ -1280,7 +1115,7 @@ function openImageModal(imageSrc) {
     const modal = `
         <div id="openImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-lg" onclick="closeImageModal()">
             <div class="relative w-full h-full flex items-center justify-center">
-                <img src="../Controller/uploads/images/${imageSrc}" alt="Enlarged Image" class="max-w-full max-h-full object-contain p-3 md:p-10">
+                <img src="../uploads/images/${imageSrc}" alt="Enlarged Image" class="max-w-full max-h-full object-contain p-3 md:p-10">
                 <button onclick="closeImageModal()" class="absolute top-4 right-4 bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -1397,7 +1232,6 @@ async function sendMessage() {
     }
 }
 
-
 // Function to send a message
 async function groupSendMessage() {
     const messageInput = document.getElementById("sendMessage");
@@ -1463,34 +1297,46 @@ async function groupSendMessage() {
     }
 }
 
+// Modularized Functions
+
+// ======================== UPLOAD POST ========================
 async function uploadPost() {
+    // Get file inputs
     const fileInputs = {
         images: document.getElementById("photo-input"),
         documents: document.getElementById("doc-input"),
         videos: document.getElementById("video-input"),
     };
 
+    // Initialize FormData object
     const formData = new FormData();
+
+    // Get the caption input
     const caption = document.getElementById("caption");
 
+    // File size limits (in bytes)
     const FILE_LIMITS = {
         images: { maxSize: 5 * 1024 * 1024, maxCount: 10, field: "image_files[]" },
         documents: { maxSize: 10 * 1024 * 1024, maxCount: 10, field: "document_files[]" },
         videos: { maxSize: 100 * 1024 * 1024, maxCount: 1, field: "video_files[]" },
     };
 
+    // Append caption if it exists
     if (caption && caption.value.trim()) {
         formData.append("caption", caption.value.trim());
     }
 
+    // Validate and append files
     for (const [key, input] of Object.entries(fileInputs)) {
         if (!input || !input.files || input.files.length === 0) continue;
 
+        // Check if the number of files exceeds the limit
         if (input.files.length > FILE_LIMITS[key].maxCount) {
             alert(`You can upload a maximum of ${FILE_LIMITS[key].maxCount} ${key}.`);
             return;
         }
 
+        // Check if any file exceeds the size limit
         for (const file of input.files) {
             if (file.size > FILE_LIMITS[key].maxSize) {
                 alert(`${key.charAt(0).toUpperCase() + key.slice(1)} ${file.name} exceeds the maximum size of ${FILE_LIMITS[key].maxSize / (1024 * 1024)}MB.`);
@@ -1500,12 +1346,14 @@ async function uploadPost() {
         }
     }
 
+    // If no caption and no files, return
     if (!formData.has("caption") && !Object.values(FILE_LIMITS).some(limit => formData.has(limit.field))) {
         alert("Please provide a caption or upload at least one file.");
         return;
     }
 
     try {
+        // Send the form data to the server
         const response = await fetch("../Controller/uploadPost.php", {
             method: "POST",
             body: formData,
@@ -1514,10 +1362,19 @@ async function uploadPost() {
         if (!response.ok) throw new Error(`Network error: ${response.statusText}`);
 
         const data = await response.json();
+
         if (data.success) {
-            document.querySelector("#uploadPostForm")?.reset();
-            getAllPosts();
-            document.querySelector('#previewContainer').innerHTML = '';
+            // Reset the form
+            const form = document.querySelector("#uploadPostForm");
+            if (form) form.reset();
+
+            // Refresh the posts
+            await getAllPosts();
+
+            // Clear the preview container
+            previewContainer.innerHTML = '';
+
+            console.log("Post uploaded successfully!");
         } else {
             throw new Error(data.error || "Failed to upload post.");
         }
@@ -1527,17 +1384,264 @@ async function uploadPost() {
     }
 }
 
+function createImageGallery(images) {
+    return `
+        <div class="grid grid-cols-${Math.min(images.length, 2)} gap-1 mt-3 relative">
+            ${images.slice(0, 4).map((photo, index) => `
+                <a href="javascript:void(0);" data-images='${JSON.stringify(images)}' data-index='${index}' class="gallery-trigger relative">
+                    <img src="../posts/images/${photo}" class="w-full object-cover rounded-lg ${images.length === 1 ? 'md:h-[600px] h-[220px]' : 'md:h-80 h-32 '} ${index === 3 && images.length > 4 ? 'opacity-50' : ''}" />
+                    ${index === 3 && images.length > 4 ? `
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl font-bold">
+                            +${images.length - 4}
+                        </div>
+                    ` : ''}
+                </a>
+            `).join('')}
+        </div>
+    `;
+}
+
+function setupGalleryEventListeners() {
+    // Add event listeners to all gallery triggers
+    document.querySelectorAll('.gallery-trigger').forEach(trigger => {
+        trigger.addEventListener('click', function () {
+            // Parse the images and current index from the data attributes
+            const images = JSON.parse(this.dataset.images);
+            const currentIndex = parseInt(this.dataset.index);
+
+            // Open the gallery modal
+            openGallery(images, currentIndex);
+        });
+    });
+
+    // Close the gallery when the escape key is pressed
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeGallery();
+        }
+    });
+
+    // Add event listeners for gallery navigation buttons
+    document.getElementById("prevImageButton")?.addEventListener("click", prevImage);
+    document.getElementById("nextImageButton")?.addEventListener("click", nextImage);
+    document.getElementById("closeGalleryButton")?.addEventListener("click", closeGallery);
+}
+
+let galleryImages = []; // Array to store gallery images
+let currentImageIndex = 0; // Current index of the displayed image
+
+// Open the gallery modal
+function openGallery(images, index) {
+    galleryImages = images;
+    currentImageIndex = index;
+    document.getElementById("galleryModal").classList.remove("hidden");
+    updateGalleryImage();
+}
+
+// Close the gallery modal
+function closeGallery() {
+    document.getElementById("galleryModal").classList.add("hidden");
+}
+
+// Update the displayed image in the gallery
+function updateGalleryImage() {
+    const imageUrl = `../posts/images/${galleryImages[currentImageIndex]}`;
+    document.getElementById("galleryImage").src = imageUrl;
+
+    // Update the save button
+    const saveButton = document.getElementById("saveImageButton");
+    saveButton.href = imageUrl;
+    saveButton.download = `image-${currentImageIndex}.jpg`;
+}
+
+// Navigate to the previous image
+function prevImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        updateGalleryImage();
+    }
+}
+
+// Navigate to the next image
+function nextImage() {
+    if (currentImageIndex < galleryImages.length - 1) {
+        currentImageIndex++;
+        updateGalleryImage();
+    }
+}
+
+function setupEventListeners() {
+    // Handle comment button clicks
+    document.querySelectorAll('.comment-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const postId = button.dataset.postId;
+            const commentContainer = document.getElementById(`commentContainer${postId}`);
+            commentContainer.classList.toggle('hidden');
+
+            if (!commentContainer.classList.contains('hidden')) {
+                await getComment(postId);
+            }
+        });
+    });
+
+    // Handle send comment button clicks
+    document.querySelectorAll('.sendCommentBtn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const postId = button.getAttribute('post-id');
+            const commentInput = document.getElementById(`comment${postId}`);
+            const comment = commentInput.value.trim();
+
+            if (comment === "") {
+                alert("Comment cannot be empty!");
+                return;
+            }
+
+            const success = await sendComment(postId, comment);
+
+            if (success) {
+                commentInput.value = "";
+                await getComment(postId);
+            }
+        });
+    });
+
+    // Handle reply button clicks (event delegation)
+    document.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('reply-btn')) {
+            const commentId = e.target.getAttribute('id');
+            const replyContainer = document.getElementById(`replyContainer${commentId}`);
+            replyContainer.classList.toggle('hidden');
+
+            if (!replyContainer.classList.contains('hidden')) {
+                await getReplyComments(commentId);
+            }
+        }
+
+        // Handle submit reply button clicks (event delegation)
+        if (e.target.classList.contains('submit-reply-btn')) {
+            const replyContainer = e.target.closest('.replies');
+            const commentId = replyContainer.id.replace('replyContainer', '');
+            const replyInput = replyContainer.querySelector('.reply-input');
+            const replyText = replyInput.value.trim();
+
+            if (replyText === "") {
+                alert("Reply cannot be empty!");
+                return;
+            }
+
+            const success = await sendReply(commentId, replyText);
+
+            if (success) {
+                replyInput.value = "";
+                await getReplyComments(commentId);
+            }
+        }
+    });
+
+    // Setup gallery event listeners
+    setupGalleryEventListeners();
+}
+
+function createVideoElement(video) {
+    return `
+        <div class="grid grid-cols-1 gap-1 mt-3 relative">
+            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='' class="gallery-trigger relative">
+                <video  class="w-full object-cover rounded-lg">
+                    <source src="../posts/videos/${video}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </a>
+        </div>
+    `;
+}
+
+function createPostElement(post) {
+    const postElement = document.createElement('div');
+    postElement.className = 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow';
+
+    const userInfo = `
+        <div class="flex items-center md:space-x-3 space-x-1">
+            <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
+            <div>
+                <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">${post.createdAt}</p>
+            </div>
+        </div>
+    `;
+
+    const caption = `
+        <p class="my-5 text-gray-800 dark:text-gray-200">
+            ${post.caption.replace(/\n/g, '<br>')}
+        </p>
+    `;
+
+    let mediaContent = '';
+    if (post.images.length > 0) {
+        mediaContent = createImageGallery(post.images);
+    } else if (post.videos.length > 0) {
+        mediaContent = createVideoElement(post.videos[0]);
+    } else if (post.files.length > 0) {
+        mediaContent = createFileElements(post.files);
+    }
+
+    const likeCommentSection = createLikeCommentSection(post.post_id);
+
+    postElement.innerHTML = userInfo + caption + mediaContent + likeCommentSection;
+    return postElement;
+}
+
+function createFileElements(files) {
+    return `
+        <div class="grid md:grid-cols-2 gap-3">
+            ${files.map(file => {
+                const ext = file.split('.').pop().toLowerCase();
+                const filePath = `../posts/documents/${file}`;
+                const fileIcon = {
+                    'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+                    'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+                    'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+                    'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+                    'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+                    'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+                    'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
+                    'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
+                }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
+
+                return `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow">
+                        <div class="flex items-center gap-3">
+                            <img class="md:w-20 w-8" src="${fileIcon}" alt="">
+                            <a href="${filePath}" target="_blank" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">${file}</a>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="${filePath}" download 
+                                class="flex items-center gap-2 px-5 py-2 text-sm text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-transform transform hover:scale-105  active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
 async function addLike(id) {
     try {
         const response = await fetch('../Controller/addLike.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: id }),
         });
 
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
+        console.log('Server response:', data);
+
         if (data.success) {
             fetchLikeCounts();
         } else {
@@ -1549,145 +1653,102 @@ async function addLike(id) {
     }
 }
 
-async function getAllPosts() {
+async function getAllPosts(userId) {
     try {
-        const response = await fetch('../Controller/getAllPosts.php');
-        const posts = await response.json();
-        renderPosts(posts);
+        const postContainer = document.querySelector('#postsContainer');
+        postContainer.innerHTML = '';
+
+        if(userId) {
+            const response = await fetch('../Controller/getUserPosts.php');
+            const posts = await response.json();
+    
+            if (posts.length === 0) {
+                postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
+                return;
+            }
+    
+            await posts.forEach(post => {
+                const postElement = createPostElement(post);
+                postContainer.appendChild(postElement);
+            });
+        } else {
+            const response = await fetch('../Controller/getAllPosts.php');
+            const posts = await response.json();
+    
+            if (posts.length === 0) {
+                postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
+                return;
+            }
+    
+            await posts.forEach(post => {
+                const postElement = createPostElement(post);
+                postContainer.appendChild(postElement);
+            });
+        }
+
+
+        // Reattach event listeners after rendering posts
+        setupEventListeners();
+
     } catch (error) {
         console.error('Error fetching posts:', error);
     }
 }
 
-function renderPosts(posts) {
-    const postContainer = document.querySelector('#postsContainer');
-    postContainer.innerHTML = posts.length === 0 
-        ? '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>'
-        : posts.map(post => createPostElement(post)).join('');
-    setupEventListeners();
-}
 
 function createPostElement(post) {
-    return `
-        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            ${createUserInfo(post)}
-            ${createCaption(post)}
-            ${createMediaContent(post)}
-            ${createLikeCommentSection(post)}
-        </div>`;
-}
+    const postElement = document.createElement('div');
+    postElement.className = 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow';
 
-function createUserInfo(post) {
-    return `
+    const userInfo = `
         <div class="flex items-center md:space-x-3 space-x-1">
             <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
             <div>
                 <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
                 <p class="text-sm text-gray-500 dark:text-gray-400">${post.createdAt}</p>
             </div>
-        </div>`;
-}
+        </div>
+    `;
 
-function createCaption(post) {
-    return `
+    const caption = `
         <p class="my-5 text-gray-800 dark:text-gray-200">
             ${post.caption.replace(/\n/g, '<br>')}
-        </p>`;
-}
+        </p>
+    `;
 
-function createMediaContent(post) {
+    let mediaContent = '';
     if (post.images.length > 0) {
-        return createImageGrid(post.images);
+        mediaContent = createImageGallery(post.images);
     } else if (post.videos.length > 0) {
-        return createVideoPlayer(post.videos[0]);
+        mediaContent = createVideoElement(post.videos[0]);
     } else if (post.files.length > 0) {
-        return createFileList(post.files);
+        mediaContent = createFileElements(post.files);
     }
-    return '';
+
+    const likeCommentSection = createLikeCommentSection(post.post_id);
+
+    postElement.innerHTML = userInfo + caption + mediaContent + likeCommentSection;
+    return postElement;
 }
 
-function createImageGrid(images) {
-    return `
-        <div class="grid grid-cols-${Math.min(images.length, 2)} gap-1 mt-3 relative">
-            ${images.slice(0, 4).map((photo, index) => `
-                <a href="javascript:void(0);" data-images='${JSON.stringify(images)}' data-index='${index}' class="gallery-trigger relative">
-                    <img src="../posts/images/${photo}" class="w-full object-cover rounded-lg ${images.length === 1 ? 'md:h-[600px] h-[220px]' : 'md:h-80 h-32'} ${index === 3 && images.length > 4 ? 'opacity-50' : ''}" />
-                    ${index === 3 && images.length > 4 ? `
-                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl font-bold">
-                            +${images.length - 4}
-                        </div>
-                    ` : ''}
-                </a>
-            `).join('')}
-        </div>`;
-}
-
-function createVideoPlayer(video) {
-    return `
-        <div class="grid grid-cols-1 gap-1 mt-3 relative">
-            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='0' class="gallery-trigger relative">
-                <video controls class="w-full object-cover rounded-lg">
-                    <source src="../posts/videos/${video}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </a>
-        </div>`;
-}
-
-function createFileList(files) {
-    return `
-        <div class="grid md:grid-cols-2 gap-3">
-            ${files.map(file => createFileItem(file)).join('')}
-        </div>`;
-}
-
-function createFileItem(file) {
-    const ext = file.split('.').pop().toLowerCase();
-    const filePath = `../posts/documents/${file}`;
-    const fileIcon = {
-        'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-        'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-        'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-        'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-        'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-        'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-        'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
-        'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
-    }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
-
-    return `
-        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow">
-            <div class="flex items-center gap-3">
-                <img class="md:w-20 w-8" src="${fileIcon}" alt="">
-                <a href="${filePath}" target="_blank" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">${file}</a>
-            </div>
-            <div class="flex gap-2">
-                <a href="${filePath}" download class="flex items-center gap-2 px-5 py-2 text-sm text-gray-800 dark:text-gray-200 font-medium rounded-lg transition-transform transform hover:scale-105 active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                </a>
-            </div>
-        </div>`;
-}
-
-function createLikeCommentSection(post) {
+function createLikeCommentSection(postId) {
     return `
         <div class="flex items-center mt-8 mb-3 text-gray-500 dark:text-gray-400">
-            <button type="button" onclick="addLike(${post.post_id})" id="like-btn-${post.post_id}" class="like-btn flex items-center transition-colors" data-post-id="${post.post_id}">
+            <button type="button" onclick="addLike(${postId})" id="like-btn-${postId}" class="like-btn flex items-center transition-colors" data-post-id="${postId}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                     <path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.777ZM2.331 10.727a11.969 11.969 0 0 0-.831 4.398 12 12 0 0 0 .52 3.507C2.28 19.482 3.105 20 3.994 20H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 0 1-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227Z" />
                 </svg>
-                <span id="like-count-${post.post_id}" class="ml-1"></span>
+                <span id="like-count-${postId}" class="ml-1"></span>
             </button>
-            <button class="comment-btn ml-5 flex items-center transition-colors" data-post-id="${post.post_id}">
+            <button class="comment-btn ml-5 flex items-center transition-colors" data-post-id="${postId}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 pointer-events-none">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                 </svg>
                 <span class="ml-1 pointer-events-none">Comments</span>
             </button>
         </div>
-        <div id="commentContainer${post.post_id}" class="w-full hidden pt-5 relative border-t border-gray-500">
+
+        <div id="commentContainer${postId}" class="w-full hidden pt-5 relative border-t border-gray-500">
             <form class="py-5">
                 <label for="comment" class="sr-only">Your comment</label>
                 <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
@@ -1696,8 +1757,9 @@ function createLikeCommentSection(post) {
                             <img alt="User profile" class="object-cover" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
                         </div>
                     </button>
-                    <textarea id="comment${post.post_id}" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
-                    <button type="button" post-id=${post.post_id} class="sendCommentBtn inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+
+                    <textarea id="comment${postId}" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+                    <button type="button" post-id=${postId} class="sendCommentBtn inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
                         <svg class="w-5 pointer-events-none h-5 rotate-45 rtl:-rotate-45" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                             <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z"/>
                         </svg>
@@ -1705,55 +1767,40 @@ function createLikeCommentSection(post) {
                     </button>
                 </div>
             </form>
-            <div id="comments${post.post_id}" class="flex flex-col rounded gap-3 max-h-[600px] overflow-auto"></div>
-        </div>`;
+
+            <div id="comments${postId}" class="flex flex-col rounded gap-3 max-h-[600px] overflow-auto">
+            </div>
+        </div>
+    `;
 }
 
-function setupEventListeners() {
-    document.querySelector('#postsContainer').addEventListener('click', async (e) => {
-        if (e.target.classList.contains('comment-btn')) {
-            const postId = e.target.getAttribute('data-post-id');
-            toggleCommentSection(postId);
-        } else if (e.target.classList.contains('sendCommentBtn')) {
-            const postId = e.target.getAttribute('post-id');
-            await handleCommentSubmission(postId);
-        }
-    });
-}
-
-async function toggleCommentSection(postId) {
-    const commentContainer = document.getElementById(`commentContainer${postId}`);
-    commentContainer.classList.toggle('hidden');
-    if (!commentContainer.classList.contains('hidden')) {
-        await getComments(postId);
-    }
-}
-
-async function getComments(postId) {
+async function getComment(postId) {
     try {
         const response = await fetch('../Controller/getComment.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ id: postId }),
         });
 
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
+
         if (data.success) {
-            renderComments(postId, data.comments);
+            const comments = document.getElementById(`comments${postId}`);
+            comments.innerHTML = "";
+            data.comments.forEach(comment => {
+                comments.innerHTML += createCommentElement(comment);
+            });
         } else {
-            throw new Error(data.error || "Failed to fetch comments.");
+            console.error("Error fetching comments:", data.error);
         }
     } catch (error) {
-        console.error('Error fetching comments:', error);
-        alert('Failed to fetch comments. Please try again.');
+        console.error("Error:", error);
+        alert("Failed to fetch comments. Please try again.");
     }
-}
-
-function renderComments(postId, comments) {
-    const commentsContainer = document.getElementById(`comments${postId}`);
-    commentsContainer.innerHTML = comments.map(comment => createCommentElement(comment)).join('');
 }
 
 function createCommentElement(comment) {
@@ -1780,10 +1827,12 @@ function createCommentElement(comment) {
                         </time>
                     </div>
                 </div>
-                <button class="reply-btn text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">5</span> Reply</button>
+                <button class="reply-btn text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">Reply</span></button>
             </div>
+        
             <div id="replyContainer${comment.comment_id}" class="replies hidden px-5 mx-4 border-l border-gray-300 ">
-                <div id="replyComments" class="w-4/5 max-h-[300px] overflow-auto mx-auto mb-5"></div>
+                <div id="replyComments${comment.comment_id}" class="w-4/5 max-h-[300px] overflow-auto mx-auto mb-5">
+                </div>
                 <div class="flex items-center justify-between">
                     <div class="w-8 rounded-full overflow-hidden mr-5">
                         <img alt="User profile" class="object-cover" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
@@ -1795,35 +1844,168 @@ function createCommentElement(comment) {
         </div>`;
 }
 
-async function handleCommentSubmission(postId) {
-    const commentInput = document.getElementById(`comment${postId}`);
-    const comment = commentInput.value.trim();
-
-    if (!comment) {
-        alert('Comment cannot be empty!');
-        return;
-    }
-
+async function sendComment(postId, comment) {
     try {
-        const response = await fetch('../Controller/sendComment.php', {
+        const response = await fetch("../Controller/sendComment.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id: postId, comment: comment })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            return true; // Comment sent successfully
+        } else {
+            throw new Error(data.error || "Failed to send comment.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to send comment. Please try again.");
+        return false;
+    }
+}
+
+async function sendReply(commentId, replyText) {
+    try {
+        const response = await fetch("../Controller/replyComment.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: commentId, comment: replyText }),
+        });
+
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error sending reply:", error);
+        throw error;
+    }
+}
+
+async function getReplyComments(commentId) {
+    try {
+        const response = await fetch('../Controller/getReplyComment.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: postId, comment }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: commentId }),
         });
 
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
+
         if (data.success) {
-            commentInput.value = '';
-            await getComments(postId);
-        } else {
-            throw new Error(data.error || "Failed to send comment.");
+            const replyComments = document.getElementById(`replyComments${commentId}`);
+            replyComments.innerHTML = "";
+            data.comments.forEach(reply => {
+                replyComments.innerHTML += `
+                    <div class="chat ${reply.userId === userId ? "chat-end" : "chat-start"}">
+                        <div class="chat-image avatar">
+                            <div class="w-8 rounded-full">
+                                <img alt="User profile" src="../uploads/profiles/${reply.profileImage}" />
+                            </div>
+                        </div>
+                        <div class="chat-header">
+                            ${reply.name}
+                            <time class="text-xs opacity-50">
+                                ${new Date(reply.createdAt).toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true
+                                })}
+                            </time>
+                        </div>
+                        <div class="chat-bubble">${reply.comment}</div>
+                        <div class="chat-footer opacity-50">Delivered</div>
+                    </div>`;
+            });
         }
     } catch (error) {
-        console.error('Error sending comment:', error);
-        alert('Failed to send comment. Please try again.');
+        console.error("Error fetching replies:", error);
     }
+}
+
+function setupEventListeners() {
+    // Handle comment button clicks
+    document.querySelectorAll('.comment-btn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const postId = button.dataset.postId;
+            const commentContainer = document.getElementById(`commentContainer${postId}`);
+            commentContainer.classList.toggle('hidden');
+
+            if (!commentContainer.classList.contains('hidden')) {
+                await getComment(postId);
+            }
+        });
+    });
+
+    // Handle send comment button clicks
+    document.querySelectorAll('.sendCommentBtn').forEach(button => {
+        button.addEventListener('click', async () => {
+            const postId = button.getAttribute('post-id');
+            const commentInput = document.getElementById(`comment${postId}`);
+            const comment = commentInput.value.trim();
+
+            if (comment === "") {
+                alert("Comment cannot be empty!");
+                return;
+            }
+
+            // Send the comment
+            const success = await sendComment(postId, comment);
+
+            if (success) {
+                commentInput.value = ""; // Clear input field
+                await getComment(postId); // Refresh comments
+            }
+        });
+    });
+
+    // Handle reply button clicks
+    document.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('reply-btn')) {
+            const commentId = e.target.getAttribute('id');
+            const replyContainer = document.getElementById(`replyContainer${commentId}`);
+            replyContainer.classList.toggle('hidden');
+
+            if (!replyContainer.classList.contains('hidden')) {
+                await getReplyComments(commentId);
+            }
+        }
+
+        // Handle submit reply button clicks
+        if (e.target.classList.contains('submit-reply-btn')) {
+            const replyContainer = e.target.closest('.replies');
+            const commentId = replyContainer.id.replace('replyContainer', '');
+            const replyInput = replyContainer.querySelector('.reply-input');
+            const replyText = replyInput.value.trim();
+
+            if (replyText === "") {
+                alert("Reply cannot be empty!");
+                return;
+            }
+
+            const success = await sendReply(commentId, replyText);
+
+            if (success) {
+                replyInput.value = "";
+                await getReplyComments(commentId);
+            }
+        }
+    });
+
+    // Setup gallery event listeners
+    setupGalleryEventListeners();
 }
 
 async function fetchLikeCounts() {
@@ -1832,27 +2014,29 @@ async function fetchLikeCounts() {
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const data = await response.json();
-        updateLikeCounts(data.likes);
+
+        // Update the UI with like counts and user likes
+        Object.entries(data.likes).forEach(([postId, likeData]) => {
+            const likeCountElement = document.getElementById(`like-count-${postId}`);
+            const likeButtonElement = document.getElementById(`like-btn-${postId}`);
+
+            if (likeCountElement) {
+                likeCountElement.innerHTML = likeData.like_count;
+            }
+
+            if (likeButtonElement) {
+                if (likeData.user_liked) {
+                    likeButtonElement.classList.add("text-blue-500"); // Change button style if liked
+                } else {
+                    likeButtonElement.classList.remove("text-blue-500");
+                }
+            }
+        });
     } catch (error) {
         console.error('Error fetching like counts:', error);
     }
 }
 
-function updateLikeCounts(likes) {
-    Object.entries(likes).forEach(([postId, likeData]) => {
-        const likeCountElement = document.getElementById(`like-count-${postId}`);
-        const likeButtonElement = document.getElementById(`like-btn-${postId}`);
+getAllPosts(false);
 
-        if (likeCountElement) {
-            likeCountElement.innerHTML = likeData.like_count;
-        }
-
-        if (likeButtonElement) {
-            likeButtonElement.classList.toggle('text-blue-500', likeData.user_liked);
-        }
-    });
-}
-
-// Initialization
-getAllPosts();
 fetchLikeCounts();
