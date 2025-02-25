@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
 }
 
 $userId = $_SESSION['user_id'];
-$groupId = $_SESSION['chooseId'];
+$groupId = $_SESSION['groupId'];
 $sendMessage = $_POST['message'] ?? '';
 
 try {

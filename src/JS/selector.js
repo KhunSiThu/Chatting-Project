@@ -13,8 +13,6 @@ const newFeedBtn = document.querySelector("#newFeedBtn");
 const chatBoxBtn = document.querySelector('#chatBoxBtn');
 const groupBtn = document.querySelector('#groupBtn');
 const closeMenu = document.querySelector("#closeMenu");
-const userProfileBtn = document.querySelectorAll(".userProfileBtn");
-const userProfileShowCon =document.getElementById('userProfileShowCon');
 
 // Group Elements
 const groupModal = document.getElementById("groupModal");
@@ -44,9 +42,16 @@ const deleteMessageBtn = document.getElementById("deleteMessageBtn");
 const sendFiles = document.getElementById("sendFiles");
 const sendFilesBtn = document.getElementById("sendFilesBtn");
 
-// Posts Elements
+// Posts & Profile Elements
 const photoInput = document.getElementById('photo-input');
 const capation = document.getElementById("capation");
 const previewContainer = document.getElementById('preview-container');
 const uploadPostBtn = document.getElementById('uploadPostBtn');
 
+const userProfileBtn = document.querySelectorAll(".userProfileBtn");
+const userProfileShowCon =document.getElementById('userProfileShowCon');
+const addCoverBtn = document.getElementById("addCoverBtn");
+const updateCoverImageModal = document.getElementById("updateCoverImageModal");
+const profileSubmitButton = document.getElementById('profileSubmitButton');
+const coverSubmitButton = document.getElementById('coverSubmitButton');
+const editUserInfoBtn = document.getElementById("editUserInfoBtn");

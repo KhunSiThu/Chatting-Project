@@ -1,3 +1,5 @@
+
+
 // Get references to the custom alert box and its elements
 const customAlertBox = document.getElementById('customAlertBox');
 const alertMessage = document.getElementById('alertMessage');
@@ -309,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Hero Section
 const chatFriend = async (chooseId) => {
+    
     const chatRoomHeader = document.querySelector("#chatRoomHeader");
 
     addMemberModal.classList.add("hidden")
@@ -1297,46 +1300,36 @@ async function groupSendMessage() {
     }
 }
 
-// Modularized Functions
-
 // ======================== UPLOAD POST ========================
+// Function to upload a post
 async function uploadPost() {
-    // Get file inputs
     const fileInputs = {
         images: document.getElementById("photo-input"),
         documents: document.getElementById("doc-input"),
         videos: document.getElementById("video-input"),
     };
 
-    // Initialize FormData object
     const formData = new FormData();
-
-    // Get the caption input
     const caption = document.getElementById("caption");
 
-    // File size limits (in bytes)
     const FILE_LIMITS = {
         images: { maxSize: 5 * 1024 * 1024, maxCount: 10, field: "image_files[]" },
         documents: { maxSize: 10 * 1024 * 1024, maxCount: 10, field: "document_files[]" },
         videos: { maxSize: 100 * 1024 * 1024, maxCount: 1, field: "video_files[]" },
     };
 
-    // Append caption if it exists
     if (caption && caption.value.trim()) {
         formData.append("caption", caption.value.trim());
     }
 
-    // Validate and append files
     for (const [key, input] of Object.entries(fileInputs)) {
         if (!input || !input.files || input.files.length === 0) continue;
 
-        // Check if the number of files exceeds the limit
         if (input.files.length > FILE_LIMITS[key].maxCount) {
             alert(`You can upload a maximum of ${FILE_LIMITS[key].maxCount} ${key}.`);
             return;
         }
 
-        // Check if any file exceeds the size limit
         for (const file of input.files) {
             if (file.size > FILE_LIMITS[key].maxSize) {
                 alert(`${key.charAt(0).toUpperCase() + key.slice(1)} ${file.name} exceeds the maximum size of ${FILE_LIMITS[key].maxSize / (1024 * 1024)}MB.`);
@@ -1346,14 +1339,12 @@ async function uploadPost() {
         }
     }
 
-    // If no caption and no files, return
     if (!formData.has("caption") && !Object.values(FILE_LIMITS).some(limit => formData.has(limit.field))) {
         alert("Please provide a caption or upload at least one file.");
         return;
     }
 
     try {
-        // Send the form data to the server
         const response = await fetch("../Controller/uploadPost.php", {
             method: "POST",
             body: formData,
@@ -1364,16 +1355,15 @@ async function uploadPost() {
         const data = await response.json();
 
         if (data.success) {
-            // Reset the form
             const form = document.querySelector("#uploadPostForm");
             if (form) form.reset();
 
-            // Refresh the posts
-            await getAllPosts();
+            await getAllPosts(false)
+            await fetchLikeCounts();
+            setupEventListeners();
 
-            // Clear the preview container
             previewContainer.innerHTML = '';
-
+            
             console.log("Post uploaded successfully!");
         } else {
             throw new Error(data.error || "Failed to upload post.");
@@ -1384,6 +1374,7 @@ async function uploadPost() {
     }
 }
 
+// Function to create an image gallery
 function createImageGallery(images) {
     return `
         <div class="grid grid-cols-${Math.min(images.length, 2)} gap-1 mt-3 relative">
@@ -1401,36 +1392,28 @@ function createImageGallery(images) {
     `;
 }
 
+// Function to setup gallery event listeners
 function setupGalleryEventListeners() {
-    // Add event listeners to all gallery triggers
     document.querySelectorAll('.gallery-trigger').forEach(trigger => {
         trigger.addEventListener('click', function () {
-            // Parse the images and current index from the data attributes
             const images = JSON.parse(this.dataset.images);
             const currentIndex = parseInt(this.dataset.index);
-
-            // Open the gallery modal
             openGallery(images, currentIndex);
         });
     });
 
-    // Close the gallery when the escape key is pressed
     document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            closeGallery();
-        }
+        if (event.key === "Escape") closeGallery();
     });
 
-    // Add event listeners for gallery navigation buttons
     document.getElementById("prevImageButton")?.addEventListener("click", prevImage);
     document.getElementById("nextImageButton")?.addEventListener("click", nextImage);
     document.getElementById("closeGalleryButton")?.addEventListener("click", closeGallery);
 }
 
-let galleryImages = []; // Array to store gallery images
-let currentImageIndex = 0; // Current index of the displayed image
+let galleryImages = [];
+let currentImageIndex = 0;
 
-// Open the gallery modal
 function openGallery(images, index) {
     galleryImages = images;
     currentImageIndex = index;
@@ -1438,23 +1421,19 @@ function openGallery(images, index) {
     updateGalleryImage();
 }
 
-// Close the gallery modal
 function closeGallery() {
     document.getElementById("galleryModal").classList.add("hidden");
 }
 
-// Update the displayed image in the gallery
 function updateGalleryImage() {
     const imageUrl = `../posts/images/${galleryImages[currentImageIndex]}`;
     document.getElementById("galleryImage").src = imageUrl;
 
-    // Update the save button
     const saveButton = document.getElementById("saveImageButton");
     saveButton.href = imageUrl;
     saveButton.download = `image-${currentImageIndex}.jpg`;
 }
 
-// Navigate to the previous image
 function prevImage() {
     if (currentImageIndex > 0) {
         currentImageIndex--;
@@ -1462,7 +1441,6 @@ function prevImage() {
     }
 }
 
-// Navigate to the next image
 function nextImage() {
     if (currentImageIndex < galleryImages.length - 1) {
         currentImageIndex++;
@@ -1470,83 +1448,12 @@ function nextImage() {
     }
 }
 
-function setupEventListeners() {
-    // Handle comment button clicks
-    document.querySelectorAll('.comment-btn').forEach(button => {
-        button.addEventListener('click', async () => {
-            const postId = button.dataset.postId;
-            const commentContainer = document.getElementById(`commentContainer${postId}`);
-            commentContainer.classList.toggle('hidden');
-
-            if (!commentContainer.classList.contains('hidden')) {
-                await getComment(postId);
-            }
-        });
-    });
-
-    // Handle send comment button clicks
-    document.querySelectorAll('.sendCommentBtn').forEach(button => {
-        button.addEventListener('click', async () => {
-            const postId = button.getAttribute('post-id');
-            const commentInput = document.getElementById(`comment${postId}`);
-            const comment = commentInput.value.trim();
-
-            if (comment === "") {
-                alert("Comment cannot be empty!");
-                return;
-            }
-
-            const success = await sendComment(postId, comment);
-
-            if (success) {
-                commentInput.value = "";
-                await getComment(postId);
-            }
-        });
-    });
-
-    // Handle reply button clicks (event delegation)
-    document.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('reply-btn')) {
-            const commentId = e.target.getAttribute('id');
-            const replyContainer = document.getElementById(`replyContainer${commentId}`);
-            replyContainer.classList.toggle('hidden');
-
-            if (!replyContainer.classList.contains('hidden')) {
-                await getReplyComments(commentId);
-            }
-        }
-
-        // Handle submit reply button clicks (event delegation)
-        if (e.target.classList.contains('submit-reply-btn')) {
-            const replyContainer = e.target.closest('.replies');
-            const commentId = replyContainer.id.replace('replyContainer', '');
-            const replyInput = replyContainer.querySelector('.reply-input');
-            const replyText = replyInput.value.trim();
-
-            if (replyText === "") {
-                alert("Reply cannot be empty!");
-                return;
-            }
-
-            const success = await sendReply(commentId, replyText);
-
-            if (success) {
-                replyInput.value = "";
-                await getReplyComments(commentId);
-            }
-        }
-    });
-
-    // Setup gallery event listeners
-    setupGalleryEventListeners();
-}
-
+// Function to create a video element
 function createVideoElement(video) {
     return `
         <div class="grid grid-cols-1 gap-1 mt-3 relative">
-            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='' class="gallery-trigger relative">
-                <video  class="w-full object-cover rounded-lg">
+            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='0' class="gallery-trigger relative">
+                <video class="w-full object-cover rounded-lg">
                     <source src="../posts/videos/${video}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -1555,6 +1462,7 @@ function createVideoElement(video) {
     `;
 }
 
+// Function to create a post element
 function createPostElement(post) {
     const postElement = document.createElement('div');
     postElement.className = 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow';
@@ -1579,7 +1487,7 @@ function createPostElement(post) {
     if (post.images.length > 0) {
         mediaContent = createImageGallery(post.images);
     } else if (post.videos.length > 0) {
-        mediaContent = createVideoElement(post.videos[0]);
+        mediaContent = createVideoElement(post.videos[0]); // Use the createVideoElement function here
     } else if (post.files.length > 0) {
         mediaContent = createFileElements(post.files);
     }
@@ -1590,6 +1498,7 @@ function createPostElement(post) {
     return postElement;
 }
 
+// Function to create file elements
 function createFileElements(files) {
     return `
         <div class="grid md:grid-cols-2 gap-3">
@@ -1627,6 +1536,8 @@ function createFileElements(files) {
     `;
 }
 
+
+// Function to add a like
 async function addLike(id) {
     try {
         const response = await fetch('../Controller/addLike.php', {
@@ -1653,84 +1564,32 @@ async function addLike(id) {
     }
 }
 
+// Function to get all posts
 async function getAllPosts(userId) {
     try {
         const postContainer = document.querySelector('#postsContainer');
         postContainer.innerHTML = '';
 
-        if(userId) {
-            const response = await fetch('../Controller/getUserPosts.php');
-            const posts = await response.json();
-    
-            if (posts.length === 0) {
-                postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
-                return;
-            }
-    
-            await posts.forEach(post => {
-                const postElement = createPostElement(post);
-                postContainer.appendChild(postElement);
-            });
-        } else {
-            const response = await fetch('../Controller/getAllPosts.php');
-            const posts = await response.json();
-    
-            if (posts.length === 0) {
-                postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
-                return;
-            }
-    
-            await posts.forEach(post => {
-                const postElement = createPostElement(post);
-                postContainer.appendChild(postElement);
-            });
+        const response = userId ? await fetch('../Controller/getUserPosts.php') : await fetch('../Controller/getAllPosts.php');
+        const posts = await response.json();
+
+        if (posts.length === 0) {
+            postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
+            return;
         }
 
+        posts.forEach(post => {
+            const postElement = createPostElement(post);
+            postContainer.appendChild(postElement);
+        });
 
-        // Reattach event listeners after rendering posts
         setupEventListeners();
-
     } catch (error) {
         console.error('Error fetching posts:', error);
     }
 }
 
-
-function createPostElement(post) {
-    const postElement = document.createElement('div');
-    postElement.className = 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow';
-
-    const userInfo = `
-        <div class="flex items-center md:space-x-3 space-x-1">
-            <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
-            <div>
-                <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">${post.createdAt}</p>
-            </div>
-        </div>
-    `;
-
-    const caption = `
-        <p class="my-5 text-gray-800 dark:text-gray-200">
-            ${post.caption.replace(/\n/g, '<br>')}
-        </p>
-    `;
-
-    let mediaContent = '';
-    if (post.images.length > 0) {
-        mediaContent = createImageGallery(post.images);
-    } else if (post.videos.length > 0) {
-        mediaContent = createVideoElement(post.videos[0]);
-    } else if (post.files.length > 0) {
-        mediaContent = createFileElements(post.files);
-    }
-
-    const likeCommentSection = createLikeCommentSection(post.post_id);
-
-    postElement.innerHTML = userInfo + caption + mediaContent + likeCommentSection;
-    return postElement;
-}
-
+// Function to create like and comment section
 function createLikeCommentSection(postId) {
     return `
         <div class="flex items-center mt-8 mb-3 text-gray-500 dark:text-gray-400">
@@ -1774,6 +1633,7 @@ function createLikeCommentSection(postId) {
     `;
 }
 
+// Function to get comments
 async function getComment(postId) {
     try {
         const response = await fetch('../Controller/getComment.php', {
@@ -1803,6 +1663,7 @@ async function getComment(postId) {
     }
 }
 
+// Function to create a comment element
 function createCommentElement(comment) {
     return `
         <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
@@ -1844,6 +1705,7 @@ function createCommentElement(comment) {
         </div>`;
 }
 
+// Function to send a comment
 async function sendComment(postId, comment) {
     try {
         const response = await fetch("../Controller/sendComment.php", {
@@ -1857,7 +1719,7 @@ async function sendComment(postId, comment) {
         const data = await response.json();
 
         if (data.success) {
-            return true; // Comment sent successfully
+            return true;
         } else {
             throw new Error(data.error || "Failed to send comment.");
         }
@@ -1868,6 +1730,7 @@ async function sendComment(postId, comment) {
     }
 }
 
+// Function to send a reply
 async function sendReply(commentId, replyText) {
     try {
         const response = await fetch("../Controller/replyComment.php", {
@@ -1888,6 +1751,7 @@ async function sendReply(commentId, replyText) {
     }
 }
 
+// Function to get reply comments
 async function getReplyComments(commentId) {
     try {
         const response = await fetch('../Controller/getReplyComment.php', {
@@ -1935,8 +1799,8 @@ async function getReplyComments(commentId) {
     }
 }
 
+// Function to setup event listeners
 function setupEventListeners() {
-    // Handle comment button clicks
     document.querySelectorAll('.comment-btn').forEach(button => {
         button.addEventListener('click', async () => {
             const postId = button.dataset.postId;
@@ -1949,7 +1813,6 @@ function setupEventListeners() {
         });
     });
 
-    // Handle send comment button clicks
     document.querySelectorAll('.sendCommentBtn').forEach(button => {
         button.addEventListener('click', async () => {
             const postId = button.getAttribute('post-id');
@@ -1961,17 +1824,15 @@ function setupEventListeners() {
                 return;
             }
 
-            // Send the comment
             const success = await sendComment(postId, comment);
 
             if (success) {
-                commentInput.value = ""; // Clear input field
-                await getComment(postId); // Refresh comments
+                commentInput.value = "";
+                await getComment(postId);
             }
         });
     });
 
-    // Handle reply button clicks
     document.addEventListener('click', async (e) => {
         if (e.target.classList.contains('reply-btn')) {
             const commentId = e.target.getAttribute('id');
@@ -1983,7 +1844,6 @@ function setupEventListeners() {
             }
         }
 
-        // Handle submit reply button clicks
         if (e.target.classList.contains('submit-reply-btn')) {
             const replyContainer = e.target.closest('.replies');
             const commentId = replyContainer.id.replace('replyContainer', '');
@@ -2004,10 +1864,10 @@ function setupEventListeners() {
         }
     });
 
-    // Setup gallery event listeners
     setupGalleryEventListeners();
 }
 
+// Function to fetch like counts
 async function fetchLikeCounts() {
     try {
         const response = await fetch('../Controller/getLikeCounts.php');
@@ -2015,7 +1875,6 @@ async function fetchLikeCounts() {
 
         const data = await response.json();
 
-        // Update the UI with like counts and user likes
         Object.entries(data.likes).forEach(([postId, likeData]) => {
             const likeCountElement = document.getElementById(`like-count-${postId}`);
             const likeButtonElement = document.getElementById(`like-btn-${postId}`);
@@ -2026,7 +1885,7 @@ async function fetchLikeCounts() {
 
             if (likeButtonElement) {
                 if (likeData.user_liked) {
-                    likeButtonElement.classList.add("text-blue-500"); // Change button style if liked
+                    likeButtonElement.classList.add("text-blue-500");
                 } else {
                     likeButtonElement.classList.remove("text-blue-500");
                 }
@@ -2037,6 +1896,205 @@ async function fetchLikeCounts() {
     }
 }
 
+// Initialize
 getAllPosts(false);
-
 fetchLikeCounts();
+
+
+// User Profile
+
+function showCoverImageChangeModal() {
+    updateCoverImageModal.classList.remove("hidden");
+}
+
+function showProfileImageChangeModal() {
+    updateProfileImageModal.classList.remove("hidden");
+}
+
+function handleCoverImageChange(event) {
+    const file = event.target.files[0];
+    const coverImage = document.getElementById('coverImage');
+    const placeholder = document.getElementById('placeholder');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            coverImage.src = e.target.result;
+            coverImage.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            coverSubmitButton.classList.remove('cursor-not-allowed', 'opacity-50');
+            coverSubmitButton.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function resetCoverImage() {
+    const fileInput = document.getElementById('fileInput');
+    const coverImage = document.getElementById('coverImage');
+    const placeholder = document.getElementById('placeholder');
+    
+    fileInput.value = "";
+    coverImage.src = "";
+    coverImage.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    coverSubmitButton.classList.add('cursor-not-allowed', 'opacity-50');
+    coverSubmitButton.disabled = true;
+}
+
+function closeCoverChangeModal() {
+    document.getElementById('updateCoverImageModal').classList.add('hidden');
+}
+
+function handleProfileImageChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const imageUrl = URL.createObjectURL(file);
+        document.getElementById('profileImage').src = imageUrl;
+        document.getElementById('profileImage').classList.remove('hidden');
+        profileSubmitButton.classList.remove('cursor-not-allowed', 'opacity-50');
+        profileSubmitButton.disabled = false;
+    }
+}
+
+profileSubmitButton.addEventListener("click" , () => {
+    const profileFileInput = document.getElementById("profileFileInput");
+
+    const file = profileFileInput.files[0];
+    
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    fetch("../Controller/uploadProfile.php", {
+            method: "POST",
+            body: formData,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                window.location.href = "./MainPage.php"
+                // alert("Profile image uploaded successfully!");
+            } else {
+                alert("Upload failed: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred: " + error.message);
+        });
+})
+
+coverSubmitButton.addEventListener("click" , () => {
+    const coverFileInput = document.getElementById("coverFileInput");
+
+    const file = coverFileInput.files[0];
+    
+    const formData = new FormData();
+    formData.append("coverImage", file);
+
+    fetch("../Controller/uploadCover.php", {
+            method: "POST",
+            body: formData,
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                window.location.href = "./MainPage.php"
+                // alert("cover image uploaded successfully!");
+            } else {
+                alert("Upload failed: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred: " + error.message);
+        });
+})
+
+function resetCoverImage() {
+    const fileInput = document.getElementById('coverFileInput');
+    const coverImage = document.getElementById('coverImage');
+    const placeholder = document.getElementById('placeholder');
+    
+    fileInput.value = "";
+    coverImage.src = "";
+    coverImage.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    coverSubmitButton.classList.add('cursor-not-allowed', 'opacity-50');
+    coverSubmitButton.disabled = true;
+}
+
+function handleProfileImageChange(event) {
+    const file = event.target.files[0];
+    const profileImage = document.getElementById('profileImage');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            profileImage.src = e.target.result;
+            profileImage.classList.remove('hidden');
+            profileSubmitButton.classList.remove('cursor-not-allowed', 'opacity-50');
+            profileSubmitButton.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function resetProfileImage() {
+    const fileInput = document.getElementById('profileFileInput');
+    const profileImage = document.getElementById('profileImage');
+    
+    fileInput.value = "";
+    profileImage.src = "";
+    profileImage.classList.add('hidden');
+    profileSubmitButton.classList.add('cursor-not-allowed', 'opacity-50');
+    profileSubmitButton.disabled = true;
+}
+
+function closeProfileChangeModal() {
+    document.getElementById('updateProfileImageModal').classList.add('hidden');
+}
+
+function showEditUserInfo () {
+    document.getElementById('editProfileModal').classList.remove('hidden');
+}
+
+function closeEditUserInfoModal () {
+    document.getElementById('editProfileModal').classList.add('hidden');
+}
+
+document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Collect form data
+    const formData = {
+        username: document.getElementById('username').value,
+        role: document.getElementById('role').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        year: document.getElementById('year').value,
+        rollno: document.getElementById('rollno').value
+    };
+
+    // Send data to the server using fetch
+    fetch('../Controller/userUpdateInfo.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('User information updated successfully!');
+            closeEditUserInfoModal(); // Close the modal
+        } else {
+            alert('Failed to update user information: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating user information.');
+    });
+});

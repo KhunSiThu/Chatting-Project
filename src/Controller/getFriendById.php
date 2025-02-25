@@ -22,7 +22,7 @@ if (empty($chooseId) || !is_numeric($chooseId)) {
 }
 
 $userId = $_SESSION['user_id'];
-$_SESSION['chooseId'] = $chooseId;
+$_SESSION['friendId'] = $data['chooseId'];
 
 // Prepare the SQL query to fetch the selected friend's details
 $query = "select * from user where userId = $chooseId";

@@ -14,14 +14,14 @@ $allowedExtensions = [
     'mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', 'ogv', '3gp', 'mpeg'
 ];
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
+if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(["error" => "Unauthorized access"]);
     exit();
 }
 
 $sendId = $_SESSION['user_id'];
-$receiveId = $_SESSION['chooseId'];
+$receiveId = $_SESSION['friendId'];
 $message = $_POST['message'] ?? '';
 
 // Sanitize inputs

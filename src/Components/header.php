@@ -46,7 +46,7 @@
 
     .bg-blur {
         backdrop-filter: blur(3px);
-        background-color: rgba(0, 0, 0, 0.306);
+        background-color: rgba(0, 0, 0, 0.806);
     }
 
     /* Dark Mode Switch Background Color */

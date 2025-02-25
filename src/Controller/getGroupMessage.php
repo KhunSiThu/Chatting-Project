@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['chooseId'])) {
     exit();
 }
 
-$groupId = $_SESSION['chooseId'];
+$groupId = $_SESSION['groupId'];
 
 try {
     // Escape the group ID for security

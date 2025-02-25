@@ -1,14 +1,23 @@
+
+
+
 // Event Listeners
 photoInput.addEventListener('change', handlePhotoInputChange);
 closeMenu.addEventListener("click", handleCloseMenu);
 newFeedBtn.addEventListener("click", handleNewFeedBtnClick);
 chatBoxBtn.addEventListener("click", handleChatBoxBtnClick);
 groupBtn.addEventListener("click", handleGroupBtnClick);
+
+newFeedBtn.addEventListener("click", () => {
+    sessionStorage.setItem("profile",false);
+    location.reload();
+});
 userProfileBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
         handleUserProfileClick();
     })
 })
+
 searchBox.addEventListener("keyup", handleSearchBoxKeyup);
 searchItems.addEventListener("click", handleSearchItemsClick);
 searchForm.addEventListener("submit", handleSearchFormSubmit);
@@ -88,11 +97,14 @@ function handleGroupBtnClick() {
     document.querySelector("#createGroupBtn").classList.remove("hidden");
 }
 
-function handleUserProfileClick() {
+async function handleUserProfileClick() {
+    sessionStorage.setItem("profile",true);
     chatRoomCon.classList.add("hidden");
     userProfileShowCon.classList.remove("hidden");
     document.querySelector("#noSelect").classList.remove("hidden");
-    getAllPosts(true)
+    await getAllPosts(true)
+    await fetchLikeCounts();
+    setupEventListeners();
 }
 
 
@@ -295,3 +307,4 @@ document.querySelector('body').addEventListener("click", (e) => {
         e.target.classList.add("hidden");
     }
 });
+
