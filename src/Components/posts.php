@@ -2,36 +2,45 @@
 session_start();
 // $conn = mysqli_connect("localhost", "root", "", "chattingdb");
 ?>
-<!-- Sticky Header -->
-<div class="w-full flex items-center justify-between sticky top-0 left-0 z-40 h-20 bg-slate-200/95 dark:bg-gray-800/95 shadow-lg px-6 py-4 backdrop-blur-sm">
+<!-- Updated Sticky Header -->
+<div class="w-full flex items-center justify-between sticky top-0 left-0 z-40 h-20 bg-white/90 dark:bg-gray-900/95 shadow-lg px-6 py-4 backdrop-blur-md">
     <!-- Sidebar Toggle Button -->
-    <div>
-        <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-            <span class="sr-only">Open sidebar</span>
-            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <div class="md:hidden block">
+        <button type="button" onclick="openMobileSideBar()" class="inline-flex items-center p-2 text-gray-500 rounded-lg bg-gray-200 dark:text-gray-400 dark:bg-gray-800 transition-all focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
             </svg>
         </button>
     </div>
 
+
     <!-- Search Form -->
-    <form id="search-form" class="md:w-1/2 w-2/3 flex justify-between">
-        <div class="relative w-full h-11 flex items-center justify-between bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all">
-            <input name="searchText" type="search" id="default-search" class="searchBox px-4 block h-full w-full text-sm text-gray-900 bg-transparent dark:placeholder-gray-400 dark:text-white border-none focus:outline-none focus:ring-0" placeholder="Search friends..." required />
-            <button type="submit" class="w-12 h-full flex items-center justify-center bg-gray-100 dark:bg-gray-600 rounded-r-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-all">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+    <form id="search-form" class="md:w-2/6 w-4/6 flex">
+        <div class="relative w-full h-11 flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all">
+            <input name="searchText" type="search" id="searchPostsText" class="px-4 w-full h-full text-sm text-gray-900 dark:text-white bg-transparent focus:outline-none rounded" placeholder="Search posts by title or friend name ..." required />
+            <button id="searchPostsBtn" type="submit" class="w-12 h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
+                <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                 </svg>
             </button>
         </div>
     </form>
 
+    <!-- Navigation Menu -->
+    <ul id="filterPosts" class="md:flex hidden w-2/6 items-center justify-center space-x-6">
+        <li><button id="filterBtnall" class="all px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">All</button></li>
+        <li><button id="filterBtnpost" class="posts px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Posts</button></li>
+        <li><button id="filterBtnvideo" class="videos px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Videos</button></li>
+        <li><button id="filterBtndoc" class="docs px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Documents</button></li>
+    </ul>
+
     <!-- Profile Section -->
-    <div class=" userProfileBtn flex justify-between items-center">
-        <div class="p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
-            <img class="w-8 h-8 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="Profile Image">
+    <div class="md:w-1/6 flex items-center justify-end">
+        <div class="p-1 flex items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
+            <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="Profile Image">
         </div>
     </div>
+
 </div>
 
 <div id="userProfileShowCon" class="hidden w-full overflow-auto relative bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-none">
@@ -73,7 +82,7 @@ session_start();
                     <ul class="text-sm mt-3 opacity-90">
                         <?php if ($userData['year']) { ?>
                             <li class="flex items-center space-x-1">
-                                <span>Year : <b>First Year</b></span>
+                                <span>Year : <b><?= $userData['year'] ?> Year</b></span>
                             </li>
                         <?php } ?>
                         <?php if ($userData['rollNo']) { ?>
@@ -81,7 +90,7 @@ session_start();
                                 <span>Roll No : <b><?= $userData['rollNo'] ?></b></span>
                             </li>
                         <?php } ?>
-                        <?php if ($userData['rollNo']) { ?>
+                        <?php if ($userData['address']) { ?>
                             <li class="flex items-center space-x-1 mt-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -155,7 +164,7 @@ session_start();
         <h1 class="text-3xl font-extrabold text-center text-gray-800 dark:text-gray-200 mb-4">Update Your Cover Photo</h1>
         <p class="text-center text-gray-500 dark:text-gray-400 mb-6">Choose an image to personalize your profile cover.</p>
         <div class="relative w-full h-48 sm:h-64 md:h-80 lg:h-96 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-md flex items-center justify-center border-2 border-dashed border-gray-400 dark:border-gray-600">
-            <img id="coverImage" class="w-full h-full object-cover hidden" />
+            <img id="coverImage" src="../uploads/covers/<?= $userData['coverImage'] ?>" class="w-full hidden h-full object-cover " />
             <span id="placeholder" class="text-gray-500 dark:text-gray-300 text-lg font-semibold">Click below to upload</span>
             <label class="absolute bottom-4 right-4 bg-blue-600 dark:bg-blue-500 p-3 rounded-full shadow-lg cursor-pointer hover:bg-blue-700 dark:hover:bg-blue-600 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-white">
@@ -282,11 +291,11 @@ session_start();
                     <label for="year" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Year:</label>
                     <select id="year" name="year" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100">
                         <option value="">None</option>
-                        <option value="first" <?= $userData['year'] === 'first' ? 'selected' : '' ?>>First</option>
-                        <option value="second" <?= $userData['year'] === 'second' ? 'selected' : '' ?>>Second</option>
-                        <option value="third" <?= $userData['year'] === 'third' ? 'selected' : '' ?>>Third</option>
-                        <option value="fourth" <?= $userData['year'] === 'fourth' ? 'selected' : '' ?>>Fourth</option>
-                        <option value="fifth" <?= $userData['year'] === 'fifth' ? 'selected' : '' ?>>Fifth (Final)</option>
+                        <option value="First" <?= $userData['year'] === 'first' ? 'selected' : '' ?>>First</option>
+                        <option value="Second" <?= $userData['year'] === 'second' ? 'selected' : '' ?>>Second</option>
+                        <option value="Third" <?= $userData['year'] === 'third' ? 'selected' : '' ?>>Third</option>
+                        <option value="Fourth" <?= $userData['year'] === 'fourth' ? 'selected' : '' ?>>Fourth</option>
+                        <option value="Fifth" <?= $userData['year'] === 'fifth' ? 'selected' : '' ?>>Fifth (Final)</option>
                     </select>
                 </div>
 
@@ -325,7 +334,7 @@ session_start();
         </div>
 
         <!-- Image Preview Container -->
-        <div id="preview-container" class="grid grid-cols-3 gap-4 justify-between"></div>
+        <div id="preview-container" class="grid gap-4 h-full"></div>
 
         <!-- File Upload and Actions -->
         <div class="mt-4 flex items-center justify-between">

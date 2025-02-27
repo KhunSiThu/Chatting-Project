@@ -18,67 +18,64 @@ if ($result && mysqli_num_rows($result) > 0) {
         <?php require_once "../Components/mobileSideBar.php" ?>
 
         <!-- Sidebar -->
-        <div id="sidebar" class="relative flex md:flex md:h-screen md:w-auto bg-white dark:bg-gray-800 border-e border-gray-200 dark:border-gray-700 z-40">
-            <nav class="md:relative fixed bottom-0 z-40 md:h-full w-full h-20 md:w-24 flex justify-between  items-center md:flex-col bg-gray-200/90 dark:bg-gray-900/90 rounded-t-xl md:rounded-none md:bg-white md:dark:bg-gray-800 md:border-e border-t-2 border-blue-400 md:border-gray-200 md:dark:border-gray-700 ">
-                <div class="flex md:flex-col items-center justify-evenly md:justify-start gap-y-6 w-full h-full">
-                    <div class="w-full md:block hidden">
+        <div id="sidebar" class="flex  md:h-screen w-screen md:w-auto bg-white dark:bg-gray-800 border-e border-gray-200 dark:border-gray-700">
+
+            <nav id="sideBarMenu" class=" fixed md:relative hidden  z-50 h-screen w-screen md:w-24 md:flex justify-between  md:items-center md:flex-col md:bg-gray-200 dark:md:bg-gray-900  md:rounded-none ">
+                <div class="flex flex-col md:w-full w-2/3 items-center p-5 md:p-0 bg-gray-200 dark:bg-gray-900 md:bg-none justify-evenly md:justify-start gap-y-6 h-full">
+                    <div class="md:w-full w-24">
                         <img class="p-2 mx-auto" src="https://static.vecteezy.com/system/resources/thumbnails/028/754/648/small_2x/3d-purple-online-chatting-bubble-icon-for-ui-ux-web-mobile-apps-social-media-ads-designs-png.png" alt="">
                     </div>
 
-                    <!-- Sidebar Icons -->
+                    <!-- Profile Icon -->
+                    <div id="" class="userProfileBtn md:hidden w-full md:w-auto hs-tooltip [--placement:right] ">
+                        <a class="hs-tooltip-toggle w-full md:w-auto p-2 inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 " href="#">
+                            <img class="w-8" src="../images/profile.png" alt="">
+                            <span class="md:hidden">
+                                Profile
+                            </span>
+                        </a>
+                    </div>
 
-
-                    <div id="chatBoxBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 0 0-1.032-.211 50.89 50.89 0 0 0-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 0 0 2.433 3.984L7.28 21.53A.75.75 0 0 1 6 21v-4.03a48.527 48.527 0 0 1-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979Z" />
-                                <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 0 0 1.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0 0 15.75 7.5Z" />
-                            </svg>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
+                    <div id="chatBoxBtn" class="hs-tooltip w-full md:w-auto [--placement:right] inline-block">
+                        <a class="hs-tooltip-toggle w-full md:w-auto p-3 inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 " href="#">
+                            <img class="w-8" src="../images/chat.png" alt="">
+                            <span class="md:hidden">
                                 Chat Box
                             </span>
                         </a>
                     </div>
 
-                    <div id="groupBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM15.75 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM2.25 9.75a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM6.31 15.117A6.745 6.745 0 0 1 12 12a6.745 6.745 0 0 1 6.709 7.498.75.75 0 0 1-.372.568A12.696 12.696 0 0 1 12 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 0 1-.372-.568 6.787 6.787 0 0 1 1.019-4.38Z" clip-rule="evenodd" />
-                                <path d="M5.082 14.254a8.287 8.287 0 0 0-1.308 5.135 9.687 9.687 0 0 1-1.764-.44l-.115-.04a.563.563 0 0 1-.373-.487l-.01-.121a3.75 3.75 0 0 1 3.57-4.047ZM20.226 19.389a8.287 8.287 0 0 0-1.308-5.135 3.75 3.75 0 0 1 3.57 4.047l-.01.121a.563.563 0 0 1-.373.486l-.115.04c-.567.2-1.156.349-1.764.441Z" />
-                            </svg>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
-                                Group
+                    <div id="groupBtn" class="hs-tooltip w-full md:w-auto [--placement:right] inline-block">
+                        <a class="hs-tooltip-toggle p-3 w-full md:w-auto inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 " href="#">
+                            <img class="w-8" src="../images/group.png" alt="">
+                            <span class="md:hidden">
+                                Group Chat
                             </span>
                         </a>
                     </div>
 
 
-                    <div id="newFeedBtn" class="hs-tooltip [--placement:right] inline-block">
-                        <a href="#" class="hs-tooltip-toggle p-3 md:mb-0 border-4 border-white dark:border-gray-800 md:border md:border-transparent inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-xl rounded-full  text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-7 md:size-6">
-                                <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-                                <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-                            </svg>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
+                    <div id="newFeedBtn" class="hs-tooltip w-full md:w-auto [--placement:right] hidden md:inline-block">
+                        <a href="#" class="hs-tooltip-toggle w-full md:w-auto p-3 inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 ">
+                            <img class="w-8" src="../images/content.png" alt="">
+                            <span class="md:hidden">
                                 New Feed
                             </span>
                         </a>
                     </div>
 
-                    <div id="requestBtn" class="relative hs-tooltip [--placement:right] inline-block">
-                        <a class="hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clip-rule="evenodd" />
-                            </svg>
+                    <div id="requestBtn" class="relative w-full md:w-auto hs-tooltip [--placement:right] hidden md:inline-block">
+                        <a class="hs-tooltip-toggle p-3 w-full md:w-auto inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 " href="#">
+                            <img class="w-8" src="../images/bell.png" alt="">
                             <div id="reqCount" class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-1 -end-1 dark:border-gray-900">0</div>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
+                            <span class="md:hidden">
                                 Friends Request
                             </span>
                         </a>
                     </div>
 
-                    <div class=" hidden md:inline-block">
-                        <button id="theme-toggle" class=" p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none">
+                    <div class="md:inline-block hidden">
+                        <button id="theme-toggle" class=" p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 ">
                             <svg id="theme-toggle-dark-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                                 <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
                             </svg>
@@ -91,26 +88,46 @@ if ($result && mysqli_num_rows($result) > 0) {
                         </button>
                     </div>
 
-                    <div class="hs-tooltip [--placement:right] hidden md:inline-block">
-                        <button id="logoutBtn" class=" logoutBtn hs-tooltip-toggle p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                    <div class="hs-tooltip [--placement:right] w-full md:w-auto inline-block">
+                        <button id="logoutBtn" class=" logoutBtn w-full md:w-auto hs-tooltip-toggle p-3 inline-flex justify-start items-center gap-x-2 text-sm font-semibold md:rounded-full rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 md:hover:bg-gray-100 md:dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 " href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                             </svg>
-                            <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
+                            <span class="md:hidden">
                                 Logout
                             </span>
                         </button>
+                    </div>
+
+                    <hr class="w-full md:hidden">
+
+                    <div class="flex w-full md:hidden items-center justify-between p-2 text-gray-700 dark:text-gray-200">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                            </svg>
+                            <span class="ml-3">Night Mode</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="theme-switch" class="sr-only peer">
+                            <div class="w-10 h-5 bg-gray-300 rounded-full peer-checked:bg-blue-600 transition duration-300">
+                                <div class="absolute switch w-4 h-4 bg-white rounded-full left-1 top-0.5 transition-transform duration-300 peer-checked:translate-x-5"></div>
+                            </div>
+                        </label>
                     </div>
 
 
                     <!-- Repeat other sidebar icons here -->
                 </div>
 
+                <div onclick="closeMobileSideBar()" class="w-1/3 h-full block bg-black/90 md:hidden">
+                </div>
+
                 <!-- Profile Icon -->
                 <div id="userProfileBtn" class=" userProfileBtn hs-tooltip [--placement:right] md:inline-block mb-5 hidden">
-                    <a class="hs-tooltip-toggle p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                    <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/'.$userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="">
-                        
+                    <a class="hs-tooltip-toggle p-1 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 disabled:opacity-50 " href="#">
+                        <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="">
+
                         <span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 inline-block absolute invisible z-50 py-1.5 px-2.5 bg-gray-600  dark:bg-gray-700 text-xs text-white rounded-lg whitespace-nowrap" role="tooltip">
                             Profile
                         </span>
@@ -126,7 +143,6 @@ if ($result && mysqli_num_rows($result) > 0) {
         <?php require_once "../Components/chatRoom.php"; ?>
 
     </main>
-
 
     <!-- Add Member Modal -->
     <div id="addMemberModal" class="fixed  top-0 left-0 z-50 w-screen h-screen flex hidden justify-center items-center bg-black bg-opacity-50 bg-blur">
@@ -150,7 +166,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
                 </div>
             </form>
-            
+
         </div>
     </div>
 

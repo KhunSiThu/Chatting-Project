@@ -1,4 +1,12 @@
+function openMobileSideBar () {
+    sideBarMenu.classList.remove("hidden");
+    sideBarMenu.classList.add("flex");
+}
 
+function closeMobileSideBar () {
+    sideBarMenu.classList.add("hidden");
+    sideBarMenu.classList.remove("flex");
+}
 
 // Get references to the custom alert box and its elements
 const customAlertBox = document.getElementById('customAlertBox');
@@ -311,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Hero Section
 const chatFriend = async (chooseId) => {
-    
+
     const chatRoomHeader = document.querySelector("#chatRoomHeader");
 
     addMemberModal.classList.add("hidden")
@@ -1303,6 +1311,7 @@ async function groupSendMessage() {
 // ======================== UPLOAD POST ========================
 // Function to upload a post
 async function uploadPost() {
+    let type = sessionStorage.getItem("type");
     const fileInputs = {
         images: document.getElementById("photo-input"),
         documents: document.getElementById("doc-input"),
@@ -1320,6 +1329,12 @@ async function uploadPost() {
 
     if (caption && caption.value.trim()) {
         formData.append("caption", caption.value.trim());
+    }
+
+    if (type) {
+        formData.append("type", type);
+    } else {
+        formData.append("type", "post");
     }
 
     for (const [key, input] of Object.entries(fileInputs)) {
@@ -1355,16 +1370,10 @@ async function uploadPost() {
         const data = await response.json();
 
         if (data.success) {
-            const form = document.querySelector("#uploadPostForm");
-            if (form) form.reset();
+            sessionStorage.removeItem("type");
+            sessionStorage.setItem("filterType",'all');
+            location.reload();
 
-            await getAllPosts(false)
-            await fetchLikeCounts();
-            setupEventListeners();
-
-            previewContainer.innerHTML = '';
-            
-            console.log("Post uploaded successfully!");
         } else {
             throw new Error(data.error || "Failed to upload post.");
         }
@@ -1492,7 +1501,7 @@ function createPostElement(post) {
         mediaContent = createFileElements(post.files);
     }
 
-    const likeCommentSection = createLikeCommentSection(post.post_id);
+    const likeCommentSection = createLikeCommentSection(post.post_id, post.profileImage);
 
     postElement.innerHTML = userInfo + caption + mediaContent + likeCommentSection;
     return postElement;
@@ -1501,22 +1510,22 @@ function createPostElement(post) {
 // Function to create file elements
 function createFileElements(files) {
     return `
-        <div class="grid md:grid-cols-2 gap-3">
+        <div class="grid md:grid-cols-2 gap-3 h-full">
             ${files.map(file => {
-                const ext = file.split('.').pop().toLowerCase();
-                const filePath = `../posts/documents/${file}`;
-                const fileIcon = {
-                    'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-                    'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
-                    'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-                    'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
-                    'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-                    'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
-                    'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
-                    'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
-                }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
+        const ext = file.split('.').pop().toLowerCase();
+        const filePath = `../posts/documents/${file}`;
+        const fileIcon = {
+            'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+            'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+            'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+            'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+            'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+            'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+            'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
+            'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
+        }[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
 
-                return `
+        return `
                     <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow">
                         <div class="flex items-center gap-3">
                             <img class="md:w-20 w-8" src="${fileIcon}" alt="">
@@ -1531,7 +1540,7 @@ function createFileElements(files) {
                             </a>
                         </div>
                     </div>`;
-            }).join('')}
+    }).join('')}
         </div>
     `;
 }
@@ -1565,41 +1574,66 @@ async function addLike(id) {
 }
 
 // Function to get all posts
-async function getAllPosts(userId) {
+async function getAllPosts(check, filter, search) {
     try {
         const postContainer = document.querySelector('#postsContainer');
         postContainer.innerHTML = '';
 
-        const response = userId ? await fetch('../Controller/getUserPosts.php') : await fetch('../Controller/getAllPosts.php');
+        const response = check 
+            ? await fetch('../Controller/getUserPosts.php') 
+            : await fetch('../Controller/getAllPosts.php');
+        
         const posts = await response.json();
 
-        if (posts.length === 0) {
+        if (!posts.length) {
             postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No posts available.</p>';
             return;
         }
 
-        posts.forEach(post => {
-            const postElement = createPostElement(post);
-            postContainer.appendChild(postElement);
-        });
+        // Convert search query to lowercase if provided
+        const searchQuery = search ? search.toLowerCase() : null;
 
-        setupEventListeners();
+        // Filtering logic
+        let filteredPosts = posts;
+
+        if (filter) {
+            filteredPosts = filteredPosts.filter(post => post.type === filter);
+        }
+
+        if (searchQuery) {
+            filteredPosts = filteredPosts.filter(post =>
+                post.caption.toLowerCase().includes(searchQuery) ||
+                post.name.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        // Display filtered posts
+        if (filteredPosts.length) {
+            filteredPosts.forEach(post => {
+                const postElement = createPostElement(post);
+                postContainer.appendChild(postElement);
+            });
+
+            setupEventListeners(); // Only setup if there are valid posts
+        } else {
+            postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No matching posts found.</p>';
+        }
     } catch (error) {
         console.error('Error fetching posts:', error);
     }
 }
 
 // Function to create like and comment section
-function createLikeCommentSection(postId) {
+function createLikeCommentSection(postId, profile) {
     return `
         <div class="flex items-center mt-8 mb-3 text-gray-500 dark:text-gray-400">
-            <button type="button" onclick="addLike(${postId})" id="like-btn-${postId}" class="like-btn flex items-center transition-colors" data-post-id="${postId}">
+            <button type="button" onclick="addLike(${postId})" id="like-btn-${postId}" class="like-btn focus:outline-none flex items-center transition-colors" data-post-id="${postId}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                     <path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 0 1 6 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75A.75.75 0 0 1 15 2a2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H14.23c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23h-.777ZM2.331 10.727a11.969 11.969 0 0 0-.831 4.398 12 12 0 0 0 .52 3.507C2.28 19.482 3.105 20 3.994 20H4.9c.445 0 .72-.498.523-.898a8.963 8.963 0 0 1-.924-3.977c0-1.708.476-3.305 1.302-4.666.245-.403-.028-.959-.5-.959H4.25c-.832 0-1.612.453-1.918 1.227Z" />
                 </svg>
                 <span id="like-count-${postId}" class="ml-1"></span>
             </button>
-            <button class="comment-btn ml-5 flex items-center transition-colors" data-post-id="${postId}">
+            <button class="comment-btn ml-5 flex focus:outline-none items-center transition-colors" data-post-id="${postId}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 pointer-events-none">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                 </svg>
@@ -1612,8 +1646,8 @@ function createLikeCommentSection(postId) {
                 <label for="comment" class="sr-only">Your comment</label>
                 <div class="flex items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <button type="button" class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
-                        <div class="w-10 rounded-full overflow-hidden">
-                            <img alt="User profile" class="object-cover" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img alt="User profile" class="object-cover w-full h-full" src="../uploads/profiles/${profile}" />
                         </div>
                     </button>
 
@@ -1670,7 +1704,7 @@ function createCommentElement(comment) {
             <div class="flex items-center justify-between">
                 <div class="chat chat-start">
                     <div class="chat-image avatar">
-                        <div class="w-10 rounded-full">
+                        <div class="w-8 rounded-full">
                             <img alt="User profile" src="../uploads/profiles/${comment.profileImage}" />
                         </div>
                     </div>
@@ -1679,28 +1713,29 @@ function createCommentElement(comment) {
                         <span>${comment.name}</span>
                         <time class="text-xs opacity-50">
                             ${new Date(comment.createdAt).toLocaleString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: '2-digit',
-                                hour12: true
-                            })}
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    })}
                         </time>
                     </div>
                 </div>
-                <button class="reply-btn text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">Reply</span></button>
+                <button class="reply-btn focus:outline-none text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">Reply</span></button>
             </div>
         
             <div id="replyContainer${comment.comment_id}" class="replies hidden px-5 mx-4 border-l border-gray-300 ">
                 <div id="replyComments${comment.comment_id}" class="w-4/5 max-h-[300px] overflow-auto mx-auto mb-5">
                 </div>
-                <div class="flex items-center justify-between">
-                    <div class="w-8 rounded-full overflow-hidden mr-5">
-                        <img alt="User profile" class="object-cover" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded-lg shadow">
+                    <div class="w-8 h-8 rounded-full overflow-hidden mr-5">
+                        <img alt="User profile" class="object-cover w-full h-full" src="../uploads/profiles/${comment.profileImage}" />
                     </div>
-                    <input type="text" class="reply-input w-full p-2 rounded-lg border" placeholder="Write a reply..." />
-                    <button class="submit-reply-btn bg-blue-500 text-white p-2 rounded-lg ml-5">Submit</button>
-                </div>          
+                    <input type="text" class="reply-input w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400" placeholder="Write a reply..." />
+                    <button class="submit-reply-btn bg-blue-500 dark:bg-blue-600 text-white p-2 rounded-lg ml-5 hover:bg-blue-600 dark:hover:bg-blue-700">Reply</button>
+                </div>
+          
             </div>
         </div>`;
 }
@@ -1777,20 +1812,21 @@ async function getReplyComments(commentId) {
                                 <img alt="User profile" src="../uploads/profiles/${reply.profileImage}" />
                             </div>
                         </div>
-                        <div class="chat-header">
+                        
+                        <div class="chat-bubble">${reply.comment}</div>
+                        
+                        <div class="chat-footer">
                             ${reply.name}
                             <time class="text-xs opacity-50">
                                 ${new Date(reply.createdAt).toLocaleString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: 'numeric',
-                                    minute: '2-digit',
-                                    hour12: true
-                                })}
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                })}
                             </time>
                         </div>
-                        <div class="chat-bubble">${reply.comment}</div>
-                        <div class="chat-footer opacity-50">Delivered</div>
                     </div>`;
             });
         }
@@ -1896,8 +1932,43 @@ async function fetchLikeCounts() {
     }
 }
 
+const profile = sessionStorage.getItem("profile");
+const filterType = sessionStorage.getItem("filterType");
+const searchPost = sessionStorage.getItem("searchPost");
+
+if (!profile && !filterType && !searchPost) {
+    getAllPosts(false);
+} 
+
+else if (profile && !filterType && !searchPost) {
+    getAllPosts(true);
+    chatRoomCon.classList.add("hidden");
+    userProfileShowCon.classList.remove("hidden");
+    document.querySelector("#noSelect").classList.remove("hidden");
+} 
+
+else if (filterType && !searchPost && !profile) {
+    const filterBtn = document.getElementById('filterBtn' + filterType);
+    if (filterBtn) {
+        filterBtn.classList.add("font-bold", "text-blue-500");
+    }
+
+    if (filterType !== "all") {
+        getAllPosts(false, filterType);
+    } else {
+        getAllPosts(false);
+    }
+} 
+
+else if (searchPost && !profile && !filterType) {
+    getAllPosts(false, null, searchPost);
+}
+
+
+
+
 // Initialize
-getAllPosts(false);
+
 fetchLikeCounts();
 
 
@@ -1915,10 +1986,10 @@ function handleCoverImageChange(event) {
     const file = event.target.files[0];
     const coverImage = document.getElementById('coverImage');
     const placeholder = document.getElementById('placeholder');
-    
+
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             coverImage.src = e.target.result;
             coverImage.classList.remove('hidden');
             placeholder.classList.add('hidden');
@@ -1933,7 +2004,7 @@ function resetCoverImage() {
     const fileInput = document.getElementById('fileInput');
     const coverImage = document.getElementById('coverImage');
     const placeholder = document.getElementById('placeholder');
-    
+
     fileInput.value = "";
     coverImage.src = "";
     coverImage.classList.add('hidden');
@@ -1957,18 +2028,18 @@ function handleProfileImageChange(event) {
     }
 }
 
-profileSubmitButton.addEventListener("click" , () => {
+profileSubmitButton.addEventListener("click", () => {
     const profileFileInput = document.getElementById("profileFileInput");
 
     const file = profileFileInput.files[0];
-    
+
     const formData = new FormData();
     formData.append("profileImage", file);
 
     fetch("../Controller/uploadProfile.php", {
-            method: "POST",
-            body: formData,
-        })
+        method: "POST",
+        body: formData,
+    })
         .then((res) => res.json())
         .then((data) => {
             if (data.success) {
@@ -1984,18 +2055,18 @@ profileSubmitButton.addEventListener("click" , () => {
         });
 })
 
-coverSubmitButton.addEventListener("click" , () => {
+coverSubmitButton.addEventListener("click", () => {
     const coverFileInput = document.getElementById("coverFileInput");
 
     const file = coverFileInput.files[0];
-    
+
     const formData = new FormData();
     formData.append("coverImage", file);
 
     fetch("../Controller/uploadCover.php", {
-            method: "POST",
-            body: formData,
-        })
+        method: "POST",
+        body: formData,
+    })
         .then((res) => res.json())
         .then((data) => {
             if (data.success) {
@@ -2015,7 +2086,7 @@ function resetCoverImage() {
     const fileInput = document.getElementById('coverFileInput');
     const coverImage = document.getElementById('coverImage');
     const placeholder = document.getElementById('placeholder');
-    
+
     fileInput.value = "";
     coverImage.src = "";
     coverImage.classList.add('hidden');
@@ -2027,10 +2098,10 @@ function resetCoverImage() {
 function handleProfileImageChange(event) {
     const file = event.target.files[0];
     const profileImage = document.getElementById('profileImage');
-    
+
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             profileImage.src = e.target.result;
             profileImage.classList.remove('hidden');
             profileSubmitButton.classList.remove('cursor-not-allowed', 'opacity-50');
@@ -2043,7 +2114,7 @@ function handleProfileImageChange(event) {
 function resetProfileImage() {
     const fileInput = document.getElementById('profileFileInput');
     const profileImage = document.getElementById('profileImage');
-    
+
     fileInput.value = "";
     profileImage.src = "";
     profileImage.classList.add('hidden');
@@ -2055,15 +2126,15 @@ function closeProfileChangeModal() {
     document.getElementById('updateProfileImageModal').classList.add('hidden');
 }
 
-function showEditUserInfo () {
+function showEditUserInfo() {
     document.getElementById('editProfileModal').classList.remove('hidden');
 }
 
-function closeEditUserInfoModal () {
+function closeEditUserInfoModal() {
     document.getElementById('editProfileModal').classList.add('hidden');
 }
 
-document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+document.getElementById('editProfileForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the default form submission
 
     // Collect form data
@@ -2084,17 +2155,16 @@ document.getElementById('editProfileForm').addEventListener('submit', function(e
         },
         body: JSON.stringify(formData)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('User information updated successfully!');
-            closeEditUserInfoModal(); // Close the modal
-        } else {
-            alert('Failed to update user information: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while updating user information.');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to update user information: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating user information.');
+        });
 });

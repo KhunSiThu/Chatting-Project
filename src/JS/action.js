@@ -1,17 +1,70 @@
-
+searchPostsBtn.addEventListener("click",()=> {
+    const searchValue = searchPostsText.value;
+    sessionStorage.removeItem("profile");
+    sessionStorage.removeItem("filterType");
+    sessionStorage.setItem("searchPost",searchValue);
+})
 
 
 // Event Listeners
+filterPosts.addEventListener("click", (e) => {
+
+    if(e.target.classList.contains('all'))
+    {
+        sessionStorage.setItem("filterType",'all');
+    } else if(e.target.classList.contains('posts')) {
+        sessionStorage.setItem("filterType",'post');
+    } else if(e.target.classList.contains('videos')) {
+        sessionStorage.setItem("filterType",'video');
+    } else if(e.target.classList.contains('docs')) {
+        sessionStorage.setItem("filterType",'doc');
+    }
+
+    sessionStorage.removeItem('profile');
+    sessionStorage.removeItem('searchPost');
+
+    location.reload()
+});
+
+// moblie Light and Dark
+document.addEventListener("DOMContentLoaded", function () {
+    const themeSwitch = document.querySelector("#theme-switch");
+    const htmlElement = document.documentElement;
+
+    // Check and apply saved theme
+    if (localStorage.getItem("color-theme") === "dark") {
+        htmlElement.classList.add("dark");
+        themeSwitch.checked = true;
+    }
+
+    // Toggle theme when switch is clicked
+    themeSwitch.addEventListener("change", function () {
+        if (themeSwitch.checked) {
+            htmlElement.classList.add("dark");
+            localStorage.setItem("color-theme", "dark");
+        } else {
+            htmlElement.classList.remove("dark");
+            localStorage.setItem("color-theme", "light");
+        }
+    });
+
+
+});
+
 photoInput.addEventListener('change', handlePhotoInputChange);
-closeMenu.addEventListener("click", handleCloseMenu);
+videoInput.addEventListener("change", handleVideoInputChange);
+documentInput.addEventListener("change", handleDocumentInputChange);
 newFeedBtn.addEventListener("click", handleNewFeedBtnClick);
 chatBoxBtn.addEventListener("click", handleChatBoxBtnClick);
 groupBtn.addEventListener("click", handleGroupBtnClick);
 
 newFeedBtn.addEventListener("click", () => {
-    sessionStorage.setItem("profile",false);
+    sessionStorage.removeItem("profile");
+    sessionStorage.setItem("filterType","all");
+    sessionStorage.removeItem('searchPost');
     location.reload();
 });
+
 userProfileBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
         handleUserProfileClick();
@@ -37,6 +90,7 @@ uploadPostBtn.addEventListener('click', handleUploadPostBtnClick);
 
 // Functions
 function handlePhotoInputChange() {
+    sessionStorage.setItem("type","post");
     previewContainer.innerHTML = '';
     Array.from(this.files).forEach(file => {
         const reader = new FileReader();
@@ -57,10 +111,64 @@ function handlePhotoInputChange() {
     });
 }
 
-function handleCloseMenu() {
-    
-    document.querySelector('.sideMenu').classList.add("-translate-x-full");
+function handleVideoInputChange() {
+    sessionStorage.setItem("type","video");
+    previewContainer.innerHTML = '';
+    Array.from(this.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'preview-item relative w-full h-full';
+            div.innerHTML = `
+                <video class="preview-video w-2/3 mx-auto" controls>
+                    <source src="${e.target.result}" type="${file.type}">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
 }
+
+function handleDocumentInputChange() {
+    sessionStorage.setItem("type","doc");
+    previewContainer.innerHTML = ''; 
+    const fileIconMap = {
+        'doc': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+        'docx': 'https://cdn-icons-png.flaticon.com/512/300/300213.png',
+        'xls': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+        'xlsx': 'https://cdn-icons-png.flaticon.com/256/3699/3699883.png',
+        'ppt': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+        'pptx': 'https://cdn-icons-png.flaticon.com/256/888/888874.png',
+        'txt': 'https://cdn-icons-png.flaticon.com/512/10260/10260761.png',
+        'pdf': 'https://cdn-icons-png.flaticon.com/512/4726/4726010.png'
+    };
+
+    Array.from(this.files).forEach(file => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const fileIcon = fileIconMap[ext] || 'https://cdn-icons-png.flaticon.com/512/6811/6811255.png';
+
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow";
+
+        div.innerHTML = `
+            
+                <img class=" w-8" src="${fileIcon}" alt="">
+                <span class="text-blue-600 dark:text-blue-400 font-medium">${file.name}</span>
+                <button type="button" class="text-red-500 hover:text-red-700" onclick="this.closest('.flex').remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+        `;
+
+        previewContainer.appendChild(div);
+    });
+
+    
+}
+
 
 function handleNewFeedBtnClick() {
     chatListContainer.classList.add("hidden");
@@ -82,6 +190,8 @@ function handleChatBoxBtnClick() {
 
     document.querySelector("#noSelect").classList.add("hidden");
     document.querySelector("#createGroupBtn").classList.add("hidden");
+
+    closeMobileSideBar();
 }
 
 function handleGroupBtnClick() {
@@ -95,16 +205,15 @@ function handleGroupBtnClick() {
 
     document.querySelector("#noSelect").classList.add("hidden");
     document.querySelector("#createGroupBtn").classList.remove("hidden");
+
+    closeMobileSideBar();
 }
 
 async function handleUserProfileClick() {
     sessionStorage.setItem("profile",true);
-    chatRoomCon.classList.add("hidden");
-    userProfileShowCon.classList.remove("hidden");
-    document.querySelector("#noSelect").classList.remove("hidden");
-    await getAllPosts(true)
-    await fetchLikeCounts();
-    setupEventListeners();
+    sessionStorage.removeItem("filterType");
+    sessionStorage.removeItem('searchPost');
+    location.reload();
 }
 
 

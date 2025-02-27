@@ -16,6 +16,7 @@ $allowedExtensions = [
 
 $userId = $_SESSION['user_id'] ?? null;
 $caption = $_POST['caption'] ?? '';
+$type = $_POST['type'];
 
 if (!$userId) {
     http_response_code(401);
@@ -67,7 +68,7 @@ try {
     $documents = implode(",", $filesData['document_files']);
     $videos = implode(",", $filesData['video_files']);
 
-    $sqlUpdate = "UPDATE posts SET images = '$images', files = '$documents', videos = '$videos' WHERE post_id = '$postId'";
+    $sqlUpdate = "UPDATE posts SET images = '$images', files = '$documents', videos = '$videos',type = '$type' WHERE post_id = '$postId'";
     if (!mysqli_query($conn, $sqlUpdate)) {
         throw new Exception("Failed to update post: " . mysqli_error($conn));
     }

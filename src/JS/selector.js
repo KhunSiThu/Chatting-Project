@@ -32,6 +32,7 @@ const changeGroupProfile = document.getElementById('changeGroupProfile');
 
 // Chat Room Elements
 const sideBar = document.querySelector("#sidebar");
+const sideBarMenu = document.querySelector("#sideBarMenu");
 const friendList = document.querySelector(".friendList");
 const sendMessageInput = document.querySelector("#sendMessage");
 const sendBtn = document.querySelector("#sendBtn");
@@ -43,10 +44,15 @@ const sendFiles = document.getElementById("sendFiles");
 const sendFilesBtn = document.getElementById("sendFilesBtn");
 
 // Posts & Profile Elements
+const filterPosts = document.getElementById('filterPosts');
 const photoInput = document.getElementById('photo-input');
 const capation = document.getElementById("capation");
 const previewContainer = document.getElementById('preview-container');
 const uploadPostBtn = document.getElementById('uploadPostBtn');
+const videoInput = document.getElementById("video-input");
+const documentInput = document.getElementById("doc-input");
+const searchPostsText = document.getElementById("searchPostsText");
+const searchPostsBtn = document.getElementById("searchPostsBtn");
 
 const userProfileBtn = document.querySelectorAll(".userProfileBtn");
 const userProfileShowCon =document.getElementById('userProfileShowCon');
