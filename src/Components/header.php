@@ -36,6 +36,10 @@
 
 
 <style>
+    html {
+        scroll-behavior: smooth;
+    }
+
     .scroll-none {
         scrollbar-width: none;
     }
@@ -47,6 +51,7 @@
     .bg-blur {
         backdrop-filter: blur(3px);
         background-color: rgba(0, 0, 0, 0.806);
+        z-index: 200;
     }
 
     /* Dark Mode Switch Background Color */

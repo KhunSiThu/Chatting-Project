@@ -7,25 +7,27 @@ searchPostsBtn.addEventListener("click",()=> {
 
 
 // Event Listeners
-filterPosts.addEventListener("click", (e) => {
+filterPosts.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
 
-    if(e.target.classList.contains('all'))
-    {
-        sessionStorage.setItem("filterType",'all');
-    } else if(e.target.classList.contains('posts')) {
-        sessionStorage.setItem("filterType",'post');
-    } else if(e.target.classList.contains('videos')) {
-        sessionStorage.setItem("filterType",'video');
-    } else if(e.target.classList.contains('docs')) {
-        sessionStorage.setItem("filterType",'doc');
-    }
-
-    sessionStorage.removeItem('profile');
-    sessionStorage.removeItem('searchPost');
-
-    location.reload()
-});
-
+        if(e.target.classList.contains('all'))
+        {
+            sessionStorage.setItem("filterType",'all');
+        } else if(e.target.classList.contains('posts')) {
+            sessionStorage.setItem("filterType",'post');
+        } else if(e.target.classList.contains('videos')) {
+            sessionStorage.setItem("filterType",'video');
+        } else if(e.target.classList.contains('docs')) {
+            sessionStorage.setItem("filterType",'doc');
+        }
+    
+        sessionStorage.removeItem('profile');
+        sessionStorage.removeItem('searchPost');
+    
+        location.reload()
+    });
+    
+})
 // moblie Light and Dark
 document.addEventListener("DOMContentLoaded", function () {
     const themeSwitch = document.querySelector("#theme-switch");

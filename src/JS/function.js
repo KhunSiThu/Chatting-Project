@@ -1,9 +1,9 @@
-function openMobileSideBar () {
+function openMobileSideBar() {
     sideBarMenu.classList.remove("hidden");
     sideBarMenu.classList.add("flex");
 }
 
-function closeMobileSideBar () {
+function closeMobileSideBar() {
     sideBarMenu.classList.add("hidden");
     sideBarMenu.classList.remove("flex");
 }
@@ -1371,7 +1371,7 @@ async function uploadPost() {
 
         if (data.success) {
             sessionStorage.removeItem("type");
-            sessionStorage.setItem("filterType",'all');
+            sessionStorage.setItem("filterType", 'all');
             location.reload();
 
         } else {
@@ -1471,20 +1471,212 @@ function createVideoElement(video) {
     `;
 }
 
-// Function to create a post element
+function openPostMenu(id) {
+    const postMenu = document.getElementById("postMenu" + id);
+    if (postMenu.classList.contains("hidden")) {
+        postMenu.classList.remove("hidden");
+    } else {
+        postMenu.classList.add("hidden");
+    }
+}
+
+function openEditPostModal(postId) {
+    const modal = document.getElementById("editPostModal");
+    const modalContent = document.getElementById("editPostContent");
+    const saveButton = document.getElementById("saveEditPost");
+
+    // Store post ID in modal's dataset
+    modal.dataset.postId = postId;
+
+    // Show modal
+    modal.classList.remove("hidden");
+    setTimeout(() => modal.classList.add("opacity-100"), 10);
+
+    // Fetch post details
+    fetch(`../Controller/getPost.php?post_id=${postId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                modalContent.value = data.caption;
+            } else {
+                alert("Error fetching post details.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Failed to fetch post details.");
+        });
+
+    // Close modal when clicking outside
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeEditPostModal();
+    });
+
+    // Close modal with Esc key
+    document.addEventListener("keydown", handleEscapeKey);
+}
+
+function closeEditPostModal() {
+    const modal = document.getElementById("editPostModal");
+
+    // Hide modal with animation
+    modal.classList.remove("opacity-100");
+    setTimeout(() => modal.classList.add("hidden"), 200);
+
+    // Remove Esc key event listener
+    document.removeEventListener("keydown", handleEscapeKey);
+}
+
+function handleEscapeKey(e) {
+    if (e.key === "Escape") {
+        closeEditPostModal();
+    }
+}
+
+function saveEditedPost() {
+    const modal = document.getElementById("editPostModal");
+    const postId = modal.dataset.postId; // Get post ID from modal's data attribute
+    const updatedCaption = document.getElementById("editPostContent").value.trim();
+
+    if (!updatedCaption) {
+        alert("Caption cannot be empty.");
+        return;
+    }
+
+    fetch("../Controller/updatePost.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            post_id: postId,
+            caption: updatedCaption
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeEditPostModal();
+                sessionStorage.setItem("saveEdit", postId);
+                location.reload();
+            } else {
+                alert("Error updating post: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Failed to update post. Please try again.");
+        });
+}
+
+// Delete Post //
+
+function openDeletePostModal(postId) {
+    const modal = document.getElementById("deletePostModal");
+    modal.classList.remove("hidden");
+
+    // Set event listener for delete confirmation button
+    document.getElementById("confirmDeletePost").onclick = function () {
+        deletePost(postId);
+    };
+
+    // Listen for Escape key
+    document.addEventListener("keydown", handleDeleteModalEscape);
+}
+
+function closeDeletePostModal() {
+    document.getElementById("deletePostModal").classList.add("hidden");
+    document.removeEventListener("keydown", handleDeleteModalEscape);
+}
+
+// Close modal with Esc key
+function handleDeleteModalEscape(event) {
+    if (event.key === "Escape") {
+        closeDeletePostModal();
+    }
+}
+
+// Function to send delete request
+function deletePost(postId) {
+    fetch("../Controller/deletePost.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ post_id: postId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                sessionStorage.setItem("saveEdit",postId-1)
+                closeDeletePostModal();
+                location.reload(); // Reload to reflect changes
+            } else {
+                alert("Error deleting post: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Failed to delete post. Please try again.");
+        });
+}
+
+
+// Function to create a post element//
 function createPostElement(post) {
-    const postElement = document.createElement('div');
+    const postElement = document.createElement('a');
+    postElement.id = "Post" + post.post_id;
     postElement.className = 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow';
 
+    let display = userId === post.user_id ? "block" : "hidden";
+
+
     const userInfo = `
-        <div class="flex items-center md:space-x-3 space-x-1">
-            <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
-            <div>
-                <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">${post.createdAt}</p>
+        <div class="flex justify-between items-center relative">
+            <div class="flex items-center md:space-x-3 space-x-1">
+                <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
+                <div>
+                    <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${post.createdAt}</p>
+                </div>
+            </div>
+            <button onclick="openPostMenu(${post.post_id})" class='focus:outline-none'>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div  id="postMenu${post.post_id}" class="z-20 postMenu absolute right-0 top-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm  dark:bg-gray-700 dark:divide-gray-600">
+                <ul class="p-2 text-sm text-gray-700 dark:text-gray-200" >
+                    <li class="">
+                        <button class="flex items-center w-full  p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                        </svg>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                        <span>Save Post</span>
+                        </button>
+                    </li>
+                    <li class="${display}">
+                        <button onclick="openEditPostModal(${post.post_id})" class="flex items-center w-full  p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                        <span>Edit Caption</span>
+                        </button>
+                    </li>
+                    <li class="${display}">
+                        <button onclick="openDeletePostModal(${post.post_id})" class="flex items-center w-full  p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                        <span>Delete Post</span>
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
-    `;
+            `;
 
     const caption = `
         <p class="my-5 text-gray-800 dark:text-gray-200">
@@ -1579,10 +1771,10 @@ async function getAllPosts(check, filter, search) {
         const postContainer = document.querySelector('#postsContainer');
         postContainer.innerHTML = '';
 
-        const response = check 
-            ? await fetch('../Controller/getUserPosts.php') 
+        const response = check
+            ? await fetch('../Controller/getUserPosts.php')
             : await fetch('../Controller/getAllPosts.php');
-        
+
         const posts = await response.json();
 
         if (!posts.length) {
@@ -1615,6 +1807,23 @@ async function getAllPosts(check, filter, search) {
             });
 
             setupEventListeners(); // Only setup if there are valid posts
+
+            const saveEdit = sessionStorage.getItem("saveEdit");
+
+            if (saveEdit) {
+                setTimeout(() => {
+                    const targetPost = document.getElementById("Post" + saveEdit);
+                    
+                    if (targetPost) {
+                        targetPost.scrollIntoView({ behavior: "smooth", block: "center" });
+                        sessionStorage.removeItem("saveEdit"); // Remove after scrolling
+                    } else {
+                        console.warn("Target post not found: Post" + saveEdit);
+                    }
+                }, 200); // Delay to ensure the element is available
+            }
+            
+
         } else {
             postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No matching posts found.</p>';
         }
@@ -1936,21 +2145,25 @@ const profile = sessionStorage.getItem("profile");
 const filterType = sessionStorage.getItem("filterType");
 const searchPost = sessionStorage.getItem("searchPost");
 
+
 if (!profile && !filterType && !searchPost) {
     getAllPosts(false);
-} 
+}
 
 else if (profile && !filterType && !searchPost) {
     getAllPosts(true);
     chatRoomCon.classList.add("hidden");
-    userProfileShowCon.classList.remove("hidden");
     document.querySelector("#noSelect").classList.remove("hidden");
-} 
+    userProfileShowCon.classList.remove("hidden");
+
+}
 
 else if (filterType && !searchPost && !profile) {
-    const filterBtn = document.getElementById('filterBtn' + filterType);
-    if (filterBtn) {
-        filterBtn.classList.add("font-bold", "text-blue-500");
+    const filterBtn1 = document.getElementById('1filterBtn' + filterType);
+    const filterBtn2 = document.getElementById('2filterBtn' + filterType);
+    if (filterBtn1) {
+        filterBtn1.classList.add("font-bold", "text-blue-500");
+        filterBtn2.classList.add("font-bold", "text-blue-500");
     }
 
     if (filterType !== "all") {
@@ -1958,13 +2171,11 @@ else if (filterType && !searchPost && !profile) {
     } else {
         getAllPosts(false);
     }
-} 
+}
 
 else if (searchPost && !profile && !filterType) {
     getAllPosts(false, null, searchPost);
 }
-
-
 
 
 // Initialize

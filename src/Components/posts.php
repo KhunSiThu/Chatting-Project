@@ -3,7 +3,7 @@ session_start();
 // $conn = mysqli_connect("localhost", "root", "", "chattingdb");
 ?>
 <!-- Updated Sticky Header -->
-<div class="w-full flex items-center justify-between sticky top-0 left-0 z-40 h-20 bg-white/90 dark:bg-gray-900/95 shadow-lg px-6 py-4 backdrop-blur-md">
+<div class="w-full flex items-center justify-between sticky top-0 left-0 z-40 h-20 bg-white/90 dark:bg-gray-900/95 shadow-lg md:px-6 px-2 py-4 backdrop-blur-md">
     <!-- Sidebar Toggle Button -->
     <div class="md:hidden block">
         <button type="button" onclick="openMobileSideBar()" class="inline-flex items-center p-2 text-gray-500 rounded-lg bg-gray-200 dark:text-gray-400 dark:bg-gray-800 transition-all focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600">
@@ -16,8 +16,8 @@ session_start();
 
     <!-- Search Form -->
     <form id="search-form" class="md:w-2/6 w-4/6 flex">
-        <div class="relative w-full h-11 flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all">
-            <input name="searchText" type="search" id="searchPostsText" class="px-4 w-full h-full text-sm text-gray-900 dark:text-white bg-transparent focus:outline-none rounded" placeholder="Search posts by title or friend name ..." required />
+        <div class="relative w-full md:h-11 h-10 flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all">
+            <input name="searchText" type="search" id="searchPostsText" class="md:px-4 px-2 w-full h-full text-sm text-gray-900 dark:text-white bg-transparent focus:outline-none rounded" placeholder="Search posts by title or friend name ..." required />
             <button id="searchPostsBtn" type="submit" class="w-12 h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-r-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
                 <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
@@ -27,18 +27,23 @@ session_start();
     </form>
 
     <!-- Navigation Menu -->
-    <ul id="filterPosts" class="md:flex hidden w-2/6 items-center justify-center space-x-6">
-        <li><button id="filterBtnall" class="all px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">All</button></li>
-        <li><button id="filterBtnpost" class="posts px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Posts</button></li>
-        <li><button id="filterBtnvideo" class="videos px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Videos</button></li>
-        <li><button id="filterBtndoc" class="docs px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Documents</button></li>
+
+    <ul id="filterPosts" class="md:flex hidden filterPosts w-2/6 items-center justify-center space-x-6">
+        <li><button id="1filterBtnall" class="all px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">All</button></li>
+        <li><button id="1filterBtnpost" class="posts px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Posts</button></li>
+        <li><button id="1filterBtnvideo" class="videos px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Videos</button></li>
+        <li><button id="1filterBtndoc" class="docs px-4 py-2 focus:outline-none  hover:text-blue-600  transition-all">Documents</button></li>
     </ul>
 
-    <!-- Profile Section -->
-    <div class="md:w-1/6 flex items-center justify-end">
-        <div class="p-1 flex items-center gap-x-2 text-sm font-semibold rounded-full border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
-            <img class="w-10 h-10 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="Profile Image">
-        </div>
+
+    <div id="requestBtn" class="relative  hs-tooltip [--placement:right] inline-block">
+        <a class="hs-tooltip-toggle p-2  inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 " href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                <path fill-rule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clip-rule="evenodd" />
+            </svg>
+            <div id="reqCount" class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500  rounded-full -top-2 -end-1.5 dark:border-gray-900">0</div>
+
+        </a>
     </div>
 
 </div>
@@ -140,7 +145,7 @@ session_start();
         </div>
 
         <!-- Edit Profile Button -->
-        <button id="addCoverBtn" onclick="showCoverImageChangeModal()" class="flex items-center justify-center bg-blue-500 absolute top-5 md:-top-12 right-3 uppercase text-white font-bold hover:shadow-md shadow text-xs md:px-4 px-2 py-2 rounded outline-none focus:outline-none mb-1 ease-linear transition-all duration-150" type="button">
+        <button id="addCoverBtn" onclick="showCoverImageChangeModal()" class="flex items-center justify-center bg-blue-500 absolute -top-12 right-3 uppercase text-white font-bold hover:shadow-md shadow text-xs md:px-4 px-2 py-2 rounded outline-none focus:outline-none mb-1 ease-linear transition-all duration-150" type="button">
             Add Cover
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 ml-1">
                 <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
@@ -382,11 +387,39 @@ session_start();
 </div>
 
 <!-- Post Display Section -->
-<div class="w-11/12 md:w-2/3 mx-auto">
+<div class="w-11/12 md:w-2/3 mx-auto mb-96">
+    <a href="#" id="scrollTo" class="hidden">Scroll To</a>
+
     <div id="postsContainer" class="flex flex-col space-y-10">
 
     </div>
 </div>
+
+<!-- Modal Background -->
+<div id="editPostModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden bg-blur">
+    <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-lg w-96 transition-all">
+        <h2 class="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-200">Edit Post Caption</h2>
+        <textarea id="editPostContent" class="w-full p-2 border rounded-lg text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring focus:ring-blue-300 dark:focus:ring-blue-600"></textarea>
+        <div class="flex justify-end mt-3">
+            <button onclick="closeEditPostModal()" class="mr-2 px-4 py-2 bg-gray-300 dark:bg-gray-700 dark:text-white rounded hover:bg-gray-400 dark:hover:bg-gray-600">Cancel</button>
+            <button id="saveEditPost" onclick="saveEditedPost()" class="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded hover:bg-blue-700 dark:hover:bg-blue-400">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deletePostModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden bg-blur">
+    <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-lg w-96 transition-all">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-200">Confirm Delete</h2>
+        <p class="text-gray-700 dark:text-gray-300 my-3">Are you sure you want to delete this post?</p>
+        <div class="flex justify-end mt-4">
+            <button onclick="closeDeletePostModal()" class="mr-2 px-4 py-2 bg-gray-300 dark:bg-gray-700 dark:text-white rounded hover:bg-gray-400 dark:hover:bg-gray-600">Cancel</button>
+            <button id="confirmDeletePost" class="px-4 py-2 bg-red-600 dark:bg-red-500 text-white rounded hover:bg-red-700 dark:hover:bg-red-400">Delete</button>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Gallery Modal -->
 <div id="galleryModal" class="hidden fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 bg-blur">

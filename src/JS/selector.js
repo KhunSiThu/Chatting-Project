@@ -44,7 +44,7 @@ const sendFiles = document.getElementById("sendFiles");
 const sendFilesBtn = document.getElementById("sendFilesBtn");
 
 // Posts & Profile Elements
-const filterPosts = document.getElementById('filterPosts');
+const filterPosts = document.querySelectorAll('.filterPosts');
 const photoInput = document.getElementById('photo-input');
 const capation = document.getElementById("capation");
 const previewContainer = document.getElementById('preview-container');

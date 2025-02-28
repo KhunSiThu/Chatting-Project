@@ -26,31 +26,39 @@ themeToggleBtn.addEventListener('click', function () {
     }
 });
 
-const logoutBtn = document.querySelectorAll('.logoutBtn');
 
-logoutBtn.forEach((btn) => {
-    btn.addEventListener("click", () => {
-        localStorage.clear();
-        localStorage.setItem('color-theme', 'light');
-        fetch("../Controller/logout.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = "../../Public/index.php"; // Redirect after logout
-                } else {
-                    alert("Logout failed: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error("Error during logout:", error);
-            });
+// Open Logout Modal
+function openLogoutModal() {
+    document.getElementById("logoutModal").classList.remove("hidden");
+}
+
+// Close Logout Modal
+function closeLogoutModal() {
+    document.getElementById("logoutModal").classList.add("hidden");
+}
+
+// Logout Logic
+document.getElementById("confirmLogout").addEventListener("click", () => {
+    localStorage.clear();
+    localStorage.setItem('color-theme', 'light');
+
+    fetch("../Controller/logout.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "../../Public/index.php"; // Redirect after logout
+        } else {
+            alert("Logout failed: " + data.error);
+        }
+    })
+    .catch(error => {
+        console.error("Error during logout:", error);
     });
-})
+});
+
 
 // moblie Light and Dark
 document.addEventListener("DOMContentLoaded", function () {

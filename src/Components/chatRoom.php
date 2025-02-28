@@ -136,6 +136,37 @@
 
 <div id="noSelect" class="h-screen   w-full overflow-auto relative bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-none">
 
-<?php require_once "../Components/posts.php"; ?>
+    <?php require_once "../Components/posts.php"; ?>
+    <ul id="filterPosts" class="flex md:hidden  fixed bottom-0 py-3 filterPosts w-full bg-slate-100/90 dark:bg-slate-950/90 rounded-t-2xl border-t-4 border-blue-400 items-center justify-evenly">
+        <li>
+            <button id="2filterBtnpost" class="posts w-12 h-12  shadow-lg text-xl rounded-full bg-slate-300 dark:bg-gray-800 focus:outline-none  hover:text-blue-600  transition-all">
+                <i class="fa-solid fa-image pointer-events-none"></i>
+            </button>
+        </li>
+        <li>
+            <button id="2filterBtnvideo" class="videos w-12 h-12 shadow-lg text-xl rounded-full bg-slate-300 dark:bg-gray-800  focus:outline-none  hover:text-blue-600  transition-all">
+                <i class="fa-solid fa-circle-play pointer-events-none"></i>
+            </button>
+        </li>
+
+
+        <li>
+            <button id="2filterBtnall" class="all w-14 h-14 shadow-lg text-xl rounded-full border-4 border-gray-800 dark:border-gray-100 bg-slate-200 dark:bg-gray-900 focus:outline-none  hover:text-blue-600  transition-all">
+                <i class="fa-solid fa-house pointer-events-none"></i>
+            </button>
+        </li>
+
+        <li>
+            <button id="2filterBtndoc" class="docs w-12 h-12 shadow-lg text-xl rounded-full bg-slate-300 dark:bg-gray-800 focus:outline-none  hover:text-blue-600  transition-all">
+                <i class="fa-solid fa-file-contract pointer-events-none"></i>
+            </button>
+        </li>
+
+        <li>
+            <button id="userProfileBtn" class="userProfileBtn w-12 h-12 shadow-lg text-xl rounded-full bg-slate-300 dark:bg-gray-800 focus:outline-none  hover:text-blue-600  transition-all">
+                <i class="fa-solid fa-user pointer-events-none"></i>
+            </button>
+        </li>
+    </ul>
 
 </div>
