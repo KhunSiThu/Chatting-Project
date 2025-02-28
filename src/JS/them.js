@@ -49,6 +49,7 @@ document.getElementById("confirmLogout").addEventListener("click", () => {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            sessionStorage.clear();
             window.location.href = "../../Public/index.php"; // Redirect after logout
         } else {
             alert("Logout failed: " + data.error);

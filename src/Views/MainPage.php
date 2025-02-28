@@ -24,10 +24,7 @@ if ($result && mysqli_num_rows($result) > 0) {
                 <div class="md:w-full w-5/6 p-4 md:p-0 bg-gray-200 dark:bg-gray-900 md:bg-none h-full">
 
 
-                    <div class="flex flex-col w-full items-center  gap-y-6 md:h-full h-2/3">
-                        <div class="md:w-full md:block hidden w-24">
-                            <img class="p-2 mx-auto" src="https://static.vecteezy.com/system/resources/thumbnails/028/754/648/small_2x/3d-purple-online-chatting-bubble-icon-for-ui-ux-web-mobile-apps-social-media-ads-designs-png.png" alt="">
-                        </div>
+                    <div class="flex flex-col w-full items-center md:gap-y-10 gap-y-6 md:h-full h-2/3">
 
                         <!-- Close Button -->
                         <div class="flex justify-end w-full md:hidden">
@@ -41,7 +38,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
 
                         <!-- Profile Icon -->
-                        <div id="userProfileBtn" class="userProfileBtn hs-tooltip w-full md:w-auto [--placement:right] inline-block">
+                        <div id="userProfileBtn" class="userProfileBtn md:mt-10 hs-tooltip w-full md:w-auto [--placement:right] inline-block">
                             <a class="hs-tooltip-toggle w-full md:w-auto p-2 inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-blue-400 text-gray-800 dark:text-gray-200 focus:outline-none disabled:opacity-50 " href="#">
                                 <img class="w-8 h-8 object-cover rounded-full" src="<?= !empty($userData['profileImage']) ? '../uploads/profiles/' . $userData['profileImage'] : 'https://t3.ftcdn.net/jpg/10/58/16/08/360_F_1058160846_MxdSa2GeeVAF5A7Zt9X7Bp0dq0mlzeDe.jpg' ?>" alt="">
 
@@ -84,19 +81,6 @@ if ($result && mysqli_num_rows($result) > 0) {
                                 </svg>
                                 <span class="md:hidden">
                                     Group Chat
-                                </span>
-                            </a>
-                        </div>
-
-
-                        <div id="newFeedBtn" class="hs-tooltip w-full md:w-auto [--placement:right] hidden md:inline-block">
-                            <a href="#" class="hs-tooltip-toggle w-full md:w-auto p-3 inline-flex justify-start items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 focus:outline-none focus:bg-blue-400 focus:text-white dark:focus:bg-blue-400 disabled:opacity-50 ">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                    <path fill-rule="evenodd" d="M4.125 3C3.089 3 2.25 3.84 2.25 4.875V18a3 3 0 0 0 3 3h15a3 3 0 0 1-3-3V4.875C17.25 3.839 16.41 3 15.375 3H4.125ZM12 9.75a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5H12Zm-.75-2.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H12a.75.75 0 0 1-.75-.75ZM6 12.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5H6Zm-.75 3.75a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75ZM6 6.75a.75.75 0 0 0-.75.75v3c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-3A.75.75 0 0 0 9 6.75H6Z" clip-rule="evenodd" />
-                                    <path d="M18.75 6.75h1.875c.621 0 1.125.504 1.125 1.125V18a1.5 1.5 0 0 1-3 0V6.75Z" />
-                                </svg>
-                                <span class="md:hidden">
-                                    New Feed
                                 </span>
                             </a>
                         </div>

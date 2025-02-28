@@ -1371,6 +1371,7 @@ async function uploadPost() {
 
         if (data.success) {
             sessionStorage.removeItem("type");
+            sessionStorage.removeItem("friendProfile");
             sessionStorage.setItem("filterType", 'all');
             location.reload();
 
@@ -1455,20 +1456,6 @@ function nextImage() {
         currentImageIndex++;
         updateGalleryImage();
     }
-}
-
-// Function to create a video element
-function createVideoElement(video) {
-    return `
-        <div class="grid grid-cols-1 gap-1 mt-3 relative">
-            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='0' class="gallery-trigger relative">
-                <video class="w-full object-cover rounded-lg">
-                    <source src="../posts/videos/${video}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </a>
-        </div>
-    `;
 }
 
 function openPostMenu(id) {
@@ -1606,7 +1593,7 @@ function deletePost(postId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                sessionStorage.setItem("saveEdit",postId-1)
+                sessionStorage.setItem("saveEdit", postId - 1)
                 closeDeletePostModal();
                 location.reload(); // Reload to reflect changes
             } else {
@@ -1619,6 +1606,14 @@ function deletePost(postId) {
         });
 }
 
+function openProfile(id) {
+    sessionStorage.removeItem("profile");
+    sessionStorage.removeItem("filterType");
+    sessionStorage.removeItem('searchPost');
+    sessionStorage.setItem('friendProfile', id);
+
+    location.reload();
+}
 
 // Function to create a post element//
 function createPostElement(post) {
@@ -1631,7 +1626,7 @@ function createPostElement(post) {
 
     const userInfo = `
         <div class="flex justify-between items-center relative">
-            <div class="flex items-center md:space-x-3 space-x-1">
+            <div onclick="openProfile(${post.user_id})" class="flex cursor-pointer items-center md:space-x-2 space-x-1">
                 <img src="../uploads/profiles/${post.profileImage}" class="w-8 h-8 object-cover rounded-full" />
                 <div>
                     <p class="font-semibold text-gray-900 dark:text-gray-100">${post.name}</p>
@@ -1737,6 +1732,20 @@ function createFileElements(files) {
     `;
 }
 
+// Function to create a video element
+function createVideoElement(video) {
+    return `
+        <div class="grid grid-cols-1 gap-1 mt-3 relative">
+            <a href="javascript:void(0);" data-videos='${JSON.stringify([video])}' data-index='0' class="gallery-trigger relative">
+                <video class="w-full object-cover rounded-lg">
+                    <source src="../posts/videos/${video}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </a>
+        </div>
+    `;
+}
+
 
 // Function to add a like
 async function addLike(id) {
@@ -1766,7 +1775,7 @@ async function addLike(id) {
 }
 
 // Function to get all posts
-async function getAllPosts(check, filter, search) {
+async function getAllPosts(check, filter, search, id) {
     try {
         const postContainer = document.querySelector('#postsContainer');
         postContainer.innerHTML = '';
@@ -1787,6 +1796,69 @@ async function getAllPosts(check, filter, search) {
 
         // Filtering logic
         let filteredPosts = posts;
+
+        if (id) {
+            filteredPosts = filteredPosts.filter(post => post.user_id === id);
+
+            if (filteredPosts.length > 0) {
+                let friend = filteredPosts[0];
+                let role = friend.role || "";
+                let year = friend.year ? `Year - ${friend.year} Year` : "";
+                let city = friend.address ? `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg> <span>${friend.address} City</span>` : "";
+                let roll = friend.rollNo ? `Roll No - ${friend.rollNo}` : "";
+                let phone = friend.phoneNo ? `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                    </svg> <span>${friend.phoneNo}</span>` : "";
+
+                document.querySelector('.profileCoverImg').innerHTML = `
+                    <img alt="cover" src="../uploads/covers/${friend.coverImage}" class="w-full h-full object-cover">
+                `;
+
+                document.getElementById("friendInfoCon").innerHTML = `
+                    <div class="p-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between w-full items-center">
+                        <div class="flex flex-col sm:flex-row items-center">
+                            <div class="relative -top-16 md:-top-20">
+                                <img alt="Profile" src="../uploads/profiles/${friend.profileImage}" class="border-2 p-1 border-blue-400 bg-black/40 h-36 w-36 md:h-48 md:w-48 rounded-full object-cover">
+                            </div>
+                            <div class="relative ml-1 sm:ml-6 lg:ml-10 flex flex-col justify-center">
+                                <h3 class="text-xl sm:text-2xl text-center md:text-start lg:text-3xl font-semibold text-gray-700 dark:text-gray-300">
+                                    ${friend.name}
+                                    <small class="text-xs opacity-80">${role}</small>
+                                </h3>
+                                <span class="text-xs text-center md:text-start opacity-40">${friend.email}</span>
+                                <ul class="text-sm mt-3 opacity-90">
+                                    <li class="flex items-center space-x-1">${year}</li>
+                                    <li class="flex items-center space-x-1 mt-2">${roll}</li>
+                                    <li class="flex items-center space-x-1 mt-2">${city}</li>
+                                    <li class="flex items-center space-x-1 mt-2">${phone}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-6 sm:mt-0">
+                            <ul class="text-sm mt-3 opacity-90">
+                                <li class="flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                                    </svg>
+                                    <span>University Of Computer Studies (Hpa-An)</span>
+                                </li>
+                                <li class="flex items-center space-x-1 mt-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                    <span>Kayin State, Hpa-An City</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+        }
 
         if (filter) {
             filteredPosts = filteredPosts.filter(post => post.type === filter);
@@ -1813,7 +1885,7 @@ async function getAllPosts(check, filter, search) {
             if (saveEdit) {
                 setTimeout(() => {
                     const targetPost = document.getElementById("Post" + saveEdit);
-                    
+
                     if (targetPost) {
                         targetPost.scrollIntoView({ behavior: "smooth", block: "center" });
                         sessionStorage.removeItem("saveEdit"); // Remove after scrolling
@@ -1822,7 +1894,7 @@ async function getAllPosts(check, filter, search) {
                     }
                 }, 200); // Delay to ensure the element is available
             }
-            
+
 
         } else {
             postContainer.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">No matching posts found.</p>';
@@ -1906,48 +1978,6 @@ async function getComment(postId) {
     }
 }
 
-// Function to create a comment element
-function createCommentElement(comment) {
-    return `
-        <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
-            <div class="flex items-center justify-between">
-                <div class="chat chat-start">
-                    <div class="chat-image avatar">
-                        <div class="w-8 rounded-full">
-                            <img alt="User profile" src="../uploads/profiles/${comment.profileImage}" />
-                        </div>
-                    </div>
-                    <div class="chat-bubble">${comment.comment}</div>
-                    <div class="chat-footer flex items-center gap-2">
-                        <span>${comment.name}</span>
-                        <time class="text-xs opacity-50">
-                            ${new Date(comment.createdAt).toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-    })}
-                        </time>
-                    </div>
-                </div>
-                <button class="reply-btn focus:outline-none text-blue-500" id=${comment.comment_id}><span class="pointer-events-none">Reply</span></button>
-            </div>
-        
-            <div id="replyContainer${comment.comment_id}" class="replies hidden px-5 mx-4 border-l border-gray-300 ">
-                <div id="replyComments${comment.comment_id}" class="w-4/5 max-h-[300px] overflow-auto mx-auto mb-5">
-                </div>
-                <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded-lg shadow">
-                    <div class="w-8 h-8 rounded-full overflow-hidden mr-5">
-                        <img alt="User profile" class="object-cover w-full h-full" src="../uploads/profiles/${comment.profileImage}" />
-                    </div>
-                    <input type="text" class="reply-input w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400" placeholder="Write a reply..." />
-                    <button class="submit-reply-btn bg-blue-500 dark:bg-blue-600 text-white p-2 rounded-lg ml-5 hover:bg-blue-600 dark:hover:bg-blue-700">Reply</button>
-                </div>
-          
-            </div>
-        </div>`;
-}
 
 // Function to send a comment
 async function sendComment(postId, comment) {
@@ -1995,7 +2025,46 @@ async function sendReply(commentId, replyText) {
     }
 }
 
-// Function to get reply comments
+function createCommentElement(comment) {
+    return `
+        <div class="bg-gray-50 dark:bg-gray-700 p-3 sm:p-5 rounded-lg w-full">
+            <div class="flex items-center justify-between">
+                <div class="chat chat-start w-full">
+                    <div class="chat-image avatar">
+                        <div class="w-6 sm:w-8 rounded-full">
+                            <img alt="User profile" src="../uploads/profiles/${comment.profileImage}" />
+                        </div>
+                    </div>
+                    <div class="chat-bubble text-sm sm:text-base">${comment.comment}</div>
+                    <div class="chat-footer flex items-center gap-2 text-xs sm:text-sm">
+                        <span>${comment.name}</span>
+                        <time class="opacity-50">
+                            ${new Date(comment.createdAt).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    })}
+                        </time>
+                    </div>
+                </div>
+                <button class="reply-btn focus:outline-none text-blue-500 text-xs sm:text-sm" id=${comment.comment_id}>
+                    <span class="pointer-events-none">Reply</span>
+                </button>
+            </div>
+        
+            <div id="replyContainer${comment.comment_id}" class="replies hidden px-3 sm:px-5 mx-2 sm:mx-4 border-l border-gray-300">
+                <div id="replyComments${comment.comment_id}" class="w-full sm:w-4/5 max-h-[200px] sm:max-h-[300px] overflow-auto mx-auto mb-3 sm:mb-5 text-sm">
+                </div>
+                <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded-lg shadow w-full">
+                    <input type="text" class="reply-input w-full p-1 sm:p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base" placeholder="Write a reply..." />
+                    <button class="submit-reply-btn bg-blue-500 dark:bg-blue-600 text-white p-1 sm:p-2 rounded-lg ml-2 sm:ml-5 hover:bg-blue-600 dark:hover:bg-blue-700 text-xs sm:text-sm">Reply</button>
+                </div>
+            </div>
+        </div>`;
+}
+
 async function getReplyComments(commentId) {
     try {
         const response = await fetch('../Controller/getReplyComment.php', {
@@ -2013,20 +2082,21 @@ async function getReplyComments(commentId) {
         if (data.success) {
             const replyComments = document.getElementById(`replyComments${commentId}`);
             replyComments.innerHTML = "";
+
             data.comments.forEach(reply => {
                 replyComments.innerHTML += `
-                    <div class="chat ${reply.userId === userId ? "chat-end" : "chat-start"}">
+                    <div class="chat ${reply.userId === userId ? "chat-end" : "chat-start"} w-full">
                         <div class="chat-image avatar">
-                            <div class="w-8 rounded-full">
+                            <div class="w-6 sm:w-8 rounded-full">
                                 <img alt="User profile" src="../uploads/profiles/${reply.profileImage}" />
                             </div>
                         </div>
                         
-                        <div class="chat-bubble">${reply.comment}</div>
+                        <div class="chat-bubble text-sm sm:text-base">${reply.comment}</div>
                         
-                        <div class="chat-footer">
-                            ${reply.name}
-                            <time class="text-xs opacity-50">
+                        <div class="chat-footer text-xs sm:text-sm opacity-70 flex items-center gap-2">
+                            <span>${reply.name}</span>
+                            <time>
                                 ${new Date(reply.createdAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -2043,6 +2113,7 @@ async function getReplyComments(commentId) {
         console.error("Error fetching replies:", error);
     }
 }
+
 
 // Function to setup event listeners
 function setupEventListeners() {
@@ -2144,13 +2215,14 @@ async function fetchLikeCounts() {
 const profile = sessionStorage.getItem("profile");
 const filterType = sessionStorage.getItem("filterType");
 const searchPost = sessionStorage.getItem("searchPost");
+const friendProfile = sessionStorage.getItem("friendProfile");
 
 
-if (!profile && !filterType && !searchPost) {
+if (!profile && !filterType && !searchPost && !friendProfile) {
     getAllPosts(false);
 }
 
-else if (profile && !filterType && !searchPost) {
+else if (profile && !filterType && !searchPost && !friendProfile) {
     getAllPosts(true);
     chatRoomCon.classList.add("hidden");
     document.querySelector("#noSelect").classList.remove("hidden");
@@ -2158,7 +2230,7 @@ else if (profile && !filterType && !searchPost) {
 
 }
 
-else if (filterType && !searchPost && !profile) {
+else if (filterType && !searchPost && !profile && !friendProfile) {
     const filterBtn1 = document.getElementById('1filterBtn' + filterType);
     const filterBtn2 = document.getElementById('2filterBtn' + filterType);
     if (filterBtn1) {
@@ -2173,8 +2245,22 @@ else if (filterType && !searchPost && !profile) {
     }
 }
 
-else if (searchPost && !profile && !filterType) {
+else if (searchPost && !profile && !filterType && !friendProfile) {
     getAllPosts(false, null, searchPost);
+} else if (!searchPost && !profile && !filterType && friendProfile) {
+    if (friendProfile === userId) {
+        getAllPosts(true);
+        chatRoomCon.classList.add("hidden");
+        document.querySelector("#noSelect").classList.remove("hidden");
+        userProfileShowCon.classList.remove("hidden");
+    } else {
+        getAllPosts(false, null, null, friendProfile);
+        chatRoomCon.classList.add("hidden");
+        document.querySelector("#noSelect").classList.remove("hidden");
+        userProfileShowCon.classList.add("hidden");
+        postCreateForm.classList.add("hidden");
+        friendProfileShowCon.classList.remove("hidden");
+    }
 }
 
 

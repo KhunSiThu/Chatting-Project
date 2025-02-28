@@ -9,7 +9,6 @@ const searchItemsCon = document.querySelector("#searchItemsCon");
 const searchItems = document.querySelector("#searchItems");
 const groupItems = document.querySelector("#groupItems");
 const groupList = document.querySelector(".groupList");
-const newFeedBtn = document.querySelector("#newFeedBtn");
 const chatBoxBtn = document.querySelector('#chatBoxBtn');
 const groupBtn = document.querySelector('#groupBtn');
 const closeMenu = document.querySelector("#closeMenu");
@@ -56,6 +55,7 @@ const searchPostsBtn = document.getElementById("searchPostsBtn");
 
 const userProfileBtn = document.querySelectorAll(".userProfileBtn");
 const userProfileShowCon =document.getElementById('userProfileShowCon');
+const friendProfileShowCon = document.getElementById("friendProfileShowCon");
 const addCoverBtn = document.getElementById("addCoverBtn");
 const updateCoverImageModal = document.getElementById("updateCoverImageModal");
 const profileSubmitButton = document.getElementById('profileSubmitButton');

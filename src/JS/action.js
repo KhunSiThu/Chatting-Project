@@ -2,6 +2,7 @@ searchPostsBtn.addEventListener("click",()=> {
     const searchValue = searchPostsText.value;
     sessionStorage.removeItem("profile");
     sessionStorage.removeItem("filterType");
+    sessionStorage.removeItem('friendProfile');
     sessionStorage.setItem("searchPost",searchValue);
 })
 
@@ -19,10 +20,14 @@ filterPosts.forEach((btn) => {
             sessionStorage.setItem("filterType",'video');
         } else if(e.target.classList.contains('docs')) {
             sessionStorage.setItem("filterType",'doc');
+        } else if(e.target.classList.contains('userProfileBtn')) {
+            handleUserProfileClick();
+            return
         }
     
         sessionStorage.removeItem('profile');
         sessionStorage.removeItem('searchPost');
+        sessionStorage.removeItem('friendProfile');
     
         location.reload()
     });
@@ -56,16 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
 photoInput.addEventListener('change', handlePhotoInputChange);
 videoInput.addEventListener("change", handleVideoInputChange);
 documentInput.addEventListener("change", handleDocumentInputChange);
-newFeedBtn.addEventListener("click", handleNewFeedBtnClick);
 chatBoxBtn.addEventListener("click", handleChatBoxBtnClick);
 groupBtn.addEventListener("click", handleGroupBtnClick);
 
-newFeedBtn.addEventListener("click", () => {
-    sessionStorage.removeItem("profile");
-    sessionStorage.setItem("filterType","all");
-    sessionStorage.removeItem('searchPost');
-    location.reload();
-});
 
 userProfileBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -215,6 +213,7 @@ async function handleUserProfileClick() {
     sessionStorage.setItem("profile",true);
     sessionStorage.removeItem("filterType");
     sessionStorage.removeItem('searchPost');
+    sessionStorage.removeItem('friendProfile');
     location.reload();
 }
 

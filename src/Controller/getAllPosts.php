@@ -6,7 +6,7 @@ session_start();
 
 header('Content-Type: application/json');
 
-$sql = "SELECT posts.*, user.name, user.profileImage 
+$sql = "SELECT posts.*,user.*
         FROM posts 
         JOIN user ON posts.user_id = user.userId 
         ORDER BY posts.createdAt DESC";
